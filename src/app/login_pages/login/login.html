@@ -1,1 +1,51 @@
-<p>login works!</p>
+<section class="vista-registro">
+    <div class="izquierda">
+        <h1>DALO</h1>
+        <p>Nos alegra tenerte de vuelta. En esta plataforma podrás acceder a servicios legales de forma clara, gratuita y confiable.  
+            Ya seas un usuario en busca de orientación o un abogado comprometido con ayudar, este espacio está diseñado para conectar, informar y brindar soluciones reales.</p>
+        <p>Explora, participa y forma parte de una comunidad que cree en la justicia accesible para todos.</p>
+    </div>
+
+    <div class="derecha">
+        <div class="back-overlay"></div>
+        <div class="content-abogados">
+            <h3>Bienvenido a <strong>DALO</strong></h3>
+            <h2>INICIO DE SESIÓN</h2>
+
+            <form id="loginForm" #loginForm="ngForm" (ngSubmit)="login($event)">
+                <div class="fila-registro">
+                    <div class="fila">
+                        <div class="campo">
+                            <label for="correo">Correo Electrónico</label>
+                            <input type="email" id="correo" placeholder="Correo Electrónico" required
+                                   [(ngModel)]="correo" name="correo"
+                                   (input)="clearMensaje()">
+                        </div>
+                    </div>
+
+                    <div class="fila">
+                        <div class="campo">
+                            <label for="contrasena">Contraseña</label>
+                            <input type="password" id="contrasena" placeholder="Contraseña" required
+                                   [(ngModel)]="contrasena" name="contrasena"
+                                   (input)="clearMensaje()">
+                        </div>
+                    </div>
+
+                    <div class="botton-submit">
+                        <button type="submit">INICIAR SESIÓN</button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="mensaje" [style.color]="mensajeColor" *ngIf="mensaje">
+                {{ mensaje }}
+            </div>
+
+            <div class="registro-links">
+                <p>¿No tienes cuenta? <a routerLink="/login/registro-usuario">Regístrate como Usuario</a></p>
+                <p>¿Eres abogado? <a routerLink="/login/registro-abogado">Regístrate como Abogado</a></p>
+            </div>
+        </div>
+    </div>
+</section>

@@ -15,7 +15,7 @@ export const routes: Routes = [
           { path: 'consultas', loadComponent: () => import('./abog_pages/consul-resp/consul-resp').then(m => m.ConsulResp) },
           { path: 'estadisticas', loadComponent: () => import('./abog_pages/estadistica-abogado/estadistica-abogado').then(m => m.EstadisticaAbogado) },
           { path: 'foro', loadComponent: () => import('./abog_pages/foro/foro').then(m => m.Foro) },
-          { path: 'materias', loadComponent: () => import('./abog_pages/materia-cards/materia-cards').then(m => m.MateriaCards) },
+          { path: 'materias', loadComponent: () => import('./abog_pages/materia-cards-abog/materia-cards-abog').then(m => m.MateriaCardsAbog) },
           { path: 'mis-respuestas', loadComponent: () => import('./abog_pages/mis-respuestas/mis-respuestas').then(m => m.MisRespuestas) },
           { path: 'perfil', loadComponent: () => import('./abog_pages/perfil-abogado/perfil-abogado').then(m => m.PerfilAbogado) },
           { path: 'reporte', loadComponent: () => import('./abog_pages/reporte/reporte').then(m => m.Reporte) },

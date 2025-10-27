@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+
+.areas-legales-container {
+    width: 100%;
+    /* Altura mínima para que el contenedor principal ocupe la pantalla, ajusta si es necesario */
+    min-height: calc(100vh - 80px); /* 80px es la altura del header */
+    padding: 30px 20px;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #D9D9D9; /* Fondo claro */
+}
+
+.areas-legales {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.areas-legales h2 {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 900;
+    color: #223240;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+/* Estilos para el contador de estado */
+.counter-status-bar {
+    margin-bottom: 30px;
+}
+
+.counter-status-bar p {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    color: #223240;
+}
+
+.counter-status-bar strong {
+    font-weight: 900;
+}
+
+.counter-status-bar .text-info {
+    background-color: #F7F7F7;
+    border: 1px solid #CCCCCC;
+}
+
+.counter-status-bar .text-warning {
+    background-color: #FFC107;
+    border: 1px solid #E0A800;
+}
+
+.counter-status-bar .text-limit {
+    background-color: #DC3545;
+    color: #FDFDFD;
+    border: 1px solid #C82333;
+}
+
+/* Mensaje temporal de límite */
+.limit-message {
+    background-color: #DC3545;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    position: fixed; /* Lo fijamos para que sea visible */
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 20;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.cards-grid {
+    display: grid;
+    /* Diseño responsivo con un número adaptable de columnas */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+    justify-content: center;
+    align-items: stretch;
+    padding: 10px;
+}
+
+.area {
+    /* Estilos base de la tarjeta */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #223240;
+    color: #FDFDFD;
+    border: none;
+    padding: 5px; /* Padding para el borde exterior */
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    text-align: center;
+    height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+    min-height: 250px; /* Altura mínima para mejor visualización */
+}
+
+/* Contenedor interior para el borde y el padding de contenido */
+.area-inner {
+    border: 3px solid #fdfdfd;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.area:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.25);
+    background-color: #385169; /* Un tono un poco más claro en hover */
+}
+
+/* Estilo para la tarjeta seleccionada (Abogado: selección múltiple) */
+.area.selected {
+    background-color: #006DCC; /* Color de énfasis azul */
+    transform: scale(1.05); /* Ligeramente más grande */
+    box-shadow: 0 0 0 5px #0056a3, 0 10px 20px rgba(0, 0, 0, 0.3); /* Borde y sombra más prominentes */
+}
+
+.area-icon {
+    width: 70px;
+    height: auto;
+    margin-bottom: 15px;
+    /* Aplicar un filtro de color claro si el ícono es oscuro y el fondo también */
+    filter: brightness(0) invert(1); 
+}
+
+.area h3 {
+    margin: 10px 0 5px 0;
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.area h4 {
+    margin: 5px 0 0 0;
+    font-size: 11px;
+    font-weight: 400;
+    color: #CCCCCC;
+}
+
+/* Media Queries para ajustes finos */
+@media (max-width: 768px) {
+    .areas-legales h2 {
+        font-size: 28px;
+    }
+    .cards-grid {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .areas-legales-container {
+        padding: 20px 10px;
+    }
+    .cards-grid {
+        grid-template-columns: 1fr 1fr; /* 2 columnas en móviles muy pequeños */
+        gap: 15px;
+    }
+    .area-icon {
+        width: 60px;
+    }
+}

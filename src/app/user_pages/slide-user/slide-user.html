@@ -2,6 +2,10 @@
 
 <aside class="sidebar" [class.active]="isOpen">
   <div class="sidebar-header">
+    <div class="user-info-slide">
+      <h3 class="user-name-slide">{{ userName }}</h3>
+      <p class="user-role-slide">{{ userRole }}</p>
+    </div>
     <button class="menu-toggle" (click)="closeSidebar()" aria-label="Cerrar menú">
       &times;
     </button>
@@ -46,6 +50,14 @@
        (click)="closeSidebar()">
       <img src="/Images/Mis_preguntas.png" alt="Mis Preguntas" />
       Mis Preguntas
+    </a>
+    
+    <a routerLink="/usuario/comentarios" 
+       routerLinkActive="active" 
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/comentarios.png" alt="Comentarios" />
+      Comentarios
     </a>
     
     <a routerLink="/usuario/ayuda" 

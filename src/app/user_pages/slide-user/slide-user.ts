@@ -2,6 +2,11 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 
+interface Usuario {
+  nombre: string;
+  idRol: number;
+}
+
 @Component({
   selector: 'app-slide-user',
   standalone: true,
@@ -13,9 +18,20 @@ export class SlideUser implements OnInit, OnDestroy {
   isOpen = false;
   private sidebarListener: any;
 
+  userName: string = 'Usuario';
+  userRole: string = 'Rol de Usuario';
+
+  private roleMap: { [key: number]: string } = {
+    1: 'Usuario',
+    2: 'Abogado',
+    3: 'Administrador'
+  };
+
   constructor(private router: Router) {}
 
   ngOnInit() {
+    this.loadUserData(); 
+    
     this.sidebarListener = (event: CustomEvent) => {
       this.isOpen = event.detail;
     };
@@ -25,6 +41,24 @@ export class SlideUser implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.sidebarListener) {
       window.removeEventListener('toggle-sidebar', this.sidebarListener);
+    }
+  }
+  
+  private loadUserData(): void {
+    try {
+      const usuarioStr = localStorage.getItem('usuario');
+      if (usuarioStr) {
+        const usuario: Usuario = JSON.parse(usuarioStr);
+        this.userName = usuario.nombre;
+        this.userRole = this.roleMap[usuario.idRol] || 'Rol Desconocido';
+      } else {
+        this.userName = 'Invitado';
+        this.userRole = 'Sin Sesión';
+      }
+    } catch (e) {
+      console.error('Error al parsear datos de usuario de localStorage', e);
+      this.userName = 'Error';
+      this.userRole = 'Datos Inválidos';
     }
   }
 
@@ -42,7 +76,5 @@ export class SlideUser implements OnInit, OnDestroy {
     this.closeSidebar();
     
     this.router.navigate(['/login']);
-    
-    
   }
 }
