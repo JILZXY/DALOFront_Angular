@@ -1,1 +1,17 @@
-<p>header works!</p>
+<header>
+  <button class="menu-toggle" (click)="toggleSidebar()" aria-label="Abrir menú">
+    <img src="/Images/menu.png" alt="Abrir menú" class="icono-menu" />
+  </button>
+  <h2 class="page-title">{{ pageTitle }}</h2>
+  <div class="user-info">
+    <div class="user-name">{{ userName }}</div>
+    <div class="user-role">{{ userRole }}</div>
+  </div>
+</header>
+
+<div class="overlay" 
+     [class.active]="isSidebarActive" 
+     (click)="closeSidebar()">
+</div>
+
+<router-outlet></router-outlet>
