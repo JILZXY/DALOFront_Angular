@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
-import { Header} from './header/header'; // Carga global
+import { Header} from './header/header'; 
 
 export const routes: Routes = [
   {
     path: '',
     component: Header,
     children: [
+      { path: '', redirectTo: '/usuario/home', pathMatch: 'full' },
+
       {
         path: 'abogado',
         children: [
@@ -18,7 +20,6 @@ export const routes: Routes = [
           { path: 'perfil', loadComponent: () => import('./abog_pages/perfil-abogado/perfil-abogado').then(m => m.PerfilAbogado) },
           { path: 'reporte', loadComponent: () => import('./abog_pages/reporte/reporte').then(m => m.Reporte) },
           { path: 'respuesta', loadComponent: () => import('./abog_pages/respuesta/respuesta').then(m => m.Respuesta) },
-          { path: 'slide', loadComponent: () => import('./abog_pages/slide-ab/slide-ab').then(m => m.SlideAb) },
         ]
       },
       {
@@ -26,7 +27,6 @@ export const routes: Routes = [
         children: [
           { path: 'inactivos', loadComponent: () => import('./admin/inactivos/inactivos').then(m => m.Inactivos) },
           { path: 'reportes', loadComponent: () => import('./admin/reportes/reportes').then(m => m.Reportes) },
-          { path: 'slide', loadComponent: () => import('./admin/slide-admin/slide-admin').then(m => m.SlideAdmin) },
         ]
       },
       {
@@ -48,7 +48,6 @@ export const routes: Routes = [
           { path: 'faq', loadComponent: () => import('./user_pages/preguntas-frecuentes/preguntas-frecuentes').then(m => m.PreguntasFrecuentes) },
           { path: 'publicar', loadComponent: () => import('./user_pages/publicar-pregunta/publicar-pregunta').then(m => m.PublicarPregunta) },
           { path: 'ayuda', loadComponent: () => import('./user_pages/user-ayuda/user-ayuda').then(m => m.UserAyuda) },
-          { path: 'slide', loadComponent: () => import('./user_pages/slide-user/slide-user').then(m => m.SlideUser) },
         ]
       }
     ]

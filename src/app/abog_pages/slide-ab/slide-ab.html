@@ -1,1 +1,49 @@
-<p>slide-ab works!</p>
+<div class="sidebar-overlay" [class.active]="isOpen" (click)="closeSidebar()"></div>
+
+<aside class="sidebar" [class.active]="isOpen">
+  <div class="sidebar-header">
+    <button class="menu-toggle" (click)="closeSidebar()" aria-label="Cerrar menú">
+      &times;
+    </button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <a routerLink="/abogado/foro" 
+       routerLinkActive="active" 
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/enviar_pregunta.png" alt="Foro" />
+      Foro
+    </a>
+    
+    <a routerLink="/abogado/mis-respuestas" 
+       routerLinkActive="active" 
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/contactar_abogado.png" alt="Mis Respuestas" />
+      Mis Respuestas
+    </a>
+    
+    <a routerLink="/abogado/estadisticas" 
+       routerLinkActive="active" 
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/stats.png" alt="Estadísticas" />
+      Estadísticas
+    </a>
+    
+    <a routerLink="/abogado/ayuda" 
+       routerLinkActive="active" 
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/ayuda.png" alt="Ayuda" />
+      Ayuda
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="#" class="menu-item" (click)="logout($event)">
+      Salir
+    </a>
+  </div>
+</aside>
