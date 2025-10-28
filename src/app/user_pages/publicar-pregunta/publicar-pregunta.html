@@ -1,1 +1,74 @@
-<p>publicar-pregunta works!</p>
+<div class="main-container">
+  
+  <section class="form-section">
+    <div class="form-container">
+      <h2>Ingresa tú pregunta</h2>
+      
+      <form id="questionForm" #questionForm="ngForm" (ngSubmit)="handleSubmit($event)">
+        
+        <div class="form-group">
+          <label for="questionTitle">Pregunta (50 Caracteres)</label>
+          <input type="text" id="questionTitle" name="questionTitle" 
+                 maxlength="50" 
+                 placeholder="Escribe tu pregunta aquí..."
+                 [(ngModel)]="questionTitle"
+                 (input)="updateTitleCounter()">
+          <div class="char-counter">
+            <span id="titleCounter">{{ titleCounter }}</span>/50
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="questionDescription">Escribe el contexto o contenido más desarrollado de tú pregunta (150 Caracteres)</label>
+          <textarea id="questionDescription" name="questionDescription" 
+                    rows="4" 
+                    maxlength="150" 
+                    placeholder="Añade más detalles..."
+                    [(ngModel)]="questionDescription"
+                    (input)="updateDescCounter()"></textarea>
+          <div class="char-counter">
+            <span id="descCounter">{{ descCounter }}</span>/150
+          </div>
+        </div>
+      
+        </div>
+  </section>
+
+  <section class="categories-section">
+    <div class="categories-container">
+      <h3>Selecciona alguna categoría</h3>
+
+      <div class="contenedor-materias">
+        <app-materia-cards (areaSelected)="onMateriaSelected($event)"></app-materia-cards>
+      </div>
+    </div>
+    
+    <div class="submit-section">
+      <div class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitQuestion" form="questionForm">
+        Enviar Pregunta
+      </button>
+      <p class="disclaimer">
+        Al publicar tu pregunta, aceptas las normas del foro y te comprometes a cumplirlas.
+      </p>
+    </div>
+  </section>
+  
+  </form> </div>
+
+<div id="confirmationModal" class="modal" *ngIf="isModalVisible">
+  
+  <div class="modal-overlay" (click)="stayHere()"></div>
+  
+  <div class="modal-content">
+    <h3>¡Pregunta publicada exitosamente!</h3>
+    <p>Tu pregunta ha sido enviada y aparecerá en "Mis Preguntas".</p>
+    <div class="modal-buttons">
+      <button id="goToMisPreguntas" class="btn-primary" (click)="goToMisPreguntas()">Ver Mis Preguntas</button>
+      <button id="stayHere" class="btn-secondary" (click)="stayHere()">Publicar Otra</button>
+    </div>
+  </div>
+</div>
