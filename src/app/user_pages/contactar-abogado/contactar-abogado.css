@@ -1,0 +1,404 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+:host {
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #D9D9D9;
+    padding-top: 80px; 
+    min-height: calc(100vh - 80px);
+    box-sizing: border-box;
+}
+
+
+.filtros-busqueda {
+    margin: 25px auto;
+    padding: 0 30px;
+    max-width: 1400px;
+}
+
+.filtros-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.filtro-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.filtro-btn {
+    background-color: #223240;
+    color: #FDFDFD;
+    padding: 10px 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filtro-btn:hover,
+.filtro-btn.active {
+    background-color: #006DCC;
+    transform: translateY(-2px);
+}
+
+.dropdown-arrow {
+    font-size: 10px;
+    transition: transform 0.3s ease;
+}
+
+.filtro-btn.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    display: none; 
+    position: absolute;
+    background-color: #223240;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 100;
+    border-radius: 8px;
+    padding: 10px 0;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.dropdown-content.show {
+    display: block; 
+}
+
+.dropdown-content label {
+    display: block;
+    padding: 10px 15px;
+    cursor: pointer;
+    color: #f0f0f0;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.dropdown-content label:hover {
+    background-color: #006DCC;
+}
+
+.dropdown-content input[type="radio"] {
+    margin-right: 8px;
+    accent-color: #006DCC;
+    transform: scale(1.1);
+}
+
+
+.filtro-busqueda {
+    margin-left: auto;
+}
+
+.buscador-container {
+    display: flex;
+    align-items: center;
+    background-color: #FDFDFD;
+    border: 2px solid #223240;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.buscador-input {
+    border: none;
+    padding: 10px 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    min-width: 250px;
+    background-color: transparent;
+}
+
+.buscador-input:focus {
+    outline: none;
+}
+
+.buscar-btn {
+    background-color: #223240;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: stretch;
+}
+
+.buscar-btn:hover {
+    background-color: #006DCC;
+}
+
+.buscar-icon {
+    width: 20px;
+    height: 20px;
+    filter: invert(1);
+}
+
+.lista-abogados {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 30px;
+    padding-bottom: 40px;
+}
+
+.estado-container {
+    text-align: center;
+    padding: 80px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #223240;
+    background-color: #fdfdfd;
+    border: 2px dashed #223240;
+    border-radius: 12px;
+}
+
+.estado-container.error {
+    color: #D9534F;
+    border-color: #D9534F;
+}
+
+.abogado-card {
+    background-color: #FDFDFD;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    padding: 8px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.abogado-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.abogado-card-inner {
+    border: 3px solid #223240;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.abogado-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Info Izquierda */
+.abogado-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.abogado-foto {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #223240;
+    object-fit: cover;
+}
+
+.abogado-detalles {
+    display: flex;
+    flex-direction: column;
+}
+
+.abogado-nombre {
+    font-size: 22px;
+    font-weight: 800;
+    color: #223240;
+    margin: 0;
+}
+
+.abogado-ubicacion {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin: 4px 0 8px 0;
+}
+
+.calificacion-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.estrella {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.estrella.llena {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAyMzAyMCI+PHBhdGggZD0iTTEyIDE3LjI3TDE4LjE4IDIybC0xLjY0LTcuMDJMNjgyLjU2IDhMMjAgOGwtMy4xOCAxMy4wOVoiLz48L3N2Zz4=');
+    filter: drop-shadow(0 0 1px #000);
+}
+
+.estrella.media {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAyMzAyMCI+PHBhdGggZD0iTTEyIDE1LjQybC00LjIwMiAyLjU2M2wxLjEwNS01LjEwM0w1LjIgOC4wMDdoNS4zNjZMMTIgMi41bDMS4zMzQgNS41MDdoNS4zNjZsLTMuNzA0IDQuODgzbDEuMTA2IDUuMTAzeiIvPjwvc3ZnPg==');
+    filter: drop-shadow(0 0 1px #000);
+}
+
+.estrella.vacia {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAyMzAyMCI+PHBhdGggZD0iTTEyIDE1LjQyTDIwIDhMOC4yMyAyMi4yN0wxMiAxNS40MlpNMTIgMTUuNDJMMTIgMjlMMTIgMTUuNDJaIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMjMwMjAiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9zdmc+');
+    opacity: 0.5;
+}
+
+.calificacion-numero {
+    font-size: 14px;
+    font-weight: 700;
+    color: #223240;
+    margin-left: 5px;
+}
+
+.abogado-especialidades {
+    flex-grow: 1;
+}
+
+.abogado-especialidades h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #223240;
+    margin: 0 0 8px 0;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.especialidad-tag {
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.abogado-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-perfil,
+.btn-contactar {
+    padding: 10px 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.btn-perfil {
+    background-color: #FDFDFD;
+    color: #223240;
+    border: 2px solid #223240;
+}
+
+.btn-perfil:hover {
+    background-color: #223240;
+    color: #FDFDFD;
+}
+
+.btn-contactar {
+    background-color: #006DCC;
+    color: white;
+}
+
+.btn-contactar:hover {
+    background-color: #0056a3;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 1200px) {
+    .abogado-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .filtro-busqueda {
+        margin-left: 0;
+    }
+    
+    .buscador-input {
+        min-width: 200px;
+    }
+    
+    .abogado-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
+    .abogado-info {
+        align-items: center;
+    }
+    
+    .abogado-detalles {
+        align-items: center;
+    }
+    
+    .calificacion-container {
+        justify-content: center;
+    }
+    
+    .abogado-acciones {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .filtros-busqueda {
+        padding: 0 15px;
+    }
+    
+    .lista-abogados {
+        padding: 0 15px;
+    }
+    
+    .abogado-content {
+        padding: 20px;
+    }
+    
+    .abogado-nombre {
+        font-size: 20px;
+    }
+}
