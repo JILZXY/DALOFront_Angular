@@ -1,0 +1,107 @@
+
+:host {
+    display: block; 
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #D9D9D9 0%, #BFBFBF 100%);
+    padding-top: 80px; 
+    min-height: 100vh;
+    box-sizing: border-box; 
+}
+
+
+
+h1 {
+    font-size: 50px;
+    font-weight: 850;
+    text-align: center;
+    margin-bottom: 0px;
+    color: #223240;
+    padding-top: 30px; 
+}
+
+h2 {
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 40px;
+    color: #223240;
+}
+
+.help-container {
+    padding-bottom: 50px; 
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;         
+    max-width: 1375px;
+    width: 90%;                  
+    margin: 20px auto;         
+    padding: 8px;
+    box-sizing: border-box;
+    background-color: #223240; 
+    border-radius: 10px;          
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+    position: relative;
+    
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.5s ease-out forwards;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-info:hover,
+.card-info:focus-within {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.card-inner {
+    border: 2px solid #D9D9D9; 
+    border-radius: 8px;
+    padding: 25px;
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-info h3 {
+    font-size: 20px;
+    font-weight: 820;
+    color: #FDFDFD; 
+    margin-bottom: 10px;
+    text-align: left;
+    position: relative;
+}
+
+.card-info p {
+    font-size: 16px;
+    color: #fdfdfd; 
+    text-align: justify;
+    line-height: 1.4;
+    word-wrap: break-word;
+    word-break: break-word;
+    position: relative;
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-info:nth-child(1) { animation-delay: 0.1s; }
+.card-info:nth-child(2) { animation-delay: 0.2s; }
+.card-info:nth-child(3) { animation-delay: 0.3s; }
+.card-info:nth-child(4) { animation-delay: 0.4s; }
+

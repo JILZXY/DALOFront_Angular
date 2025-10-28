@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-ayuda',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './user-ayuda.html',
-  styleUrl: './user-ayuda.css',
+  styleUrls: ['./user-ayuda.css']
 })
 export class UserAyuda {
+
+  constructor() { }
 
 }

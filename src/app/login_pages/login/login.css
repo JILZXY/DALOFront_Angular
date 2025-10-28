@@ -70,7 +70,7 @@
 }
 
 .derecha {
-    background-image: url('../Images/background.png');
+    background-image: url('/Images/background.png');
     background-size: 1500px 1000px;
     background-position: right;    
     background-repeat: no-repeat;
@@ -308,7 +308,6 @@ input::placeholder {
   position: relative;
 }
 
-/* Botón de "Examinar" personalizado */
 .campo-archivo input[type="file"]::file-selector-button {
   background-color: #223240;
   color: #D9D9D9;

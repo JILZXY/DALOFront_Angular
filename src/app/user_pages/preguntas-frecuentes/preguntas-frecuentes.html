@@ -1,1 +1,20 @@
-<p>preguntas-frecuentes works!</p>
+<app-materia-cards (areaSelected)="onAreaSelected($event)"></app-materia-cards>
+
+<section class="cards-informativas">
+
+  <ng-container *ngFor="let p of preguntas">
+    
+    <div class="card-info" 
+         [ngClass]="'materia-' + p.materia" 
+         *ngIf="shouldShow(p.materia)">
+         
+      <div class="card-inner">
+        <img [src]="p.logo" [alt]="'Logo ' + p.materia" class="card-logo" />
+        <h3 class="card-titulo">{{ p.titulo }}</h3>
+        <p class="card-texto">{{ p.texto }}</p>
+      </div>
+    </div>
+    
+  </ng-container>
+
+</section>

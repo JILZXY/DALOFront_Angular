@@ -1,4 +1,4 @@
-import { Component, output, signal, effect } from '@angular/core';
+import { Component, output, signal, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -15,10 +15,10 @@ interface Materia {
   imports: [CommonModule],
   templateUrl: './materia-cards.html',
   styleUrls: ['./materia-cards.css'],
-  changeDetection: 1, 
+  changeDetection: ChangeDetectionStrategy.OnPush, 
 })
 export class MateriaCards {
-  readonly materiaSeleccionada = output<string>();
+  readonly areaSelected = output<string | null>();
 
   readonly selectedId = signal<string | null>(null);
 
@@ -34,28 +34,24 @@ export class MateriaCards {
 
   constructor(private router: Router) {
     effect(() => {
-      if (this.selectedId()) {
-        const idArea = this.selectedId()!.replace('area-', '');
-        this.materiaSeleccionada.emit(idArea);
+      const currentId = this.selectedId();
+      if (currentId) {
+        const idArea = currentId.replace('area-', '');
+        this.areaSelected.emit(idArea);
+      } else {
+        this.areaSelected.emit(null);
       }
     });
   }
 
-  /**
-   * Maneja el clic en una tarjeta de materia.
-   * @param id 
-   */
   handleAreaClick(id: string): void {
-    // Si ya está seleccionada, la deselecciona (opcional)
-    // Si es un componente de selección única, siempre selecciona la nueva.
-    this.selectedId.set(id);
+    if (this.selectedId() === id) {
+      this.selectedId.set(null); 
+    } else {
+      this.selectedId.set(id); 
+    }
   }
 
-  /**
-   * Verifica si una materia está seleccionada.
-   * @param id El ID de la materia.
-   * @returns true si está seleccionada.
-   */
   isSelected(id: string): boolean {
     return this.selectedId() === id;
   }

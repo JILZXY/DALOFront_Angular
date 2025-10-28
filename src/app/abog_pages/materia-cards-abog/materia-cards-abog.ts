@@ -1,4 +1,4 @@
-import { Component, output, signal, effect, input } from '@angular/core';
+import { Component, output, signal, effect, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Materia {
@@ -14,7 +14,7 @@ interface Materia {
   imports: [CommonModule],
   templateUrl: './materia-cards-abog.html',
   styleUrls: ['./materia-cards-abog.css'],
-  changeDetection: 1, 
+  changeDetection: ChangeDetectionStrategy.OnPush, 
 })
 export class MateriaCardsAbog {
   readonly maxSelections = input(3);
