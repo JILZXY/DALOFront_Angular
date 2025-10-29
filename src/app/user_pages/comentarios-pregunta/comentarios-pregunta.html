@@ -1,1 +1,160 @@
-<p>comentarios-pregunta works!</p>
+<section class="navegacion-section">
+  <button class="btn-regresar" (click)="goBack()">
+    <img src="/Images/regresar.png" alt="Regresar" class="icon-regresar">
+    <span>Volver a Mis Preguntas</span>
+  </button>
+</section>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <div class="loading-spinner">
+    <p>Cargando respuestas...</p>
+  </div>
+</div>
+
+<div class="error-container" *ngIf="!isLoading && errorMensaje">
+  <h3>Oops! Algo salió mal</h3>
+  <p>{{ errorMensaje }}</p>
+  <button (click)="goBack()" class="btn-regresar">Volver</button>
+</div>
+
+<div *ngIf="!isLoading && !errorMensaje && pregunta">
+
+  <section class="pregunta-original">
+    <div class="pregunta-container">
+      <div class="pregunta-header">
+        <div class="usuario-info">
+          <div class="usuario-datos">
+            <span class="usuario-nombre">{{ pregunta.usuario.nombre }}</span>
+            <span class="pregunta-tiempo">{{ formatTimeAgo(pregunta.fecha) }}</span>
+          </div>
+        </div>
+        <div class="materia-icon">
+          <img [src]="pregunta.materia.logo || '/Images/logo_general.png'" [alt]="pregunta.materia.nombre">
+          <span>{{ pregunta.materia.nombre }}</span>
+        </div>
+      </div>
+      <div class="pregunta-contenido">
+        <h3>{{ pregunta.titulo }}</h3>
+        <p>{{ pregunta.descripcion }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="comentarios-section">
+    <h2>Respuestas de Abogados ({{ respuestas.length }})</h2>
+    
+    <div class="comentarios-container">
+      
+      <div class="no-comentarios" *ngIf="respuestas.length === 0">
+        <img src="/Images/logo azul.png" alt="Sin comentarios">
+        <h3>No hay respuestas aún</h3>
+        <p>Sé paciente, los abogados pronto responderán a tu pregunta.</p>
+      </div>
+
+      <div class="comentario-card" 
+           *ngFor="let respuesta of respuestas"
+           [class.mejor-respuesta]="respuesta.esMejorRespuesta">
+        
+        <div class="comentario-header">
+          <div class="abogado-info">
+            <img [src]="respuesta.abogado.foto || '/Images/logo azul.png'" alt="Foto Abogado" class="abogado-foto">
+            <div class="abogado-datos">
+              <span class="abogado-nombre">{{ respuesta.abogado.nombre }} {{ respuesta.abogado.apellidos }}</span>
+              <span class="comentario-tiempo">{{ formatTimeAgo(respuesta.fecha) }}</span>
+            </div>
+          </div>
+          <div class="mejor-respuesta-tag" *ngIf="respuesta.esMejorRespuesta">
+            ★ Mejor Respuesta
+          </div>
+        </div>
+        
+        <div class="comentario-contenido">
+          <p>{{ respuesta.contenido }}</p>
+        </div>
+        
+        <div class="comentario-footer">
+          <div class="calificacion-display">
+            <div class="estrellas-container">
+              <span *ngFor="let estrella of getEstrellas(respuesta.calificacionPromedio)" 
+                    class="estrella {{ estrella }}"></span>
+            </div>
+            <span class="calificacion-texto">
+              ({{ (respuesta.calificacionPromedio || 0).toFixed(1) }})
+            </span>
+          </div>
+          
+          <div class="comentario-acciones">
+            <button class="btn-accion btn-calificar" 
+                    (click)="abrirModalCalificacion(respuesta)"
+                    [disabled]="respuesta.yaCalificada">
+              {{ respuesta.yaCalificada ? 'Calificada' : 'Calificar' }}
+            </button>
+            
+            <button class="btn-accion btn-mejor"
+                    *ngIf="!pregunta.mejorRespuestaId && !respuesta.esMejorRespuesta"
+                    (click)="marcarComoMejorRespuesta(respuesta.idRespuesta)">
+              Marcar como Mejor
+            </button>
+          </div>
+        </div>
+
+      </div> </div> </section>
+
+</div> <div class="modal-calificacion" *ngIf="isModalVisible">
+  <div class="modal-overlay" (click)="cerrarModalCalificacion()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Calificar Respuesta</h3>
+      <button class="btn-cerrar-modal" (click)="cerrarModalCalificacion()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Califica al abogado en base a los siguientes criterios (5 es Excelente):</p>
+      
+      <div class="modal-error" *ngIf="errorModal">
+        {{ errorModal }}
+      </div>
+
+      <div class="criterios-container">
+        <div class="criterio-item">
+          <label for="claridad">Claridad:</label>
+          <select class="select-calificacion" id="claridad" name="claridad" [(ngModel)]="calificacionData.claridad">
+            <option value="" disabled>Seleccionar</option>
+            <option value="1">1 - Muy Malo</option>
+            <option value="2">2 - Malo</option>
+            <option value="3">3 - Regular</option>
+            <option value="4">4 - Bueno</option>
+            <option value="5">5 - Excelente</option>
+          </select>
+        </div>
+        
+        <div class="criterio-item">
+          <label for="tiempo">Tiempo de Respuesta:</label>
+          <select class="select-calificacion" id="tiempo" name="tiempo" [(ngModel)]="calificacionData.tiempo">
+            <option value="" disabled>Seleccionar</option>
+            <option value="1">1 - Muy Lento</option>
+            <option value="2">2 - Lento</option>
+            <option value="3">3 - Adecuado</option>
+            <option value="4">4 - Rápido</option>
+            <option value="5">5 - Muy Rápido</option>
+          </select>
+        </div>
+        
+        <div class="criterio-item">
+          <label for="empatia">Empatía:</label>
+          <select class="select-calificacion" id="empatia" name="empatia" [(ngModel)]="calificacionData.empatia">
+            <option value="" disabled>Seleccionar</option>
+            <option value="1">1 - Muy Malo</option>
+            <option value="2">2 - Malo</option>
+            <option value="3">3 - Regular</option>
+            <option value="4">4 - Bueno</option>
+            <option value="5">5 - Excelente</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancelar" (click)="cerrarModalCalificacion()">Cancelar</button>
+      <button class="btn-enviar-calificacion" (click)="enviarCalificacion()">Calificar</button>
+    </div>
+  </div>
+</div>
