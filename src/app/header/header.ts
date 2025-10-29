@@ -107,6 +107,12 @@ export class Header implements OnInit {
   }
 
   getUserRole(): number | null {
+    // --- MODIFICACIÓN PARA PRUEBAS ---
+    // Cambia este número para probar los diferentes menús laterales:
+    // 1 = Usuario, 2 = Abogado, 3 = Administrador
+    // Para volver al comportamiento normal, coméntalo o asígnale `null`.
+    const testUserRole: number | null = 1;
+    if (testUserRole !== null) return testUserRole;
     try {
       const usuarioStr = localStorage.getItem('usuario');
       if (usuarioStr) {
