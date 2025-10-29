@@ -79,7 +79,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/Images"
             ],
             "styles": [
               "src/styles.css"
