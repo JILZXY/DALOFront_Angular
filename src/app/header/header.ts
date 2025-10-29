@@ -24,6 +24,12 @@ export class Header implements OnInit {
   pageTitle: string = 'Título de Página';
   isSidebarActive: boolean = false;
 
+  private roleMap: { [key: number]: string } = {
+    1: 'Usuario',
+    2: 'Abogado',
+    3: 'Administrador'
+  };
+
   constructor(private router:Router) {}
 
   ngOnInit(): void {
@@ -42,21 +48,34 @@ export class Header implements OnInit {
       const usuarioStr = localStorage.getItem('usuario');
       if (usuarioStr) {
         const usuario: Usuario = JSON.parse(usuarioStr);
-        this.userName = usuario.nombre || 'Nombre Usuario';
-        this.userRole = usuario.idRol === 2 ? 'Abogado' : 
-                       usuario.idRol === 1 ? 'Usuario' : 
-                       'Administrador';
+        this.userName = usuario.nombre;
+        this.userRole = this.roleMap[usuario.idRol] || 'Rol Desconocido';
+      } else {
+        this.userName = 'Invitado';
+        this.userRole = 'Sin Sesión';
       }
     } catch (e) {
-      console.error('Error al cargar datos del usuario:', e);
+      console.error('Error al parsear datos de usuario de localStorage', e);
+      this.userName = 'Error';
+      this.userRole = 'Datos Inválidos';
     }
   }
 
-  private updatePageTitle(): void {
-    const url = this.router.url;
+  
+  toggleSidebar(): void {
+    this.isSidebarActive = !this.isSidebarActive;
     
-    const titleMap: { [key: string]: string } = {
+  }
 
+  
+  closeSidebar(): void {
+      this.isSidebarActive = false;
+          
+  }
+
+  private updatePageTitle(): void {
+    const url = this.router.url.split('?')[0]; 
+    const titleMap: { [key: string]: string } = {
       '/usuario/home': 'Home',
       '/usuario/publicar': 'Publicar Pregunta',
       '/usuario/contactar': 'Contactar Abogados',
@@ -87,7 +106,6 @@ export class Header implements OnInit {
     this.pageTitle = titleMap[url] || 'Página';
   }
 
-  // ✅ AGREGAR ESTE MÉTODO NUEVO:
   getUserRole(): number | null {
     try {
       const usuarioStr = localStorage.getItem('usuario');
@@ -96,18 +114,8 @@ export class Header implements OnInit {
         return usuario.idRol;
       }
     } catch (e) {
-      console.error('Error al obtener rol:', e);
+      console.error('Error al parsear datos de usuario de localStorage', e);
     }
     return null;
-  }
-
-  toggleSidebar(): void {
-    this.isSidebarActive = true;
-    window.dispatchEvent(new CustomEvent('toggle-sidebar', { detail: true }));
-  }
-
-  closeSidebar(): void {
-    this.isSidebarActive = false;
-    window.dispatchEvent(new CustomEvent('toggle-sidebar', { detail: false }));
   }
 }

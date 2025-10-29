@@ -8,14 +8,27 @@
     <div class="user-role">{{ userRole }}</div>
   </div>
 </header>
-
 <div class="overlay" 
      [class.active]="isSidebarActive" 
      (click)="closeSidebar()">
 </div>
 
-<app-slide-user *ngIf="getUserRole() === 1"></app-slide-user>
-<app-slide-ab *ngIf="getUserRole() === 2"></app-slide-ab>
-<app-slide-admin *ngIf="getUserRole() === 3"></app-slide-admin>
+<app-slide-user 
+  *ngIf="getUserRole() === 1" 
+  [isOpen]="isSidebarActive" 
+  (closed)="closeSidebar()">
+</app-slide-user>
+
+<app-slide-ab 
+  *ngIf="getUserRole() === 2" 
+  [isOpen]="isSidebarActive" 
+  (closed)="closeSidebar()">
+</app-slide-ab>
+
+<app-slide-admin 
+  *ngIf="getUserRole() === 3" 
+  [isOpen]="isSidebarActive" 
+  (closed)="closeSidebar()">
+</app-slide-admin>
 
 <router-outlet></router-outlet>
