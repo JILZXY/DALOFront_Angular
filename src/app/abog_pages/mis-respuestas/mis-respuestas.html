@@ -1,1 +1,83 @@
-<p>mis-respuestas works!</p>
+<section class="respuestas-section">
+  <div class="section-header">
+    <h3>MIS RESPUESTAS</h3>
+    <p>Consulta el historial de respuestas que has proporcionado</p>
+  </div>
+
+  <div class="respuestas-container">
+
+  </div>
+</section>
+
+<div 
+  class="modal-overlay" 
+  [class.active]="modalCalificacionVisible"
+  (click)="onModalOverlayClick($event)"
+  (keydown.escape)="onEscapeKey($event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Calificación de la Respuesta</h3>
+      <button class="close-button" (click)="cerrarModalCalificacion()">
+        <span>&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="calificacion-total">
+        <span class="promedio-grande">{{ calificacionActual.promedio.toFixed(1) }}</span>
+        <div class="estrellas-promedio">
+        </div>
+      </div>
+      <div class="criterios-calificacion">
+        <div class="criterio-item">
+          <span>Atención</span>
+          <span class="puntos">{{ calificacionActual.atencion }}</span>
+        </div>
+        <div class="criterio-item">
+          <span>Profesionalismo</span>
+          <span class="puntos">{{ calificacionActual.profesionalismo }}</span>
+        </div>
+        <div class="criterio-item">
+          <span>Claridad</span>
+          <span class="puntos">{{ calificacionActual.claridad }}</span>
+        </div>
+        <div class="criterio-item">
+          <span>Empatía</span>
+          <span class="puntos">{{ calificacionActual.empatia }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div 
+  class="modal-overlay" 
+  [class.active]="modalSinCalificacionVisible"
+  (click)="onModalOverlayClick($event)"
+  (keydown.escape)="onEscapeKey($event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Estado de Calificación</h3>
+      <button class="close-button" (click)="cerrarModalCalificacion()">
+        <span>&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="sin-calificacion-modal">
+        <div class="icono-sin-calificacion">
+          <span>🕒</span>
+        </div>
+        <h4 class="titulo-sin-calificacion">Esperando Calificación</h4>
+        <p class="texto-sin-calificacion">
+          El usuario aún no ha calificado tu respuesta.
+          <br><br>
+          Las calificaciones te ayudan a:
+        </p>
+        <ul class="beneficios-calificacion">
+          <li>Mejorar tu reputación profesional</li>
+          <li>Atraer más clientes</li>
+          <li>Obtener retroalimentación valiosa</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

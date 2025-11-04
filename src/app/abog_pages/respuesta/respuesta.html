@@ -1,1 +1,45 @@
-<p>respuesta works!</p>
+<main class="main-container">
+  <section class="form-section">
+    <div class="form-container">
+      <h2>Consulta del Usuario</h2>
+      <div class="form-group">
+        <label for="pregunta-box">Pregunta:</label>
+        <div id="pregunta-box" class="pregunta-box">
+          {{ preguntaOriginal || 'Cargando pregunta...' }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <div class="form-container">
+      <h2>Tu Respuesta</h2>
+      <div class="form-group">
+        <label for="respuesta">Escribe tu respuesta:</label>
+        <textarea
+          id="respuesta"
+          name="respuesta"
+          [(ngModel)]="respuesta"
+          rows="6"
+          [maxlength]="maxCaracteres"
+          placeholder="Redacta tu respuesta como abogado... ({{ maxCaracteres }} caracteres máx)"
+        ></textarea>
+        <div class="contador-caracteres">
+          {{ caracteresRestantes }} caracteres restantes
+        </div>
+      </div>
+      <div class="submit-section">
+        <button 
+          (click)="enviarRespuesta()" 
+          class="submit-btn"
+          [disabled]="!respuesta.trim()"
+        >
+          Enviar Respuesta
+        </button>
+        <p class="disclaimer">
+          Al enviar tu respuesta, aceptas nuestras políticas de uso del foro.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>

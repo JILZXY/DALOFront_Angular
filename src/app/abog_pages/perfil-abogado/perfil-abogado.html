@@ -1,1 +1,62 @@
-<p>perfil-abogado works!</p>
+Perfil abogado.component · HTML
+Copy
+
+<div class="perfil-wrapper">
+  <div class="perfil-lateral">
+    <h2>{{ nombreAbogado }}</h2>
+
+    <div class="info-adicional">
+      <div class="info-item">
+        <span class="info-label">Especialización:</span>
+        <p>{{ especializacionAbogado }}</p>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Ubicación:</span>
+        <p>{{ ubicacionAbogado }}</p>
+      </div>
+    </div>
+
+    <div class="botones-accion">
+      <button class="btn-contactar" (click)="contactar()">CONTACTAR</button>
+      <button class="btn-volver" (click)="volver()">← VOLVER</button>
+    </div>
+  </div>
+
+  <div class="perfil-card">
+    <div class="descripcion-section">
+      <h3>Descripción:</h3>
+      <p>{{ descripcionAbogado }}</p>
+    </div>
+
+    <div class="calificaciones-section">
+      <h3>Calificaciones Promedio</h3>
+      <div class="calificaciones-grid">
+        <div class="calificacion-box destacada">
+          <span class="calificacion-titulo">General</span>
+          <div class="calificacion-valor">{{ calificaciones.general }}</div>
+        </div>
+
+        <div class="calificacion-box">
+          <span class="calificacion-titulo">Profesionalismo</span>
+          <div class="calificacion-valor">{{ calificaciones.profesionalismo }}</div>
+        </div>
+
+        <div class="calificacion-box">
+          <span class="calificacion-titulo">Atención</span>
+          <div class="calificacion-valor">{{ calificaciones.atencion }}</div>
+        </div>
+
+        <div class="calificacion-box">
+          <span class="calificacion-titulo">Claridad</span>
+          <div class="calificacion-valor">{{ calificaciones.claridad }}</div>
+        </div>
+
+        <div class="calificacion-box">
+          <span class="calificacion-titulo">Empatía</span>
+          <div class="calificacion-valor">{{ calificaciones.empatia }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
