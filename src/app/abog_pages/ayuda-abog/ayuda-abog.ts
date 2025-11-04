@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-ayuda-abog.html',
-  imports: [],
+  selector: 'app-ayuda-abog',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './ayuda-abog.html',
-  styleUrl: './ayuda-abog.css',
+  styleUrls: ['./ayuda-abog.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AyudaAbog {
-
+export class AyudaAbog { 
 }

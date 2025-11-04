@@ -1,0 +1,118 @@
+
+h1 {
+  font-size: 50px;
+  font-weight: 850;
+  text-align: center;
+  margin-bottom: 0px;
+  color: #223240;
+}
+
+h2 {
+  font-size: 25px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 0px;
+  margin-bottom: 40px;
+  color: #223240;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  max-width: 1375px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 8px;
+  box-sizing: border-box;
+  background-color: #223240; 
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(58, 58, 58, 0.15); 
+  position: relative;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s ease forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-inner {
+  border: 2px solid #FDFDFD; 
+  border-radius: 8px;
+  padding: 25px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-info h3 {
+  font-size: 20px;
+  font-weight: 820;
+  color: #FDFDFD; 
+  margin-bottom: 10px;
+  text-align: left;
+  position: relative;
+}
+
+.card-info p {
+  font-size: 16px;
+  color: #fdfdfd; 
+  text-align: justify;
+  line-height: 1.4;
+  word-wrap: break-word;
+  word-break: break-word;
+  position: relative;
+}
+
+/* Animación de desvanecimiento y desplazamiento hacia arriba */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación escalonada */
+.card-info:nth-child(1) { animation-delay: 0.1s; }
+.card-info:nth-child(2) { animation-delay: 0.2s; }
+.card-info:nth-child(3) { animation-delay: 0.3s; }
+
+
+
+.card-info:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.25); 
+}
+
+h1, h2 {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+h1 {
+  animation-delay: 0.1s;
+}
+
+h2 {
+  animation-delay: 0.3s;
+}
+
+
+.help-container {
+  max-width: 1375px; 
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem; 
+  padding-right: 1rem;
+}
+
+.titulos{
+  max-width: 1375px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+  padding-top: 50px; 
+}

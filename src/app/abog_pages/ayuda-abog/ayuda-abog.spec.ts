@@ -1,23 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-import { AyudaAbogHtml } from './ayuda-abog';
+@Component({
+  selector: 'app-ayuda-abog', 
+  standalone: true,
+  imports: [CommonModule],
 
-describe('AyudaAbogHtml', () => {
-  let component: AyudaAbogHtml;
-  let fixture: ComponentFixture<AyudaAbogHtml>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AyudaAbogHtml]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(AyudaAbogHtml);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  templateUrl: './ayuda-abog.html',
+  
+  styleUrls: ['./ayuda-abog.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class AyudaAbogComponent {
+}

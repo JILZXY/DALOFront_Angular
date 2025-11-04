@@ -1,1 +1,72 @@
-<p>consul-resp works!</p>
+<main class="respuesta-main">
+
+  <section class="consulta-original">
+    <button class="boton-reportar" (click)="abrirModalReporte()">
+      <span>•••</span> REPORTAR
+    </button>
+    <h2>Consulta</h2>
+    <p>Aquí va el texto de la pregunta original. Este es un ejemplo estático.</p>
+    <button class="boton-responder">Responder a esta consulta</button>
+  </section>
+
+  <section class="respuestas-lista">
+    
+    <div class="card-wrapper">
+      <div class="card">
+        <div class="card-header">
+          <h4>Nombre del Abogado</h4>
+          <small class="fecha">4 de noviembre de 2025</small>
+        </div>
+        <div class="card-content">
+          <p>Aquí va el texto de la respuesta del abogado. Este es un ejemplo estático.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-wrapper">
+      <div class="card">
+        <div class="card-header">
+          <h4>Otro Abogado</h4>
+          <small class="fecha">3 de noviembre de 2025</small>
+        </div>
+        <div class="card-content">
+          <p>Este es otro ejemplo de una respuesta.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<div *ngIf="isModalVisible" class="report-modal" (click)="cerrarModalReporte()">
+  
+  <div class="report-modal-content" (click)="$event.stopPropagation()">
+    
+    <div class="report-modal-header">
+      <h2>ENVIAR UN REPORTE</h2>
+    </div>
+    
+    <div class="report-modal-body">
+      <div class="report-options">
+        <button class="report-option">Contenido ofensivo</button>
+        <button class="report-option">Información falsa</button>
+        <button class="report-option">Incumplimiento de normas</button>
+        <button class="report-option">Spam</button>
+      </div>
+      
+      <div class="custom-reason-container">
+        <textarea 
+          id="customReason" 
+          class="custom-reason-textarea" 
+          placeholder="Escriba otro motivo">
+        </textarea>
+      </div>
+    </div>
+    
+    <div class="report-modal-footer">
+      <button class="btn-cancel" (click)="cerrarModalReporte()">Cancelar</button>
+      <button class="btn-submit">HECHO</button>
+    </div>
+
+  </div>
+</div>

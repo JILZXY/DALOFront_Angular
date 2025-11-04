@@ -1,1 +1,55 @@
-<p>estadistica-abogado works!</p>
+<main class="estadisticas-main">
+  <div class="estadisticas-container">
+    
+    <div class="header-estadisticas">
+      <h1>Panel de Estadísticas</h1>
+      <p>Revisa tu rendimiento y calificaciones como abogado</p>
+    </div>
+
+    <div class="stats-grid">
+      
+      <div class="stat-card consultas-card">
+        <div class="stat-content">
+          <h3>Consultas Respondidas</h3>
+          <div class="stat-number" id="consultas-respondidas">0</div>
+          <p class="stat-description">Total de consultas respondidas</p>
+        </div>
+      </div>
+
+      <div class="stat-card chart-card">
+        <div class="chart-header">
+          <h3>Calificaciones por Área</h3>
+          <p>Evaluación de tu desempeño en cada rubro</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="radarChart" #radarChart></canvas>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: rgba(0, 109, 204, 0.8);"></div>
+            <span>Mis Calificaciones</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="detalles-section">
+      <div class="detalle-card">
+        <h3>Resumen del Período</h3>
+        <div class="detalle-content">
+          <div class="detalle-item">
+            <span class="detalle-label">Promedio General:</span>
+            <span class="detalle-value" id="promedio-general">0.0/5.0</span>
+          </div>
+          <div class="detalle-item">
+            <span class="detalle-label">Mejor Área:</span>
+            <span class="detalle-value" id="mejor-area">-</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
