@@ -6,7 +6,7 @@ export const routes: Routes = [
     path: '',
     component: Header,
     children: [
-      { path: '', redirectTo: '/usuario/mis-preguntas', pathMatch: 'full' },
+      { path: '', redirectTo: '/abogado/mis-respuestas', pathMatch: 'full' },
 
       {
         path: 'abogado',
