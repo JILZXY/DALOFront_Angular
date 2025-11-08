@@ -1,83 +1,94 @@
-<section class="respuestas-section">
-  <div class="section-header">
-    <h3>MIS RESPUESTAS</h3>
-    <p>Consulta el historial de respuestas que has proporcionado</p>
+<div class="container">
+  
+  <div class="loading-container" *ngIf="isLoading">
+    <p>Cargando tu historial...</p>
   </div>
 
-  <div class="respuestas-container">
+  <div class="timeline" *ngIf="!isLoading">
+    
+    <div class="timeline-item" *ngFor="let item of respuestas">
+      <div class="timeline-marker"></div>
+      
+      <div class="card">
+        <div class="card-header">
+          <span class="status-badge" [class.calificada]="item.calificacion" [class.pendiente]="!item.calificacion">
+            {{ item.calificacion ? 'Calificada' : 'Pendiente' }}
+          </span>
+          <span class="date">{{ formatTime(item.fechaRespuesta) }}</span>
+        </div>
 
-  </div>
-</section>
+        <div class="pregunta-contexto">
+          <h4>{{ item.preguntaTitulo }}</h4>
+          <p>"{{ item.preguntaDescripcion }}"</p>
+          <div class="usuario-tag">
+            <small>Usuario Anónimo</small>
+          </div>
+        </div>
 
-<div 
-  class="modal-overlay" 
-  [class.active]="modalCalificacionVisible"
-  (click)="onModalOverlayClick($event)"
-  (keydown.escape)="onEscapeKey($event)">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Calificación de la Respuesta</h3>
-      <button class="close-button" (click)="cerrarModalCalificacion()">
-        <span>&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="calificacion-total">
-        <span class="promedio-grande">{{ calificacionActual.promedio.toFixed(1) }}</span>
-        <div class="estrellas-promedio">
+        <div class="respuesta-content">
+          <div class="mi-respuesta-label">Tu Respuesta:</div>
+          <p>{{ item.contenidoRespuesta }}</p>
         </div>
-      </div>
-      <div class="criterios-calificacion">
-        <div class="criterio-item">
-          <span>Atención</span>
-          <span class="puntos">{{ calificacionActual.atencion }}</span>
-        </div>
-        <div class="criterio-item">
-          <span>Profesionalismo</span>
-          <span class="puntos">{{ calificacionActual.profesionalismo }}</span>
-        </div>
-        <div class="criterio-item">
-          <span>Claridad</span>
-          <span class="puntos">{{ calificacionActual.claridad }}</span>
-        </div>
-        <div class="criterio-item">
-          <span>Empatía</span>
-          <span class="puntos">{{ calificacionActual.empatia }}</span>
+
+        <div class="card-actions">
+          <button class="btn-ver" (click)="verCalificacion(item)">
+            {{ item.calificacion ? 'Ver Calificación' : 'Ver Estado' }}
+          </button>
         </div>
       </div>
     </div>
+
+    <div class="no-results" *ngIf="respuestas.length === 0">
+      <p>Aún no has respondido ninguna consulta.</p>
+    </div>
+
   </div>
 </div>
 
-<div 
-  class="modal-overlay" 
-  [class.active]="modalSinCalificacionVisible"
-  (click)="onModalOverlayClick($event)"
-  (keydown.escape)="onEscapeKey($event)">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Estado de Calificación</h3>
-      <button class="close-button" (click)="cerrarModalCalificacion()">
-        <span>&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="sin-calificacion-modal">
-        <div class="icono-sin-calificacion">
-          <span>🕒</span>
+<div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="cerrarModal()">&times;</button>
+
+    <div *ngIf="modalTipo === 'con-calificacion' && calificacionSeleccionada" class="modal-body">
+      <h3>¡Te han calificado!</h3>
+      
+      <div class="score-circle">
+        <span class="score-num">{{ calificacionSeleccionada.promedio | number:'1.1-1' }}</span>
+        <div class="stars-row">
+          <span *ngFor="let s of getEstrellas(calificacionSeleccionada.promedio)" [class.gold]="s !== '☆'">{{ s }}</span>
         </div>
-        <h4 class="titulo-sin-calificacion">Esperando Calificación</h4>
-        <p class="texto-sin-calificacion">
-          El usuario aún no ha calificado tu respuesta.
-          <br><br>
-          Las calificaciones te ayudan a:
-        </p>
-        <ul class="beneficios-calificacion">
-          <li>Mejorar tu reputación profesional</li>
-          <li>Atraer más clientes</li>
-          <li>Obtener retroalimentación valiosa</li>
-        </ul>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <span>Profesionalismo</span>
+          <div class="bar-bg"><div class="bar-fill" [style.width.%]="(calificacionSeleccionada.profesionalismo / 5) * 100"></div></div>
+          <strong>{{ calificacionSeleccionada.profesionalismo }}</strong>
+        </div>
+        <div class="metric">
+          <span>Atención</span>
+          <div class="bar-bg"><div class="bar-fill" [style.width.%]="(calificacionSeleccionada.atencion / 5) * 100"></div></div>
+          <strong>{{ calificacionSeleccionada.atencion }}</strong>
+        </div>
+        <div class="metric">
+          <span>Claridad</span>
+          <div class="bar-bg"><div class="bar-fill" [style.width.%]="(calificacionSeleccionada.claridad / 5) * 100"></div></div>
+          <strong>{{ calificacionSeleccionada.claridad }}</strong>
+        </div>
+        <div class="metric">
+          <span>Empatía</span>
+          <div class="bar-bg"><div class="bar-fill" [style.width.%]="(calificacionSeleccionada.empatia / 5) * 100"></div></div>
+          <strong>{{ calificacionSeleccionada.empatia }}</strong>
+        </div>
       </div>
     </div>
+
+    <div *ngIf="modalTipo === 'sin-calificacion'" class="modal-body pending-state">
+      <div class="icon-pending">⏳</div>
+      <h3>Esperando Calificación</h3>
+      <p>El usuario ha visto tu respuesta pero aún no ha dejado una reseña.</p>
+      <p class="tip">Consejo: Las respuestas rápidas y amables suelen recibir mejores puntuaciones.</p>
+    </div>
+
   </div>
 </div>
