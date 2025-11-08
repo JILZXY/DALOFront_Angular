@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
 :host {
@@ -11,7 +10,6 @@
     min-height: calc(100vh - 80px);
     box-sizing: border-box;
 }
-
 
 .filtros-busqueda {
     margin: 25px auto;
@@ -102,7 +100,6 @@
     accent-color: #006DCC;
     transform: scale(1.1);
 }
-
 
 .filtro-busqueda {
     margin-left: auto;
@@ -209,7 +206,6 @@
     gap: 30px;
 }
 
-/* Info Izquierda */
 .abogado-info {
     display: flex;
     align-items: center;
@@ -246,38 +242,23 @@
 .calificacion-container {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
+    margin-top: 5px;
 }
 
-.estrella {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.estrella.llena {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAyMzAyMCI+PHBhdGggZD0iTTEyIDE3LjI3TDE4LjE4IDIybC0xLjY0LTcuMDJMNjgyLjU2IDhMMjAgOGwtMy4xOCAxMy4wOVoiLz48L3N2Zz4=');
-    filter: drop-shadow(0 0 1px #000);
-}
-
-.estrella.media {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAyMzAyMCI+PHBhdGggZD0iTTEyIDE1LjQybC00LjIwMiAyLjU2M2wxLjEwNS01LjEwM0w1LjIgOC4wMDdoNS4zNjZMMTIgMi41bDMS4zMzQgNS41MDdoNS4zNjZsLTMuNzA0IDQuODgzbDEuMTA2IDUuMTAzeiIvPjwvc3ZnPg==');
-    filter: drop-shadow(0 0 1px #000);
-}
-
-.estrella.vacia {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAyMzAyMCI+PHBhdGggZD0iTTEyIDE1LjQyTDIwIDhMOC4yMyAyMi4yN0wxMiAxNS40MlpNMTIgMTUuNDJMMTIgMjlMMTIgMTUuNDJaIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMjMwMjAiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9zdmc+');
-    opacity: 0.5;
-}
-
-.calificacion-numero {
+.calificacion-label {
     font-size: 14px;
     font-weight: 700;
     color: #223240;
-    margin-left: 5px;
+}
+
+.calificacion-numero {
+    font-size: 16px;
+    font-weight: 800;
+    color: #006DCC; 
+    background-color: #e6f2ff;
+    padding: 2px 8px;
+    border-radius: 4px;
 }
 
 .abogado-especialidades {

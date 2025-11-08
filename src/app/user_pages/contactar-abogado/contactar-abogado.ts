@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
-
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, finalize, tap } from 'rxjs/operators';
-import { throwError, Subscription } from 'rxjs'; 
+import { HttpClient } from '@angular/common/http';
+import { Subscription, of } from 'rxjs'; 
+import { delay } from 'rxjs/operators';
 
 interface Abogado {
   idUsuario: number;
@@ -16,10 +15,6 @@ interface Abogado {
   calificacion: number;
   foto: string;
   email: string;
-}
-
-interface AbogadosResponse {
-  abogados: Abogado[];
 }
 
 @Component({
@@ -51,11 +46,20 @@ export class ContactarAbogado implements OnInit, OnDestroy {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.cargarAbogados(`${this.baseUrl}/abogados`);
+    this.cargarAbogadosSimulados();
   }
 
-  
+  ngOnDestroy(): void {
+    if (this.cargaSubscription) {
+      this.cargaSubscription.unsubscribe();
+    }
+  }
+
   cargarAbogados(url: string): void {
+    this.cargarAbogadosSimulados();
+  }
+
+  cargarAbogadosSimulados(): void {
     this.isLoading = true;
     this.errorMensaje = '';
     this.abogados = [];
@@ -65,35 +69,70 @@ export class ContactarAbogado implements OnInit, OnDestroy {
       this.cargaSubscription.unsubscribe();
     }
 
-    this.cargaSubscription = this.http
-      .get<AbogadosResponse | Abogado[]>(url)
-      .pipe(
-        tap((data) => {
-          this.abogados = (data as AbogadosResponse).abogados || (data as Abogado[]); 
+    const abogadosFalsos: Abogado[] = [
+      {
+        idUsuario: 101,
+        nombre: 'Lic. Roberto',
+        apellidos: 'Gómez Bolaños',
+        estado: 'Chiapas',
+        ciudad: 'Tuxtla Gutiérrez',
+        especialidades: ['Derecho Penal', 'Derecho Civil'],
+        calificacion: 4.8,
+        foto: '', 
+        email: 'roberto@ejemplo.com'
+      },
+      {
+        idUsuario: 102,
+        nombre: 'Lic. Ana',
+        apellidos: 'Martínez',
+        estado: 'Chiapas',
+        ciudad: 'Tapachula',
+        especialidades: ['Derecho Laboral'],
+        calificacion: 5.0,
+        foto: '',
+        email: 'ana@ejemplo.com'
+      },
+      {
+        idUsuario: 103,
+        nombre: 'Lic. Carlos',
+        apellidos: 'Salinas',
+        estado: 'Chiapas',
+        ciudad: 'San Cristóbal',
+        especialidades: ['Derecho Mercantil', 'Derecho Fiscal'],
+        calificacion: 3.5,
+        foto: '',
+        email: 'carlos@ejemplo.com'
+      },
+      {
+        idUsuario: 104,
+        nombre: 'Lic. Sofía',
+        apellidos: 'Vergara',
+        estado: 'Chiapas',
+        ciudad: 'Comitán',
+        especialidades: ['Derecho Familiar'],
+        calificacion: 4.2,
+        foto: '',
+        email: 'sofia@ejemplo.com'
+      }
+    ];
 
+    this.cargaSubscription = of(abogadosFalsos)
+      .pipe(delay(800)) 
+      .subscribe({
+        next: (data) => {
+          this.abogados = data;
           if (this.abogados.length === 0) {
             this.errorMensaje = 'No se encontraron abogados con esos criterios.';
           }
-        }),
-        catchError((error: HttpErrorResponse) => {
-          console.error('Error al cargar abogados:', error);
-          this.errorMensaje = 'Error al cargar los abogados. Inténtalo más tarde.';
-          return throwError(() => new Error(this.errorMensaje));
-        }),
-        finalize(() => {
           this.isLoading = false;
-        })
-      )
-      .subscribe(); 
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMensaje = 'Error al cargar los abogados simulados.';
+          this.isLoading = false;
+        }
+      });
   }
-
-  ngOnDestroy(): void {
-    if (this.cargaSubscription) {
-      this.cargaSubscription.unsubscribe();
-    }
-  }
-
-  
 
   toggleDropdown(dropdown: 'materia' | 'estado' | 'ciudad'): void {
     this.materiaDropdownAbierto = (dropdown === 'materia') ? !this.materiaDropdownAbierto : false;
@@ -110,22 +149,19 @@ export class ContactarAbogado implements OnInit, OnDestroy {
   filtrarPorMateria(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.materiaActiva = input.value;
-    const url = `${this.baseUrl}/materia/${this.materiaActiva}`;
-    this.cargarAbogados(url);
+    this.cargarAbogadosSimulados();
   }
   
   filtrarPorEstado(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.estadoActivo = input.value;
-    const url = `${this.baseUrl}/estado/${this.estadoActivo}`;
-    this.cargarAbogados(url);
+    this.cargarAbogadosSimulados();
   }
 
   filtrarPorCiudad(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.ciudadActiva = input.value;
-    const url = `${this.baseUrl}/ciudad/${this.ciudadActiva}`;
-    this.cargarAbogados(url);
+    this.cargarAbogadosSimulados();
   }
   
   limpiarFiltros(): void {
@@ -133,7 +169,7 @@ export class ContactarAbogado implements OnInit, OnDestroy {
     this.estadoActivo = null;
     this.ciudadActiva = null;
     this.terminoBusqueda = '';
-    this.cargarAbogados(`${this.baseUrl}/abogados`);
+    this.cargarAbogadosSimulados();
   }
 
   buscarPorNombre(): void {
@@ -141,29 +177,13 @@ export class ContactarAbogado implements OnInit, OnDestroy {
       this.limpiarFiltros();
       return;
     }
-    const url = `${this.baseUrl}/buscar/${encodeURIComponent(this.terminoBusqueda)}`;
-    this.cargarAbogados(url);
-  }
-
-  getEstrellas(calificacion: number): string[] {
-    const estrellas: string[] = [];
-    const numCalificacion = Number(calificacion) || 0; 
-    const llena = Math.floor(numCalificacion);
-    const media = (numCalificacion % 1 >= 0.5) ? 1 : 0;
-    const vacia = 5 - llena - media;
-
-    for (let i = 0; i < llena; i++) estrellas.push('llena');
-    if (media > 0) estrellas.push('media');
-    for (let i = 0; i < vacia; i++) estrellas.push('vacia');
-    
-    return estrellas;
+    this.cargarAbogadosSimulados();
   }
   
   contactarAbogado(abogado: Abogado): void {
     if (abogado.email) {
       window.location.href = `mailto:${abogado.email}?subject=Contacto desde DALO`;
     } else {
-      console.warn('Este abogado no ha proporcionado un correo electrónico público.');
       this.errorMensaje = 'Este abogado no ha proporcionado un correo electrónico público.';
       setTimeout(() => { this.errorMensaje = ''; }, 3000);
     }
