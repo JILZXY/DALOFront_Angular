@@ -1,172 +1,103 @@
 <section class="filtros-busqueda">
   <div class="filtros-container">
-    <div class="filtro-dropdown">
-      <button class="filtro-btn" 
-              [class.active]="materiaDropdownOpen"
-              (click)="toggleMateriaDropdown($event)">
-        MATERIA
-        <span class="dropdown-arrow">▼</span>
-      </button>
-      <div class="dropdown-content" [class.show]="materiaDropdownOpen">
-        <label>
-          <input type="radio" 
-                 name="materia" 
-                 value="penal" 
-                 [checked]="materiaSeleccionada === 'penal'"
-                 (change)="selectMateria('penal')"> 
-          Derecho Penal
-        </label>
-        <label>
-          <input type="radio" 
-                 name="materia" 
-                 value="civil" 
-                 [checked]="materiaSeleccionada === 'civil'"
-                 (change)="selectMateria('civil')"> 
-          Derecho Civil
-        </label>
-        <label>
-          <input type="radio" 
-                 name="materia" 
-                 value="procesal" 
-                 [checked]="materiaSeleccionada === 'procesal'"
-                 (change)="selectMateria('procesal')"> 
-          Derecho Procesal
-        </label>
-        <label>
-          <input type="radio" 
-                 name="materia" 
-                 value="laboral" 
-                 [checked]="materiaSeleccionada === 'laboral'"
-                 (change)="selectMateria('laboral')"> 
-          Derecho Laboral
-        </label>
-        <label>
-          <input type="radio" 
-                 name="materia" 
-                 value="mercantil" 
-                 [checked]="materiaSeleccionada === 'mercantil'"
-                 (change)="selectMateria('mercantil')"> 
-          Derecho Mercantil
-        </label>
-        <label>
-          <input type="radio" 
-                 name="materia" 
-                 value="constitucional" 
-                 [checked]="materiaSeleccionada === 'constitucional'"
-                 (change)="selectMateria('constitucional')"> 
-          Derecho Constitucional
-        </label>
+      
+      <div class="filtro-dropdown">
+          <button class="filtro-btn" 
+                  [class.active]="materiaDropdownAbierto"
+                  (click)="toggleDropdown('materia')">
+              {{ materiaActiva ? (materiaActiva | titlecase) : 'MATERIA' }}
+              <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="dropdown-content" [class.show]="materiaDropdownAbierto">
+              <label (click)="seleccionarFiltro('materia', 'penal')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='penal'"> Derecho Penal
+              </label>
+              <label (click)="seleccionarFiltro('materia', 'civil')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='civil'"> Derecho Civil
+              </label>
+              <label (click)="seleccionarFiltro('materia', 'laboral')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='laboral'"> Derecho Laboral
+              </label>
+              <label (click)="seleccionarFiltro('materia', 'familiar')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='familiar'"> Derecho Familiar
+              </label>
+              <label (click)="seleccionarFiltro('materia', 'mercantil')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='mercantil'"> Derecho Mercantil
+              </label>
+          </div>
       </div>
-    </div>
 
-    <!-- Filtro Estado -->
-    <div class="filtro-dropdown">
-      <button class="filtro-btn" 
-              [class.active]="estadoDropdownOpen"
-              (click)="toggleEstadoDropdown($event)">
-        ESTADO
-        <span class="dropdown-arrow">▼</span>
-      </button>
-      <div class="dropdown-content" [class.show]="estadoDropdownOpen">
-        <label>
-          <input type="radio" 
-                 name="estado" 
-                 value="chiapas" 
-                 [checked]="estadoSeleccionado === 'chiapas'"
-                 (change)="selectEstado('chiapas')"> 
-          Chiapas
-        </label>
-        <label>
-          <input type="radio" 
-                 name="estado" 
-                 value="oaxaca" 
-                 [checked]="estadoSeleccionado === 'oaxaca'"
-                 (change)="selectEstado('oaxaca')"> 
-          Oaxaca
-        </label>
-        <label>
-          <input type="radio" 
-                 name="estado" 
-                 value="tabasco" 
-                 [checked]="estadoSeleccionado === 'tabasco'"
-                 (change)="selectEstado('tabasco')"> 
-          Tabasco
-        </label>
-        <label>
-          <input type="radio" 
-                 name="estado" 
-                 value="veracruz" 
-                 [checked]="estadoSeleccionado === 'veracruz'"
-                 (change)="selectEstado('veracruz')"> 
-          Veracruz
-        </label>
-        <label>
-          <input type="radio" 
-                 name="estado" 
-                 value="ciudad de mexico" 
-                 [checked]="estadoSeleccionado === 'ciudad de mexico'"
-                 (change)="selectEstado('ciudad de mexico')"> 
-          Ciudad de México
-        </label>
+      <div class="filtro-dropdown">
+          <button class="filtro-btn" 
+                  [class.active]="estadoDropdownAbierto"
+                  (click)="toggleDropdown('estado')">
+              {{ estadoActivo ? (estadoActivo | titlecase) : 'ESTADO' }}
+              <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="dropdown-content" [class.show]="estadoDropdownAbierto">
+              <label (click)="seleccionarFiltro('estado', 'chiapas')">
+                  <input type="radio" name="estado" [checked]="estadoActivo==='chiapas'"> Chiapas
+              </label>
+          </div>
       </div>
-    </div>
 
-    <div class="filtro-dropdown">
-      <button class="filtro-btn" 
-              [class.active]="ciudadDropdownOpen"
-              (click)="toggleCiudadDropdown($event)">
-        CIUDAD
-        <span class="dropdown-arrow">▼</span>
-      </button>
-      <div class="dropdown-content" [class.show]="ciudadDropdownOpen">
-        <label>
-          <input type="radio" 
-                 name="ciudad" 
-                 value="tuxtla" 
-                 [checked]="ciudadSeleccionada === 'tuxtla'"
-                 (change)="selectCiudad('tuxtla')"> 
-          Tuxtla Gutiérrez
-        </label>
-        <label>
-          <input type="radio" 
-                 name="ciudad" 
-                 value="tapachula" 
-                 [checked]="ciudadSeleccionada === 'tapachula'"
-                 (change)="selectCiudad('tapachula')"> 
-          Tapachula
-        </label>
-        <label>
-          <input type="radio" 
-                 name="ciudad" 
-                 value="comitan" 
-                 [checked]="ciudadSeleccionada === 'comitan'"
-                 (change)="selectCiudad('comitan')"> 
-          Comitán
-        </label>
-        <label>
-          <input type="radio" 
-                 name="ciudad" 
-                 value="ocosingo" 
-                 [checked]="ciudadSeleccionada === 'ocosingo'"
-                 (change)="selectCiudad('ocosingo')"> 
-          Ocosingo
-        </label>
-        <label>
-          <input type="radio" 
-                 name="ciudad" 
-                 value="benito juarez" 
-                 [checked]="ciudadSeleccionada === 'benito juarez'"
-                 (change)="selectCiudad('benito juarez')"> 
-          Benito Juárez
-        </label>
+      <div class="filtro-dropdown">
+          <button class="filtro-btn" 
+                  [class.active]="ciudadDropdownAbierto"
+                  (click)="toggleDropdown('ciudad')">
+              {{ ciudadActiva ? (ciudadActiva | titlecase) : 'CIUDAD' }}
+              <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="dropdown-content" [class.show]="ciudadDropdownAbierto">
+              <label (click)="seleccionarFiltro('ciudad', 'tuxtla')">
+                  <input type="radio" name="ciudad" [checked]="ciudadActiva==='tuxtla'"> Tuxtla Gutiérrez
+              </label>
+              <label (click)="seleccionarFiltro('ciudad', 'tapachula')">
+                  <input type="radio" name="ciudad" [checked]="ciudadActiva==='tapachula'"> Tapachula
+              </label>
+              <label (click)="seleccionarFiltro('ciudad', 'comitan')">
+                  <input type="radio" name="ciudad" [checked]="ciudadActiva==='comitan'"> Comitán
+              </label>
+          </div>
       </div>
-    </div>
 
-    <button class="filtro-btn" (click)="limpiarFiltros()">
-      Limpiar Filtros
-    </button>
+      <button class="filtro-btn btn-limpiar" (click)="limpiarFiltros()">
+          Limpiar Filtros
+      </button>
   </div>
 </section>
 
-<div class="contenedor" id="contenedor-consultas" (click)="closeAllDropdowns()">
+<div class="loading-container" *ngIf="isLoading">
+  <p>Cargando consultas...</p>
+</div>
+
+<div class="contenedor" *ngIf="!isLoading">
+  
+  <div class="card-wrapper" *ngFor="let consulta of consultas">
+      <div class="card">
+          <div class="card-header">
+              <span class="materia-badge">{{ consulta.materia?.nombre }}</span>
+              <span class="fecha-badge">{{ formatTime(consulta.fecha) }}</span>
+          </div>
+          
+          <div class="card-body">
+              <h3 class="card-title">{{ consulta.titulo }}</h3>
+              <p class="card-description">{{ consulta.descripcion }}</p>
+          </div>
+          
+          <div class="card-footer">
+              <div class="user-info">
+                  <span class="user-name">Usuario Anónimo</span>
+              </div>
+              <button class="btn-responder" (click)="verDetalle(consulta.idConsulta)">
+                  Responder
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <div class="no-results" *ngIf="consultas.length === 0">
+      <p>No se encontraron consultas con estos criterios.</p>
+  </div>
+
 </div>
