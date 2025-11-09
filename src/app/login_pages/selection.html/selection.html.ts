@@ -16,6 +16,6 @@ export class SelectionHtml {
   }
 
   irRegistroAbogado(): void {
-    this.router.navigate(['/login/registro-usuario']);
+    this.router.navigate(['/login/registro-abogado']);
   }
 }
