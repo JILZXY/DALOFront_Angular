@@ -1,92 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
 
 :host {
     display: block;
     margin: 0;
     padding: 0;
-    font-family: Montserrat;
-    background-color: #D9d9d9;
-   
-    padding-top: 80px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #D9D9D9;
+    padding-top: 100px; 
+    padding-bottom: 60px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+  width: 95%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.filtro-seccion {
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+:host ::ng-deep app-materia-cards .cards-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important; 
+    justify-content: space-between !important; 
+    align-items: stretch !important;
+    overflow-x: auto !important;
+    gap: 10px !important;
+    padding-bottom: 10px !important;
+    width: 100% !important;
+}
+
+:host ::ng-deep app-materia-cards .card {
+    flex: 1 0 auto !important; 
+    width: auto !important;
+    min-width: 110px !important; 
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+:host ::ng-deep app-materia-cards .cards-row::-webkit-scrollbar {
+    height: 0px;
+    background: transparent;
 }
 
 
+.initial-state {
+  text-align: center;
+  padding: 60px;
+  background: #fdfdfd;
+  border-radius: 12px;
+  border: 2px solid #223240;
+  color: #223240;
+  margin-top: 20px;
+}
+
+.initial-state h2 {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 15px 0;
+}
+
+.initial-state p {
+  font-size: 18px;
+  margin: 0;
+  color: #555;
+}
 
 .cards-informativas {
-  margin-top: 40px;
-  max-width: 1375px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 20px; 
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-
-
 
 .card-info {
-  display: flex;
-  flex-direction: column;         
-  width: 100%;                  
-  margin: 20px auto;         
-  padding: 8px;
-  box-sizing: border-box;
   background-color: #fdfdfd; 
   border-radius: 10px;          
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
-  position: relative;
-  
-  opacity: 0;
-  transform: translateY(30px);
-  animation: fadeInUp 0.5s ease-out forwards;
-}
-
-.card-inner {
-  border: 2px solid #223240;
-  border-radius: 8px;
-  padding: 25px;
-  box-sizing: border-box;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+  border-left: 8px solid #223240;
   width: 100%;
-  overflow: hidden;
-  position: relative;
-  padding-right: 80px; 
+  animation: fadeInUp 0.4s ease-out forwards;
 }
 
+.card-content {
+  padding: 25px 30px;
+}
 
-.card-info h3 {
-  font-size: 20px;
-  font-weight: 820;
+.card-titulo {
+  font-size: 22px;
+  font-weight: 800;
   color: #223240;
-  margin-bottom: 10px;
-  text-align: left;
-  position: relative;
+  margin: 0 0 10px 0;
 }
 
-.card-info p {
+.card-texto {
   font-size: 16px;
-  color: #223240;
+  color: #333;
   text-align: justify;
-  line-height: 1.4;
-  word-wrap: break-word;
-  word-break: break-word;
-  position: relative;
+  line-height: 1.6;
+  font-weight: 500;
+  margin: 0;
 }
 
-.card-logo {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  width: 50px;
-  height: auto;
-  margin-bottom: -10px;
+.no-results {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #555;
+  background: white;
+  border-radius: 10px;
+  font-weight: 600;
 }
-
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
