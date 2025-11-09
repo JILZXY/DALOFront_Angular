@@ -1,1 +1,111 @@
-<p>registro-user works!</p>
+<section class="vista-registro">
+  <div class="izquierda">
+    <h1>USUARIO</h1>
+    <p>Como usuario, tu participación en el foro consiste en realizar preguntas de manera anónima sobre temas legales que sean de tu interés o necesidad. Tu identidad estará protegida en todo momento, ya que los abogados solo tendrán acceso a tu nombre de usuario y a la consulta que compartas.</p>
+    <p>Este espacio ha sido diseñado para brindarte orientación profesional en un entorno seguro, confidencial y accesible. Siéntete con la libertad de expresar tus dudas con confianza; estamos aquí para ayudarte.</p>
+  </div>
+
+  <div class="derecha">
+    <div class="form-wrapper">
+      <h3>Crea tu cuenta <strong>DALO</strong></h3>
+      <h2>REGISTRO DE USUARIO</h2>
+
+      <div class="tabs-container">
+        <div class="tabs-header">
+          <button class="tab-button" [class.active]="currentTab === 1" (click)="cambiarTab(1)">1. Datos Personales</button>
+          <button class="tab-button" [class.active]="currentTab === 2" (click)="cambiarTab(2)" [disabled]="currentTab === 1">2. Acceso</button>
+        </div>
+      </div>
+
+      <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+        
+        <div *ngIf="currentTab === 1" class="tab-content">
+          <div class="fila">
+            <div class="campo">
+              <label>Nombre(s)</label>
+              <input type="text" formControlName="nombre" placeholder="Tu nombre">
+            </div>
+            <div class="campo">
+              <label>Apellidos</label>
+              <input type="text" formControlName="apellidos" placeholder="Tus apellidos">
+            </div>
+          </div>
+
+          <div class="fila">
+            <div class="campo">
+              <label>Teléfono</label>
+              <input type="text" formControlName="telefono" placeholder="10 dígitos" maxlength="10">
+            </div>
+            <div class="campo">
+              <label>Fecha de Nacimiento</label>
+              <input type="date" formControlName="fechaNacimiento">
+            </div>
+          </div>
+
+          <div class="fila">
+            <div class="campo">
+              <label>Género</label>
+              <select formControlName="genero">
+                <option value="">Selecciona</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label>Estado</label>
+              <select formControlName="estado">
+                <option value="">Selecciona Estado</option>
+                <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="fila">
+            <div class="campo">
+              <label>Municipio</label>
+              <select formControlName="municipio">
+                <option value="">Selecciona Municipio</option>
+                <option *ngFor="let mun of municipiosDisponibles" [value]="mun">{{ mun }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+          <button type="button" class="btn-submit" (click)="cambiarTab(2)">CONTINUAR</button>
+        </div>
+
+        <div *ngIf="currentTab === 2" class="tab-content">
+          <div class="fila">
+            <div class="campo full-width">
+              <label>Correo Electrónico</label>
+              <input type="email" formControlName="email" placeholder="correo@ejemplo.com">
+            </div>
+          </div>
+
+          <div class="fila">
+            <div class="campo">
+              <label>Contraseña</label>
+              <input type="password" formControlName="password" placeholder="******">
+            </div>
+            <div class="campo">
+              <label>Confirmar Contraseña</label>
+              <input type="password" formControlName="confirmPassword" placeholder="******">
+            </div>
+          </div>
+
+          <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+          <div class="botones-accion">
+            <button type="button" class="btn-secondary" (click)="cambiarTab(1)">Atrás</button>
+            <button type="submit" class="btn-submit" [disabled]="isLoading">
+              {{ isLoading ? 'Registrando...' : 'REGISTRARME' }}
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</section>

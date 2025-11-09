@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+:host {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #D9D9D9;
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.vista-registro {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+}
+
+.izquierda {
+    display: flex;
+    flex-direction: column;
+    background-color: #223240;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 35%;
+    padding: 60px 40px;
+    box-sizing: border-box;
+    justify-content: center;
+}
+
+.izquierda h1 {
+    color: #D9D9D9;
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 30px;
+}
+
+.izquierda p {
+    color: #D9D9D9;
+    font-size: 16px;
+    text-align: justify;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.derecha {
+    width: 65%;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 700px;
+}
+
+h3 {
+    color: #223240;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+h2 {
+    color: #223240;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 30px;
+}
+
+.tabs-header {
+    display: flex;
+    border-bottom: 3px solid #223240;
+    margin-bottom: 30px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 15px;
+    background: #f0f0f0;
+    border: none;
+    font-weight: 700;
+    color: #666;
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+}
+
+.tab-button.active {
+    background: #223240;
+    color: white;
+}
+
+.fila {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.campo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    flex: 100%;
+}
+
+label {
+    font-weight: 700;
+    color: #223240;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+input, select {
+    padding: 12px;
+    border: 2px solid #223240;
+    border-radius: 8px;
+    background: #D9D9D9;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #006DCC;
+}
+
+.btn-submit, .btn-secondary {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.btn-submit {
+    background-color: #223240;
+    color: white;
+}
+.btn-submit:hover {
+    background-color: #006DCC;
+}
+
+.btn-secondary {
+    background-color: #bbb;
+    color: #223240;
+}
+
+.botones-accion {
+    display: flex;
+    gap: 15px;
+}
+
+.error-msg {
+    color: #D9534F;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+@media (max-width: 1000px) {
+    .vista-registro {
+        flex-direction: column;
+    }
+    .izquierda {
+        width: 100%;
+        border-radius: 0;
+        padding: 30px;
+    }
+    .derecha {
+        width: 100%;
+    }
+    .fila {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

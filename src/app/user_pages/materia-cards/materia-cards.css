@@ -103,7 +103,6 @@
     color: #CCCCCC;
 }
 
-/* Media Queries para ajustes finos */
 @media (max-width: 768px) {
     .areas-legales h2 {
         font-size: 28px;
