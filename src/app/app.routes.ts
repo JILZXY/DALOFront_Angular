@@ -1,13 +1,34 @@
 import { Routes } from '@angular/router';
-import { Header} from './header/header'; 
+import { Header } from './header/header'; 
 
 export const routes: Routes = [
+  { path: '', redirectTo: '/login/seleccion', pathMatch: 'full' },
+
+  {
+    path: 'login',
+    children: [
+      { 
+        path: '', 
+        loadComponent: () => import('./login_pages/login/login').then(m => m.Login) 
+      },
+      { 
+        path: 'registro-abogado', 
+        loadComponent: () => import('./login_pages/registro-abo/registro-abo').then(m => m.RegistroAbo) 
+      },
+      { 
+        path: 'registro-usuario', 
+        loadComponent: () => import('./login_pages/registro-user/registro-user').then(m => m.RegistroUser) 
+      },
+      { 
+        path: 'seleccion', 
+        loadComponent: () => import('./login_pages/selection.html/selection.html').then(m => m.SelectionHtml) 
+      },
+    ]
+  },
   {
     path: '',
-    component: Header,
+    component: Header, 
     children: [
-      { path: '', redirectTo: '/usuario/comentarios', pathMatch: 'full' },
-
       {
         path: 'abogado',
         children: [
@@ -27,15 +48,6 @@ export const routes: Routes = [
         children: [
           { path: 'inactivos', loadComponent: () => import('./admin/inactivos/inactivos').then(m => m.Inactivos) },
           { path: 'reportes', loadComponent: () => import('./admin/reportes/reportes').then(m => m.Reportes) },
-        ]
-      },
-      {
-        path: 'login',
-        children: [
-          { path: '', loadComponent: () => import('./login_pages/login/login').then(m => m.Login) },
-          { path: 'registro-abogado', loadComponent: () => import('./login_pages/registro-abo/registro-abo').then(m => m.RegistroAbo) },
-          { path: 'registro-usuario', loadComponent: () => import('./login_pages/registro-user/registro-user').then(m => m.RegistroUser) },
-          { path: 'seleccion', loadComponent: () => import('./login_pages/selection.html/selection.html').then(m => m.SelectionHtml) },
         ]
       },
       {

@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+:host {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #D9D9D9;
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  padding: 0; 
+  box-sizing: border-box;
+}
+
+.vista-inicio {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 100vh;           
+}
+
+.izquierda {
+    display: flex;
+    flex-direction: column;
+    background-color: #223240;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 40%;   
+    /* Altura completa */
+    min-height: 100vh;           
+    padding: 40px;
+    box-sizing: border-box;
+    justify-content: center;
+}
+
+.izquierda h1 {
+    color: #D9D9D9;
+    font-size: 48px;
+    font-weight: 850;
+    text-align: left;
+    margin-bottom: 30px;
+    line-height: 1;
+}
+
+.izquierda p {
+    color: #D9D9D9;
+    font-size: 18px;
+    text-align: justify;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.derecha {
+    width: 60%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.content-abogados {
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.content-abogados h3 {
+    font-size: 24px;
+    color: #223240;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.content-abogados h2 {
+    font-size: 28px;
+    color: #223240;
+    font-weight: 800;
+    margin-bottom: 40px;
+}
+
+.boton-usuario, .boton-abogado {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.boton-usuario {
+    background-color: #223240;
+    color: #D9D9D9;
+}
+
+.boton-usuario:hover {
+    background-color: #006DCC;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.boton-abogado {
+    background-color: #D9D9D9;
+    color: #223240;
+    border: 3px solid #223240;
+    margin-top: 20px;
+}
+
+.boton-abogado:hover {
+    background-color: #223240;
+    color: #D9D9D9;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.descripcion, .descripcion-abogado {
+    font-size: 14px;
+    color: #555;
+    text-align: justify;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+@media (max-width: 1000px) {
+    .vista-inicio {
+        flex-direction: column;
+    }
+
+    .izquierda {
+        width: 100%;
+        min-height: auto;
+        border-radius: 0;
+        padding: 30px;
+    }
+
+    .derecha {
+        width: 100%;
+        min-height: auto;
+        padding: 40px 20px;
+    }
+}
