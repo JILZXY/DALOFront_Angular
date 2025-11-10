@@ -1,0 +1,73 @@
+<header class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>DALO</h1>
+    <h3>LEGAL GATEWAY</h3>
+    <p>Conecta con la justicia digital en un clic</p>
+    <div class="hero-buttons">
+      <button class="btn-primary" (click)="irASeleccion()">CREA TU PERFIL</button>
+      <button class="btn-secondary" (click)="irALogin()">INICIA SESIÓN</button>
+    </div>
+  </div>
+</header>
+
+<section class="que-hacemos">
+  <div class="container split-layout">
+    <div class="text-content">
+      <h2>¿QUÉ HACEMOS?</h2>
+      <p>
+        DALO es una plataforma digital que facilita el acceso a orientación legal gratuita y confidencial. Su principal función es conectar a personas con abogados para resolver dudas legales de manera sencilla y segura.
+        <br><br>
+        Funciona como un espacio de encuentro entre usuarios y profesionales del derecho, donde la comunicación es directa y privada. DALO está pensado para hacer que la información legal sea más accesible para todos.
+      </p>
+    </div>
+    <div class="image-content">
+      <img src="/Images/3.jpg" alt="Abogados trabajando" class="feature-img">
+    </div>
+  </div>
+</section>
+
+<section class="testimonios-section">
+  <h2>LO QUE DICEN NUESTROS USUARIOS</h2>
+  
+  <div class="carousel-container">
+    <button class="nav-btn prev" (click)="prevTestimonial()">&#10094;</button>
+    
+    <div class="testimonios-wrapper">
+      <div class="testimonio-card" *ngFor="let item of testimonios; let i = index" [class.active]="i === currentIndex">
+        <p class="cita">"{{ item.texto }}"</p>
+        <div class="autor-info">
+          <strong>{{ item.autor }}</strong>
+          <span>{{ item.rol }}</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="nav-btn next" (click)="nextTestimonial()">&#10095;</button>
+  </div>
+  
+  <div class="dots">
+    <span *ngFor="let item of testimonios; let i = index" 
+          class="dot" 
+          [class.active]="i === currentIndex"
+          (click)="currentIndex = i"></span>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="logo-section">
+      <img src="/Images/Logo beige.png" alt="Icono DALO" class="logo-icon">
+      <h4>DALO</h4> 
+    </div>
+    <ul class="footer-links">
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#">¿Cómo funciona?</a></li>
+      <li><a href="#">Áreas legales</a></li>
+      <li><a href="#">Términos y Condiciones</a></li>
+    </ul>
+  </div>
+  <div class="copyright">
+    <p>&copy; 2025 DALO. Todos los derechos reservados.</p>
+  </div>
+</footer>

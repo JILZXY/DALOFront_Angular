@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { Header } from './header/header'; 
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login/seleccion', pathMatch: 'full' },
+  { path: '', redirectTo: '/login/landing', pathMatch: 'full' },
 
   {
     path: 'login',
@@ -23,6 +23,10 @@ export const routes: Routes = [
         path: 'seleccion', 
         loadComponent: () => import('./login_pages/selection.html/selection.html').then(m => m.SelectionHtml) 
       },
+      {
+        path: 'landing',
+        loadComponent: () => import('./login_pages/landing/landing-page').then(m => m.LandingPage)
+      }
     ]
   },
   {
