@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 
 interface Usuario {
@@ -10,7 +10,7 @@ interface Usuario {
 @Component({
   selector: 'app-slide-user',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NgIf],
   templateUrl: './slide-user.html',
   styleUrls: ['./slide-user.css']
 })

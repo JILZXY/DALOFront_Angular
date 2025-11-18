@@ -1,1 +1,69 @@
-<p>inactivos works!</p>
+<div class="main-content">
+  <div class="page-header">
+    <h1 class="page-title">Usuarios Inactivos</h1>
+    <p class="page-subtitle">Gestión de abogados con estado inactivo</p>
+  </div>
+
+  <div id="alertContainer">
+    <div 
+      *ngFor="let alert of alerts; trackBy: trackByAlertId"
+      class="alert alert-{{ alert.type }}"
+      [@fadeInOut]>
+      {{ alert.message }}
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <p>Cargando usuarios inactivos...</p>
+  </div>
+
+  <div 
+    *ngIf="!isLoading && inactiveUsers.length > 0" 
+    class="lawyers-grid">
+    <div 
+      *ngFor="let user of inactiveUsers; let i = index; trackBy: trackByUserId"
+      class="lawyer-card">
+      <div class="lawyer-info">
+        <h3>{{ user.nombre }}</h3>
+        <div class="lawyer-details">
+          <div class="detail-item">
+            <span class="detail-label">Email:</span>
+            <span>{{ user.email }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Cédula:</span>
+            <span>{{ user.abogado.cedulaProfesional }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Estado:</span>
+            <span class="status-badge">Inactivo</span>
+          </div>
+        </div>
+        
+        <div *ngIf="user.abogado.biografia" class="bio-section">
+          <div class="bio-title">Biografía:</div>
+          <div class="bio-text">{{ user.abogado.biografia }}</div>
+        </div>
+        
+        <div *ngIf="user.abogado.descripcion" class="bio-section">
+          <div class="bio-title">Descripción:</div>
+          <div class="bio-text">{{ user.abogado.descripcion }}</div>
+        </div>
+      </div>
+      
+      <button 
+        class="activate-btn" 
+        (click)="activateUser(user.idUsuario, i)">
+        Activar Usuario
+      </button>
+    </div>
+  </div>
+
+  <div 
+    *ngIf="!isLoading && inactiveUsers.length === 0" 
+    class="no-data">
+    <div class="no-data-icon">👥</div>
+    <h3>No hay usuarios inactivos</h3>
+    <p>Todos los abogados están actualmente activos en el sistema.</p>
+  </div>
+</div>

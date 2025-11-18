@@ -2,6 +2,11 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angu
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 
+interface Usuario {
+  nombre: string;
+  idRol: number;
+}
+
 @Component({
   selector: 'app-slide-ab',
   standalone: true,
@@ -13,14 +18,39 @@ export class SlideAb implements OnInit, OnDestroy {
   @Input() isOpen: boolean = false;
   @Output() closed = new EventEmitter<void>();
 
-  
+  userName: string = 'Abogado';
+  userRole: string = 'Rol de Abogado';
+  private roleMap: { [key: number]: string } = {
+    1: 'Usuario',
+    2: 'Abogado',
+    3: 'Administrador'
+  };
 
   constructor(private router: Router) {}
 
   ngOnInit() {
+    this.loadUserData();
   }
 
   ngOnDestroy() {
+  }
+
+  private loadUserData(): void {
+    try {
+      const usuarioStr = localStorage.getItem('usuario');
+      if (usuarioStr) {
+        const usuario: Usuario = JSON.parse(usuarioStr);
+        this.userName = usuario.nombre;
+        this.userRole = this.roleMap[usuario.idRol] || 'Rol Desconocido';
+      } else {
+        this.userName = 'Invitado';
+        this.userRole = 'Sin Sesión';
+      }
+    } catch (e) {
+      console.error('Error al parsear datos de usuario de localStorage', e);
+      this.userName = 'Error';
+      this.userRole = 'Datos Inválidos';
+    }
   }
 
   closeSidebar() {
