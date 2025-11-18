@@ -1,0 +1,165 @@
+<section class="filtros-busqueda">
+  <div class="filtros-container">
+    
+    <div class="filtro-dropdown">
+      <button class="filtro-btn" id="materiaBtn" 
+              (click)="toggleDropdown('materia')"
+              [class.active]="materiaDropdownAbierto">
+        MATERIA
+        <span class="dropdown-arrow">▼</span>
+      </button>
+      <div class="dropdown-content" id="materiaDropdown" 
+           [class.show]="materiaDropdownAbierto">
+        <label>
+          <input type="radio" name="materia" value="penal" 
+                 [checked]="materiaActiva === 'penal'" 
+                 (change)="filtrarPorMateria($event)"> Derecho Penal
+        </label>
+        <label>
+          <input type="radio" name="materia" value="civil" 
+                 [checked]="materiaActiva === 'civil'" 
+                 (change)="filtrarPorMateria($event)"> Derecho Civil
+        </label>
+        <label>
+          <input type="radio" name="materia" value="procesal" 
+                 [checked]="materiaActiva === 'procesal'" 
+                 (change)="filtrarPorMateria($event)"> Derecho Procesal
+        </label>
+        <label>
+          <input type="radio" name="materia" value="laboral" 
+                 [checked]="materiaActiva === 'laboral'" 
+                 (change)="filtrarPorMateria($event)"> Derecho Laboral
+        </label>
+        <label>
+          <input type="radio" name="materia" value="mercantil" 
+                 [checked]="materiaActiva === 'mercantil'" 
+                 (change)="filtrarPorMateria($event)"> Derecho Mercantil
+        </label>
+        <label>
+          <input type="radio" name="materia" value="constitucional" 
+                 [checked]="materiaActiva === 'constitucional'" 
+                 (change)="filtrarPorMateria($event)"> Derecho Constitucional
+        </label>
+      </div>
+    </div>
+
+    <div class="filtro-dropdown">
+      <button class="filtro-btn" id="estadoBtn" 
+              (click)="toggleDropdown('estado')"
+              [class.active]="estadoDropdownAbierto">
+        ESTADO
+        <span class="dropdown-arrow">▼</span>
+      </button>
+      <div class="dropdown-content" id="estadoDropdown" 
+           [class.show]="estadoDropdownAbierto">
+        <label>
+          <input type="radio" name="estado" value="chiapas" 
+                 [checked]="estadoActivo === 'chiapas'" 
+                 (change)="filtrarPorEstado($event)"> Chiapas
+        </label>
+      </div>
+    </div>
+
+    <div class="filtro-dropdown">
+      <button class="filtro-btn" id="ciudadBtn" 
+              (click)="toggleDropdown('ciudad')"
+              [class.active]="ciudadDropdownAbierto">
+        CIUDAD
+        <span class="dropdown-arrow">▼</span>
+      </button>
+      <div class="dropdown-content" id="ciudadDropdown" 
+           [class.show]="ciudadDropdownAbierto">
+        <label>
+          <input type="radio" name="ciudad" value="tuxtla" 
+                 [checked]="ciudadActiva === 'tuxtla'" 
+                 (change)="filtrarPorCiudad($event)"> Tuxtla Gutiérrez
+        </label>
+        <label>
+          <input type="radio" name="ciudad" value="tapachula" 
+                 [checked]="ciudadActiva === 'tapachula'" 
+                 (change)="filtrarPorCiudad($event)"> Tapachula
+        </label>
+        <label>
+          <input type="radio" name="ciudad" value="comitan" 
+                 [checked]="ciudadActiva === 'comitan'" 
+                 (change)="filtrarPorCiudad($event)"> Comitán
+        </label>
+        <label>
+          <input type="radio" name="ciudad" value="ocosingo" 
+                 [checked]="ciudadActiva === 'ocosingo'" 
+                 (change)="filtrarPorCiudad($event)"> Ocosingo
+        </label>
+        <label>
+          <input type="radio" name="ciudad" value="benito%20juarez" 
+                 [checked]="ciudadActiva === 'benito%20juarez'" 
+                 (change)="filtrarPorCiudad($event)"> Benito Juárez
+        </label>
+      </div>
+    </div>
+
+    <button class="filtro-btn" id="limpiarFiltrosAbogadosBtn" (click)="limpiarFiltros()">
+      Limpiar Filtros
+    </button>
+
+    <div class="filtro-busqueda">
+      <div class="buscador-container">
+        <input type="text" class="buscador-input" placeholder="Busca tu abogado" 
+               id="buscadorInput"
+               [(ngModel)]="terminoBusqueda"
+               (keyup.enter)="buscarPorNombre()">
+        <button class="buscar-btn" id="buscarBtn" (click)="buscarPorNombre()">
+          <img src="/Images/logo azul.png" alt="Buscar" class="buscar-icon">
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lista-abogados">
+  
+  <div *ngIf="isLoading" class="estado-container">
+    Cargando abogados...
+  </div>
+  
+  <div *ngIf="!isLoading && errorMensaje" class="estado-container error">
+    {{ errorMensaje }}
+  </div>
+
+  <div id="abogadosContainer" *ngIf="!isLoading && abogados.length > 0">
+    
+    <div class="abogado-card" *ngFor="let abogado of abogados">
+      <div class="abogado-card-inner">
+        <div class="abogado-content">
+          
+          <div class="abogado-info">
+            <img [src]="abogado.foto || '/Images/logo azul.png'" alt="Foto de {{ abogado.nombre }}" class="abogado-foto">
+            <div class="abogado-detalles">
+              <h3 class="abogado-nombre">{{ abogado.nombre }} {{ abogado.apellidos }}</h3>
+              <p class="abogado-ubicacion">{{ abogado.ciudad }}, {{ abogado.estado }}</p>
+              
+              <div class="calificacion-container">
+                <span *ngFor="let estrella of getEstrellas(abogado.calificacion)" 
+                      class="estrella {{ estrella }}"></span>
+                <span class="calificacion-numero">{{ (abogado.calificacion || 0).toFixed(1) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="abogado-especialidades">
+            <h4>Especialidades:</h4>
+            <div class="tags-container">
+              <span *ngFor="let esp of abogado.especialidades" class="especialidad-tag">{{ esp }}</span>
+            </div>
+          </div>
+          
+          <div class="abogado-acciones">
+            <button class="btn-perfil">Ver Perfil</button>
+            <button class="btn-contactar" (click)="contactarAbogado(abogado)">Contactar</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</section>

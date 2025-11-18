@@ -1,0 +1,67 @@
+<aside class="sidebar" [class.active]="isOpen">
+  <div class="sidebar-header">
+    <div class="user-info-slide">
+      <h3 class="user-name-slide">{{ userName }}</h3>
+      <p class="user-role-slide">{{ userRole }}</p>
+    </div>
+    <button class="menu-toggle" (click)="closeSidebar()" aria-label="Cerrar menú">
+      &times;
+    </button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <a routerLink="/abogado/foro"
+       routerLinkActive="active"
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/foro.png" alt="Foro" />
+      Foro
+    </a>
+
+    <a routerLink="/abogado/consultas"
+       routerLinkActive="active"
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/consultas.png" alt="Consultas" />
+      Consultas
+    </a>
+
+    <a routerLink="/abogado/mis-respuestas"
+       routerLinkActive="active"
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/mis_respuestas.png" alt="Mis Respuestas" />
+      Mis Respuestas
+    </a>
+
+    <a routerLink="/abogado/estadisticas"
+       routerLinkActive="active"
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/estadisticas.png" alt="Estadísticas" />
+      Estadísticas
+    </a>
+
+    <a routerLink="/abogado/perfil"
+       routerLinkActive="active"
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/perfil.png" alt="Perfil" />
+      Perfil
+    </a>
+
+    <a routerLink="/abogado/ayuda"
+       routerLinkActive="active"
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/ayuda.png" alt="Ayuda" />
+      Ayuda
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="#" class="menu-item" (click)="logout($event)">
+      Salir
+    </a>
+  </div>
+</aside>

@@ -1,0 +1,33 @@
+<div class="sidebar-overlay" [class.active]="isOpen" (click)="closeSidebar()"></div>
+
+<aside class="sidebar" [class.active]="isOpen">
+  <div class="sidebar-header">
+    <button class="menu-toggle" (click)="closeSidebar()" aria-label="Cerrar menú">
+      &times;
+    </button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <a routerLink="/admin/inactivos" 
+       routerLinkActive="active" 
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/home.png" alt="Usuarios Inactivos" />
+      Usuarios Inactivos
+    </a>
+    
+    <a routerLink="/admin/reportes" 
+       routerLinkActive="active" 
+       class="menu-item"
+       (click)="closeSidebar()">
+      <img src="/Images/enviar_pregunta.png" alt="Reportes" />
+      Reportes
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="#" class="menu-item" (click)="logout($event)">
+      Salir
+    </a>
+  </div>
+</aside>
