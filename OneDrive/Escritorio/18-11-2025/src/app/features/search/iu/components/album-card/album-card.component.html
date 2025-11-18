@@ -1,0 +1,21 @@
+<div class="album-card" (click)="onAlbumClick()">
+  <!-- Cover del álbum -->
+  <div class="album-cover">
+    <img
+      [src]="albumImage"
+      [alt]="album.name"
+      class="album-image"
+    />
+    <!-- Overlay -->
+    <div class="album-overlay">
+      <button class="play-button">▶️</button>
+    </div>
+  </div>
+
+  <!-- Info del álbum -->
+  <div class="album-info">
+    <h3 class="album-name">{{ album.name }}</h3>
+    <p class="album-artists">{{ artistsName }}</p>
+    <p class="album-year">{{ releaseYear }}</p>
+  </div>
+</div>

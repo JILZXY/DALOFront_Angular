@@ -1,0 +1,27 @@
+<div class="track-card" (click)="onTrackClick()">
+
+  <div class="track-cover">
+    <img
+      [src]="track.album.images[0]?.url"
+      [alt]="track.name"
+      class="track-image"
+    />
+    <!-- Overlay con botón play -->
+    <div class="track-overlay">
+      <button 
+        class="play-button"
+        title="Play preview"
+        (click)="onPlayPreview(); $event.stopPropagation()"
+      >
+        ▶️
+      </button>
+    </div>
+  </div>
+
+  <!-- Info del track -->
+  <div class="track-info">
+    <h3 class="track-title">{{ track.name }}</h3>
+    <p class="track-artist">{{ artistsName }}</p>
+
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="dashboard">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <div class="content-wrapper">
+      <!-- Header -->
+      <header class="header">
+        <h1 class="title">🎵 Spotify Clone</h1>
+        <p class="subtitle">Busca tu música favorita</p>
+      </header>
+
+      <!-- Search bar -->
+      <app-search-bar (search)="onSearch($event)"></app-search-bar>
+
+      <!-- Loading state -->
+      <div *ngIf="loading$ | async" class="loading">
+        <div class="spinner"></div>
+        <p>Buscando...</p>
+      </div>
+
+      <!-- Error state -->
+      <div *ngIf="error$ | async as error" class="error">
+        <p class="error-icon">⚠️</p>
+        <p class="error-message">{{ error }}</p>
+      </div>
+
+      <!-- Results -->
+      <app-search-results
+        *ngIf="!(loading$ | async)"
+        [tracks]="tracks"
+        [artists]="artists"
+        [albums]="albums"
+        (click)="onCardClick($event)"
+      ></app-search-results>
+    </div>
+  </div>
+</div>

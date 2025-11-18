@@ -1,0 +1,21 @@
+<div class="artist-card" (click)="onArtistClick()">
+  <!-- Cover del artista -->
+  <div class="artist-cover">
+    <img
+      [src]="artistImage"
+      [alt]="artist.name"
+      class="artist-image"
+    />
+    <!-- Overlay -->
+    <div class="artist-overlay">
+      <button class="play-button">▶️</button>
+    </div>
+  </div>
+
+  <!-- Info del artista -->
+  <div class="artist-info">
+    <h3 class="artist-name">{{ artist.name }}</h3>
+    <p class="artist-genres">{{ genresDisplay }}</p>
+    <p class="artist-type">Artista</p>
+  </div>
+</div>

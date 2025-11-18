@@ -1,0 +1,55 @@
+<div class="search-results">
+  <!-- Tracks -->
+  @if (tracks && tracks.length > 0) {
+    <section class="results-section">
+      <h2 class="section-title">🎵 Canciones</h2>
+      <div class="results-grid">
+        @for (track of tracks; track $index) {
+          <app-track-card
+            [track]="track"
+            (trackSelected)="onTrackSelected($event)"
+          />
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Artists -->
+  @if (artists && artists.length > 0) {
+    <section class="results-section">
+      <h2 class="section-title">🎤 Artistas</h2>
+      <div class="results-grid">
+        @for (artist of artists; track $index) {
+          <app-artist-card
+            [artist]="artist"
+            (artistSelected)="onArtistSelected($event)"
+          />
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Albums -->
+  @if (albums && albums.length > 0) {
+    <section class="results-section">
+      <h2 class="section-title">💿 Álbumes</h2>
+      <div class="results-grid">
+        @for (album of albums; track $index) {
+          <app-album-card
+            [album]="album"
+            (albumSelected)="onAlbumSelected($event)"
+          />
+        }
+      </div>
+    </section>
+  }
+
+  <!-- No results -->
+  @if (!hasResults) {
+    <div class="empty-state">
+      <p class="empty-icon">🎵</p>
+      <p class="empty-text">No se encontraron resultados</p>
+      <p class="empty-hint">Intenta con otro término de búsqueda</p>
+    </div>
+  }
+</div>

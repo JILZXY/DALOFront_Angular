@@ -1,0 +1,46 @@
+<div class="search-bar-container">
+  <div class="search-bar">
+    <!-- Icono de búsqueda -->
+    <span class="search-icon">🔍</span>
+
+    <!-- Input -->
+    <input
+      #searchInput
+      type="text"
+      placeholder="¿Qué quieres escuchar?"
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      (input)="onSearchChange()"
+      (keyup.enter)="onSearchSubmit()"
+      autocomplete="off"
+    />
+
+    <!-- Botón de búsqueda -->
+    <button
+      class="search-button"
+      (click)="onSearchSubmit()"
+      title="Buscar"
+      [disabled]="searchQuery.trim().length < 2"
+    >
+      🔎
+    </button>
+
+    <!-- Botón de limpiar -->
+    <button
+      *ngIf="searchQuery"
+      class="clear-button"
+      (click)="onClear()"
+      title="Limpiar búsqueda"
+    >
+      ✕
+    </button>
+  </div>
+
+  <!-- Caracteres -->
+  <p class="search-hint">
+    {{ searchQuery.length }} caracteres
+    <span *ngIf="searchQuery.trim().length < 2" class="hint-warning">
+      (mínimo 2)
+    </span>
+  </p>
+</div>

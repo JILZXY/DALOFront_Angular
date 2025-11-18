@@ -1,0 +1,56 @@
+<div class="sidebar">
+  <!-- Logo -->
+  <div class="logo">
+    <span class="logo-icon">🎵</span>
+    <span class="logo-text">Spotify Clone</span>
+  </div>
+
+  <!-- Navegación principal -->
+  <nav class="nav-main">
+    <h3 class="nav-title">MENÚ</h3>
+    
+    <ul class="nav-list">
+      <li>
+        <a 
+          routerLink="/dashboard" 
+          routerLinkActive="active"
+          class="nav-link"
+        >
+          🏠 Inicio
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" (click)="onPreventDefault($event)">
+          ❤️ Favoritos
+        </a>
+      </li>
+      <li>
+        <a href="#" class="nav-link" (click)="onPreventDefault($event)">
+          📊 Mis Listas
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Búsquedas recientes -->
+  <nav class="nav-recent">
+    <h3 class="nav-title">BÚSQUEDAS RECIENTES</h3>
+    
+    <ul class="nav-list">
+      <li *ngFor="let search of recentSearches">
+        <a 
+          href="#" 
+          class="nav-link"
+          (click)="onPreventDefault($event)"
+        >
+          🕐 {{ search }}
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar-footer">
+    <p class="version">v1.0.0</p>
+  </div>
+</div>
