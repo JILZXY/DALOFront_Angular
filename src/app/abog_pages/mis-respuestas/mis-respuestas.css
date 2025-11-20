@@ -1,0 +1,291 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+:host {
+  display: block;
+  background-color: #D9D9D9;
+  font-family: 'Montserrat', sans-serif;
+  min-height: 100vh;
+  padding-top: 100px; 
+  padding-bottom: 40px;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 95%; /* Ocupa casi todo el ancho */
+  max-width: 1600px; /* Límite mucho más amplio */
+  margin: 0 auto;
+  padding: 0;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 40px; /* Un poco más de espacio para la línea */
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px; /* Línea más gruesa */
+  background: #e0e0e0;
+  border-radius: 3px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 50px; /* Más separación entre tarjetas */
+  width: 100%;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -43px; 
+  top: 30px;
+  width: 24px; /* Marcador más grande */
+  height: 24px;
+  background: #223240;
+  border: 4px solid #D9D9D9;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.card {
+  background: #fdfdfd;
+  border-radius: 15px;
+  padding: 40px; /* Más relleno interno para que se vea grande */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  border-left: 8px solid #223240; /* Borde lateral más notorio */
+  animation: slideIn 0.5s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.status-badge {
+  font-size: 14px; /* Letra más grande */
+  font-weight: 800; /* Negrita fuerte */
+  padding: 6px 15px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.calificada {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.date {
+  font-size: 14px;
+  color: #555; /* Texto más oscuro */
+  font-weight: 600;
+}
+
+.pregunta-contexto {
+  background: #f4f6f8;
+  padding: 25px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  border-left: 5px solid #ccc;
+}
+
+.pregunta-contexto h4 {
+  margin: 0 0 10px 0;
+  color: #223240;
+  font-size: 20px; /* Título más grande */
+  font-weight: 800;
+}
+
+.pregunta-contexto p {
+  margin: 0;
+  font-style: italic;
+  color: #333; /* Texto casi negro */
+  font-size: 16px; /* Letra más grande */
+  font-weight: 500; /* Semi-negrita para legibilidad */
+  line-height: 1.5;
+}
+
+.usuario-tag {
+  margin-top: 15px;
+  font-size: 13px;
+  color: #006DCC;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.respuesta-content {
+  margin-bottom: 30px;
+}
+
+.mi-respuesta-label {
+  font-size: 14px;
+  font-weight: 800;
+  color: #223240;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.respuesta-content p {
+  margin: 0;
+  line-height: 1.7;
+  color: #111; /* Negro intenso para la respuesta */
+  font-size: 18px; /* Tamaño de lectura cómodo */
+  font-weight: 500; /* Peso medio para que no se vea "flaca" */
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-ver {
+  background: #223240;
+  color: white;
+  border: none;
+  padding: 14px 30px; /* Botón más grande */
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-ver:hover {
+  background: #006DCC;
+  transform: translateY(-2px);
+}
+
+/* MODAL (Sin cambios mayores, solo ajustes de fuente) */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  animation: popIn 0.3s ease;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px; right: 20px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  color: #666;
+}
+
+.score-circle {
+  background: #f8f9fa;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 0 auto 30px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 6px solid #006DCC;
+}
+
+.score-num {
+  font-size: 48px;
+  font-weight: 800;
+  color: #223240;
+  line-height: 1;
+}
+
+.stars-row {
+  font-size: 24px;
+  color: #ccc;
+  margin-top: 5px;
+}
+.gold { color: #ffc107; }
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  text-align: left;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.metric span {
+  font-weight: 700;
+  color: #444;
+}
+
+.bar-bg { 
+  width: 100%; 
+  height: 10px; 
+  background: #eee; 
+  border-radius: 5px; 
+  overflow: hidden; 
+}
+.bar-fill { height: 100%; background: #006DCC; }
+
+.pending-state .icon-pending {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+.tip {
+  font-size: 14px;
+  color: #555;
+  background: #fff3cd;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 25px;
+  font-weight: 600;
+}
+
+.loading-container, .no-results {
+  text-align: center;
+  padding: 60px;
+  font-size: 20px;
+  color: #444;
+  font-weight: 600;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

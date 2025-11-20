@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
-import { filter} from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { SlideUser } from '../user_pages/slide-user/slide-user';
 import { SlideAb } from '../abog_pages/slide-ab/slide-ab';
 import { SlideAdmin } from '../admin/slide-admin/slide-admin';
@@ -24,57 +24,76 @@ export class Header implements OnInit {
   pageTitle: string = 'Título de Página';
   isSidebarActive: boolean = false;
 
+  currentRole: number = 1; 
+
   private roleMap: { [key: number]: string } = {
     1: 'Usuario',
     2: 'Abogado',
     3: 'Administrador'
   };
 
-  constructor(private router:Router) {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
-    this.loadUserData();
-    this.updatePageTitle();
+    this.updateBasedOnUrl();
     
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      this.updatePageTitle();
+      this.updateBasedOnUrl();
     });
   }
 
-  private loadUserData(): void {
+  
+  private updateBasedOnUrl(): void {
+    const url = this.router.url;
+
+    this.updatePageTitle(url);
+
+    if (url.includes('/abogado')) {
+      this.currentRole = 2;
+      this.userRole = 'Abogado (Test)';
+      if (this.userName === 'Nombre Usuario') this.userName = 'Lic. Prueba'; 
+    } 
+    else if (url.includes('/admin')) {
+      this.currentRole = 3;
+      this.userRole = 'Administrador (Test)';
+    } 
+    else {
+      this.currentRole = 1; 
+      this.loadUserDataFromStorage();
+    }
+  }
+
+  private loadUserDataFromStorage(): void {
     try {
       const usuarioStr = localStorage.getItem('usuario');
       if (usuarioStr) {
         const usuario: Usuario = JSON.parse(usuarioStr);
         this.userName = usuario.nombre;
+        this.currentRole = usuario.idRol; 
         this.userRole = this.roleMap[usuario.idRol] || 'Rol Desconocido';
       } else {
         this.userName = 'Invitado';
-        this.userRole = 'Sin Sesión';
+        this.userRole = 'Usuario';
       }
     } catch (e) {
-      console.error('Error al parsear datos de usuario de localStorage', e);
-      this.userName = 'Error';
-      this.userRole = 'Datos Inválidos';
+      console.error('Error al leer datos locales', e);
     }
   }
 
-  
   toggleSidebar(): void {
     this.isSidebarActive = !this.isSidebarActive;
-    
   }
 
-  
   closeSidebar(): void {
-      this.isSidebarActive = false;
-          
+    this.isSidebarActive = false;
   }
 
-  private updatePageTitle(): void {
-    const url = this.router.url.split('?')[0]; 
+  private updatePageTitle(url: string): void {
+    // Limpiar query params (ej: ?id=1)
+    const cleanUrl = url.split('?')[0];
+    
     const titleMap: { [key: string]: string } = {
       '/usuario/home': 'Home',
       '/usuario/publicar': 'Publicar Pregunta',
@@ -84,18 +103,18 @@ export class Header implements OnInit {
       '/usuario/ayuda': 'Ayuda',
       '/usuario/comentarios': 'Comentarios',
       
-      '/abogado/foro': 'Foro',
+      '/abogado/foro': 'Foro de Abogados',
       '/abogado/mis-respuestas': 'Mis Respuestas',
       '/abogado/estadisticas': 'Estadísticas',
-      '/abogado/ayuda': 'Ayuda',
-      '/abogado/consultas': 'Consultas',
-      '/abogado/materias': 'Materias',
-      '/abogado/perfil': 'Perfil',
+      '/abogado/ayuda': 'Ayuda Abogado',
+      '/abogado/consultas': 'Consultas Disponibles',
+      '/abogado/materias': 'Mis Materias',
+      '/abogado/perfil': 'Mi Perfil',
       '/abogado/reporte': 'Reportes',
-      '/abogado/respuesta': 'Respuesta',
+      '/abogado/respuesta': 'Responder',
       
       '/admin/inactivos': 'Usuarios Inactivos',
-      '/admin/reportes': 'Reportes',
+      '/admin/reportes': 'Reportes Globales',
       
       '/login': 'Iniciar Sesión',
       '/login/registro-abogado': 'Registro Abogado',
@@ -103,25 +122,6 @@ export class Header implements OnInit {
       '/login/seleccion': 'Selección'
     };
 
-    this.pageTitle = titleMap[url] || 'Página';
-  }
-
-  getUserRole(): number | null {
-    // --- MODIFICACIÓN PARA PRUEBAS ---
-    // Cambia este número para probar los diferentes menús laterales:
-    // 1 = Usuario, 2 = Abogado, 3 = Administrador
-    // Para volver al comportamiento normal, coméntalo o asígnale `null`.
-    const testUserRole: number | null = 1;
-    if (testUserRole !== null) return testUserRole;
-    try {
-      const usuarioStr = localStorage.getItem('usuario');
-      if (usuarioStr) {
-        const usuario: Usuario = JSON.parse(usuarioStr);
-        return usuario.idRol;
-      }
-    } catch (e) {
-      console.error('Error al parsear datos de usuario de localStorage', e);
-    }
-    return null;
+    this.pageTitle = titleMap[cleanUrl] || 'DALO';
   }
 }

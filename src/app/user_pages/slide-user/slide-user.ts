@@ -10,7 +10,7 @@ interface Usuario {
 @Component({
   selector: 'app-slide-user',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgIf],
+  imports: [CommonModule, RouterModule], 
   templateUrl: './slide-user.html',
   styleUrls: ['./slide-user.css']
 })
@@ -26,12 +26,10 @@ export class SlideUser implements OnInit, OnDestroy {
     3: 'Administrador'
   };
 
-
   constructor(private router: Router) {}
 
   ngOnInit() {
     this.loadUserData(); 
-    
   }
 
   ngOnDestroy() {

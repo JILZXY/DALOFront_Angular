@@ -1,0 +1,21 @@
+<div class="bufete-codigo-container">
+    <button class="btn-volver" (click)="volver()">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="11" stroke="#1a2b3c" stroke-width="2" />
+            <path d="M14 8l-4 4 4 4" stroke="#1a2b3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </button>
+
+    <div class="content-wrapper">
+        <div class="image-container">
+            <!-- Placeholder for the group of lawyers image -->
+            <img src="/Images/lawyers_team.jpg" alt="Equipo de abogados" class="lawyers-image">
+        </div>
+
+        <div class="input-section">
+            <div class="divider-line"></div>
+            <h2>INGRESA TU CÓDIGO</h2>
+            <input type="text" [(ngModel)]="codigo" (keyup.enter)="ingresarCodigo()" placeholder="" class="code-input">
+        </div>
+    </div>
+</div>

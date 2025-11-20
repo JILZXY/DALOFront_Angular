@@ -1,0 +1,33 @@
+<div class="crear-bufete-container">
+    <button class="btn-volver" (click)="volver()">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="11" stroke="#1a2b3c" stroke-width="2" />
+            <path d="M14 8l-4 4 4 4" stroke="#1a2b3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </button>
+
+    <div class="content-wrapper">
+        <div class="vista-previa-box">
+            <h2 *ngIf="!previewUrl">VISTA PREVIA</h2>
+            <img *ngIf="previewUrl" [src]="previewUrl" alt="Vista previa" class="preview-image">
+        </div>
+
+        <div class="form-section">
+            <div class="input-card">
+                <label>Inserte la foto que se vera en su menú</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" (change)="onFileSelected($event)" hidden #fileUpload>
+                    <button class="custom-file-btn" (click)="fileUpload.click()">Adjuntar</button>
+                </div>
+            </div>
+
+            <div class="input-card">
+                <label>Escriba el codigo de Acceso al Buffet</label>
+                <input type="text" [(ngModel)]="codigoAcceso" placeholder="Solo letras y numeros (10 Caracteres)"
+                    maxlength="10" class="text-input">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-crear" (click)="crear()">Crear</button>
+</div>

@@ -1,1 +1,103 @@
-<p>foro works!</p>
+<section class="filtros-busqueda">
+  <div class="filtros-container">
+      
+      <div class="filtro-dropdown">
+          <button class="filtro-btn" 
+                  [class.active]="materiaDropdownAbierto"
+                  (click)="toggleDropdown('materia')">
+              {{ materiaActiva ? (materiaActiva | titlecase) : 'MATERIA' }}
+              <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="dropdown-content" [class.show]="materiaDropdownAbierto">
+              <label (click)="seleccionarFiltro('materia', 'penal')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='penal'"> Derecho Penal
+              </label>
+              <label (click)="seleccionarFiltro('materia', 'civil')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='civil'"> Derecho Civil
+              </label>
+              <label (click)="seleccionarFiltro('materia', 'laboral')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='laboral'"> Derecho Laboral
+              </label>
+              <label (click)="seleccionarFiltro('materia', 'familiar')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='familiar'"> Derecho Familiar
+              </label>
+              <label (click)="seleccionarFiltro('materia', 'mercantil')">
+                  <input type="radio" name="materia" [checked]="materiaActiva==='mercantil'"> Derecho Mercantil
+              </label>
+          </div>
+      </div>
+
+      <div class="filtro-dropdown">
+          <button class="filtro-btn" 
+                  [class.active]="estadoDropdownAbierto"
+                  (click)="toggleDropdown('estado')">
+              {{ estadoActivo ? (estadoActivo | titlecase) : 'ESTADO' }}
+              <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="dropdown-content" [class.show]="estadoDropdownAbierto">
+              <label (click)="seleccionarFiltro('estado', 'chiapas')">
+                  <input type="radio" name="estado" [checked]="estadoActivo==='chiapas'"> Chiapas
+              </label>
+          </div>
+      </div>
+
+      <div class="filtro-dropdown">
+          <button class="filtro-btn" 
+                  [class.active]="ciudadDropdownAbierto"
+                  (click)="toggleDropdown('ciudad')">
+              {{ ciudadActiva ? (ciudadActiva | titlecase) : 'CIUDAD' }}
+              <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="dropdown-content" [class.show]="ciudadDropdownAbierto">
+              <label (click)="seleccionarFiltro('ciudad', 'tuxtla')">
+                  <input type="radio" name="ciudad" [checked]="ciudadActiva==='tuxtla'"> Tuxtla Gutiérrez
+              </label>
+              <label (click)="seleccionarFiltro('ciudad', 'tapachula')">
+                  <input type="radio" name="ciudad" [checked]="ciudadActiva==='tapachula'"> Tapachula
+              </label>
+              <label (click)="seleccionarFiltro('ciudad', 'comitan')">
+                  <input type="radio" name="ciudad" [checked]="ciudadActiva==='comitan'"> Comitán
+              </label>
+          </div>
+      </div>
+
+      <button class="filtro-btn btn-limpiar" (click)="limpiarFiltros()">
+          Limpiar Filtros
+      </button>
+  </div>
+</section>
+
+<div class="loading-container" *ngIf="isLoading">
+  <p>Cargando consultas...</p>
+</div>
+
+<div class="contenedor" *ngIf="!isLoading">
+  
+  <div class="card-wrapper" *ngFor="let consulta of consultas">
+      <div class="card">
+          <div class="card-header">
+              <span class="materia-badge">{{ consulta.materia?.nombre }}</span>
+              <span class="fecha-badge">{{ formatTime(consulta.fecha) }}</span>
+          </div>
+          
+          <div class="card-body">
+              <h3 class="card-title">{{ consulta.titulo }}</h3>
+              <p class="card-description">{{ consulta.descripcion }}</p>
+          </div>
+          
+          <div class="card-footer">
+              <div class="user-info">
+                  <span class="user-name">Usuario Anónimo</span>
+              </div>
+              <button class="btn-responder" (click)="verDetalle(consulta.idConsulta)">
+                  Responder
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <div class="no-results" *ngIf="consultas.length === 0">
+      <p>No se encontraron consultas con estos criterios.</p>
+  </div>
+
+</div>

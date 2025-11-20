@@ -1,0 +1,87 @@
+<div class="mi-bufete-container">
+    <div class="header-banner">
+        <button class="btn-volver" (click)="volver()">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="11" stroke="#1a2b3c" stroke-width="2" />
+                <path d="M14 8l-4 4 4 4" stroke="#1a2b3c" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+        <div class="banner-content">
+            <!-- Banner image placeholder -->
+            <div class="banner-image" style="background-image: url('/Images/background.png');"></div>
+            <div class="bufete-identity">
+                <div class="logo-circle">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M3 21h18M5 21v-7m14 7v-7m-7 7v-9m-7-2h14l-1-6H6l-1 6zm4 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm6 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
+                            stroke="#1a2b3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <h1>RODRIGUEZ Y ASOCIADOS</h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="left-column">
+            <div class="filter-section">
+                <h2>Encuentre a nuestros abogados segun la especialidad que requiera</h2>
+                <div class="filter-buttons">
+                    <button [class.active]="selectedFilter === 'PENAL'" (click)="setFilter('PENAL')">PENAL</button>
+                    <button [class.active]="selectedFilter === 'CIVIL'" (click)="setFilter('CIVIL')">CIVIL</button>
+                    <button [class.active]="selectedFilter === 'MERCANTIL'"
+                        (click)="setFilter('MERCANTIL')">MERCANTIL</button>
+                    <button [class.active]="selectedFilter === 'CONSTITUCIONAL'"
+                        (click)="setFilter('CONSTITUCIONAL')">CONSTITUCIONAL</button>
+                </div>
+            </div>
+
+            <div class="abogados-list">
+                <div class="abogado-card-simple" *ngFor="let abogado of filteredAbogados">
+                    <div class="ranking-badge">#{{ abogado.ranking }}</div>
+                    <div class="card-content-simple">
+                        <div class="avatar-simple">
+                            <img [src]="abogado.foto" alt="Avatar">
+                        </div>
+                        <div class="info-simple">
+                            <h3>{{ abogado.nombre }}</h3>
+                            <p class="specialty">{{ abogado.especialidad }}</p>
+                            <p class="bufete-name">Buffet: {{ abogado.bufete }}</p>
+                            <p class="location">
+                                <span class="pin-icon">📍</span> {{ abogado.ubicacion }}
+                            </p>
+                        </div>
+                        <div class="rating-simple">
+                            <span>CALIFICACIÓN GENERAL</span>
+                            <span class="score">{{ (abogado.calificacion || 0).toFixed(1) }}/5.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <img src="/Images/logo azul.png" alt="Profile">
+                </div>
+                <h3>JESHUA GABRIEL MÁRQUEZ CASTAÑO</h3>
+                <p class="location">📍 Tapachula, Chiapas.</p>
+
+                <div class="specialty-icons">
+                    <div class="spec-icon">
+                        <div class="icon-box">⚖️</div>
+                        <span>DERECHO PENAL</span>
+                    </div>
+                    <div class="spec-icon">
+                        <div class="icon-box">♟️</div>
+                        <span>DERECHO CIVIL</span>
+                    </div>
+                </div>
+
+                <button class="btn-salir" (click)="salirDelBufete()">SALIR DEL BUFETE</button>
+            </div>
+        </div>
+    </div>
+</div>

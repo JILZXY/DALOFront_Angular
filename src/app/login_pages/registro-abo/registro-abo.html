@@ -1,1 +1,161 @@
-<p>registro-abo works!</p>
+<section class="vista-registro">
+  <div class="izquierda">
+    <h1>ABOGADO</h1>
+    <p>Como abogado, formarás parte de una comunidad comprometida con brindar orientación legal gratuita, clara y responsable. Tendrás acceso a las preguntas anónimas realizadas por los usuarios y podrás responder según tu área de especialidad.</p>
+    <p>Tu participación es clave para generar confianza, acercar la justicia a quienes más lo necesitan y fortalecer la cultura legal desde un enfoque accesible y humano.</p>
+  </div>
+
+  <div class="derecha">
+    <div class="form-wrapper">
+      <h3>Crea tu cuenta <strong>DALO</strong></h3>
+      <h2>REGISTRO SESIÓN DE ABOGADO</h2>
+
+      <div class="tabs-container">
+        <div class="tabs-header">
+          <button class="tab-button" [class.active]="currentTab === 1">1. Datos</button>
+          <button class="tab-button" [class.active]="currentTab === 2">2. Acceso</button>
+          <button class="tab-button" [class.active]="currentTab === 3">3. Perfil</button>
+          <button class="tab-button" [class.active]="currentTab === 4">4. Especialidad</button>
+        </div>
+      </div>
+
+      <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+        
+        <div *ngIf="currentTab === 1" class="tab-content">
+          <div class="fila">
+            <div class="campo">
+              <label>Nombre(s)</label>
+              <input type="text" formControlName="nombre">
+            </div>
+            <div class="campo">
+              <label>Apellidos</label>
+              <input type="text" formControlName="apellidos">
+            </div>
+          </div>
+          <div class="fila">
+            <div class="campo">
+              <label>Teléfono</label>
+              <input type="text" formControlName="telefono" maxlength="10">
+            </div>
+            <div class="campo">
+              <label>Fecha Nacimiento</label>
+              <input type="date" formControlName="fechaNacimiento">
+            </div>
+          </div>
+          <div class="fila">
+            <div class="campo">
+              <label>Género</label>
+              <select formControlName="genero">
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+              </select>
+            </div>
+            <div class="campo">
+              <label>Estado</label>
+              <select formControlName="estado">
+                <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="fila">
+             <div class="campo">
+              <label>Municipio</label>
+              <select formControlName="municipio">
+                <option *ngFor="let mun of municipiosDisponibles" [value]="mun">{{ mun }}</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+          
+          <button type="button" class="btn-submit" (click)="cambiarTab(2)">CONTINUAR</button>
+        </div>
+
+        <div *ngIf="currentTab === 2" class="tab-content">
+          <div class="fila">
+            <div class="campo full-width">
+              <label>Email</label>
+              <input type="email" formControlName="email">
+            </div>
+          </div>
+          <div class="fila">
+            <div class="campo">
+              <label>Contraseña (Mín 6 caracteres)</label>
+              <input type="password" formControlName="password">
+            </div>
+            <div class="campo">
+              <label>Confirmar Contraseña</label>
+              <input type="password" formControlName="confirmPassword">
+            </div>
+          </div>
+
+          <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+          <div class="botones-accion">
+            <button type="button" class="btn-secondary" (click)="cambiarTab(1)">Atrás</button>
+            <button type="button" class="btn-submit" (click)="cambiarTab(3)">CONTINUAR</button>
+          </div>
+        </div>
+
+        <div *ngIf="currentTab === 3" class="tab-content">
+          <div class="campo-foto">
+            <div class="preview-container" *ngIf="previewUrl">
+                <img [src]="previewUrl" class="foto-preview">
+            </div>
+            <label class="btn-upload">
+                Subir Foto de Perfil
+                <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+            </label>
+          </div>
+
+          <div class="campo full-width">
+            <label>Biografía Corta (150 caracteres)</label>
+            <textarea formControlName="biografia" rows="3" maxlength="150"></textarea>
+          </div>
+          <div class="campo full-width">
+            <label>Descripción de Servicios</label>
+            <textarea formControlName="descripcion" rows="4"></textarea>
+          </div>
+
+          <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+          <div class="botones-accion">
+            <button type="button" class="btn-secondary" (click)="cambiarTab(2)">Atrás</button>
+            <button type="button" class="btn-submit" (click)="cambiarTab(4)">CONTINUAR</button>
+          </div>
+        </div>
+
+        <div *ngIf="currentTab === 4" class="tab-content">
+          <div class="campo full-width">
+            <label>Cédula Profesional</label>
+            <input type="text" formControlName="cedula">
+          </div>
+
+          <h3>Selecciona tus especialidades</h3>
+          
+          <div class="materias-grid">
+            <div 
+              class="materia-card" 
+              *ngFor="let m of materias" 
+              (click)="toggleMateria(m.id)"
+              [class.selected]="isSelected(m.id)"
+            >
+              <img [src]="m.icono" [alt]="m.nombre" class="materia-icon">
+              <span class="materia-title">{{ m.nombre }}</span>
+            </div>
+          </div>
+
+          <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+          <div class="botones-accion">
+            <button type="button" class="btn-secondary" (click)="cambiarTab(3)">Atrás</button>
+            <button type="submit" class="btn-submit" [disabled]="isLoading">
+                {{ isLoading ? 'Registrando...' : 'FINALIZAR REGISTRO' }}
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</section>

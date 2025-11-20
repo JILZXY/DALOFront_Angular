@@ -138,8 +138,7 @@
               <p class="abogado-ubicacion">{{ abogado.ciudad }}, {{ abogado.estado }}</p>
               
               <div class="calificacion-container">
-                <span *ngFor="let estrella of getEstrellas(abogado.calificacion)" 
-                      class="estrella {{ estrella }}"></span>
+                <span class="calificacion-label">Calificación General:</span>
                 <span class="calificacion-numero">{{ (abogado.calificacion || 0).toFixed(1) }}</span>
               </div>
             </div>

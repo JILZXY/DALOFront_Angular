@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  min-height: calc(100vh - 80px);
+  background-color: #D9D9D9;
+  background-image: 
+    repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255, 165, 0, 0.05) 35px, rgba(255, 165, 0, 0.05) 70px);
+  padding-top: 100px;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+}
+
+.opciones-bufet-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 30px;
+  text-align: center;
+}
+
+.titulo-principal {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 900;
+  color: #223240;
+  margin-bottom: 60px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.opciones-grid {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.opcion-card {
+  flex: 1;
+  min-width: 280px;
+  max-width: 350px;
+  background-color: #223240;
+  border: none;
+  padding: 8px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.opcion-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.25);
+  background-color: #385169;
+}
+
+.opcion-card:active {
+  transform: translateY(-4px) scale(1.01);
+}
+
+.opcion-card-inner {
+  border: 3px solid #fdfdfd;
+  border-radius: 12px;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  box-sizing: border-box;
+  gap: 30px;
+}
+
+.opcion-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100px;
+}
+
+.opcion-icono svg {
+  width: 80px;
+  height: 80px;
+}
+
+.opcion-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.opcion-titulo {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  color: #FDFDFD;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+.opcion-subtitulo {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  color: #FDFDFD;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .opciones-grid {
+    gap: 30px;
+  }
+  
+  .opcion-card {
+    min-width: 250px;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding-top: 60px;
+    padding-bottom: 30px;
+  }
+  
+  .opciones-bufet-container {
+    padding: 0 20px;
+  }
+  
+  .titulo-principal {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+  
+  .opciones-grid {
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+  }
+  
+  .opcion-card {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .opcion-card-inner {
+    padding: 35px 25px;
+    gap: 25px;
+  }
+  
+  .opcion-icono svg {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .titulo-principal {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+  
+  .opcion-card-inner {
+    padding: 30px 20px;
+    gap: 20px;
+  }
+  
+  .opcion-icono svg {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .opcion-titulo,
+  .opcion-subtitulo {
+    font-size: 18px;
+  }
+}
+
