@@ -27,4 +27,25 @@ export class BufeteService {
         );
     }
 
+
+    getById(id: number): Observable<Bufete> {
+        return this.http.get<Bufete>(
+            `${this.baseUrl}${API_CONFIG.endpoints.bufetes}/${id}`
+        );
+    }
+
+    getMisBufetes(): Observable<Bufete[]> {
+        return this.http.get<Bufete[]>(
+            `${this.baseUrl}${API_CONFIG.endpoints.misBufetes}`
+        );
+    }
+
+
+    create(data: CreateBufeteRequest): Observable<Bufete> {
+        return this.http.post<Bufete>(
+            `${this.baseUrl}${API_CONFIG.endpoints.bufetes}`,
+            data
+        );
+    }
+
 }
