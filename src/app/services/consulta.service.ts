@@ -99,4 +99,80 @@ export class ConsultaService {
         );
     }
 
+
+    create(data: CreateConsultaRequest): Observable<Consulta> {
+        return this.http.post<Consulta>(
+            `${this.baseUrl}${API_CONFIG.endpoints.consultas}`,
+            data
+        );
+    }
+
+    updateEstado(id: number, data: UpdateEstadoConsultaRequest): Observable<void> {
+        return this.http.patch<void>(
+            `${this.baseUrl}${API_CONFIG.endpoints.consultas}/${id}/estado`,
+            data
+        );
+    }
+
+
+    delete(id: number): Observable<void> {
+        return this.http.delete<void>(
+            `${this.baseUrl}${API_CONFIG.endpoints.consultas}/${id}`
+        );
+    }
+
+
+    getRespuestas(consultaId: number): Observable<RespuestaConsulta[]> {
+        return this.http.get<RespuestaConsulta[]>(
+            `${this.baseUrl}${API_CONFIG.endpoints.consultas}/${consultaId}/respuestas`
+        );
+    }
+
+
+    createRespuesta(
+        consultaId: number,
+        data: CreateRespuestaRequest
+    ): Observable<RespuestaConsulta> {
+        return this.http.post<RespuestaConsulta>(
+            `${this.baseUrl}${API_CONFIG.endpoints.consultas}/${consultaId}/respuestas`,
+            data
+        );
+    }
+
+
+    getRespuestaById(id: number): Observable<RespuestaConsulta> {
+        return this.http.get<RespuestaConsulta>(
+            `${this.baseUrl}${API_CONFIG.endpoints.respuestas}/${id}`
+        );
+    }
+
+
+    likeRespuesta(id: number): Observable<void> {
+        return this.http.post<void>(
+            `${this.baseUrl}${API_CONFIG.endpoints.respuestas}/${id}/like`,
+            {}
+        );
+    }
+
+
+    deleteRespuesta(id: number): Observable<void> {
+        return this.http.delete<void>(
+            `${this.baseUrl}${API_CONFIG.endpoints.respuestas}/${id}`
+        );
+    }
+
+
+    getTotalRespuestasByAbogado(abogadoId: string): Observable<{ total: number }> {
+        return this.http.get<{ total: number }>(
+            `${this.baseUrl}/abogado/${abogadoId}/total`
+        );
+    }
+
+
+    getRespuestasByAbogado(abogadoId: string): Observable<RespuestaConsulta[]> {
+        return this.http.get<RespuestaConsulta[]>(
+            `${this.baseUrl}/abogado/${abogadoId}`
+        );
+    }
+
 }
