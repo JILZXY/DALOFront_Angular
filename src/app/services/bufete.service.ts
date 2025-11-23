@@ -48,4 +48,67 @@ export class BufeteService {
         );
     }
 
+    update(id: number, data: Partial<Bufete>): Observable<Bufete> {
+        return this.http.put<Bufete>(
+            `${this.baseUrl}${API_CONFIG.endpoints.bufetes}/${id}`,
+            data
+        );
+    }
+
+
+    delete(id: number): Observable<void> {
+        return this.http.delete<void>(
+            `${this.baseUrl}${API_CONFIG.endpoints.bufetes}/${id}`
+        );
+    }
+
+
+    createSolicitud(data: CreateSolicitudBufeteRequest): Observable<SolicitudBufete> {
+        return this.http.post<SolicitudBufete>(
+            `${this.baseUrl}${API_CONFIG.endpoints.solicitudesBufete}`,
+            data
+        );
+    }
+
+
+    getMisSolicitudes(): Observable<SolicitudBufete[]> {
+        return this.http.get<SolicitudBufete[]>(
+            `${this.baseUrl}${API_CONFIG.endpoints.solicitudesBufete}/mis-solicitudes`
+        );
+    }
+
+
+    getSolicitudesByBufete(bufeteId: number): Observable<SolicitudBufete[]> {
+        return this.http.get<SolicitudBufete[]>(
+            `${this.baseUrl}${API_CONFIG.endpoints.solicitudesBufete}/bufete/${bufeteId}`
+        );
+    }
+
+
+    updateSolicitud(
+        id: number,
+        data: UpdateSolicitudEstadoRequest
+    ): Observable<void> {
+        return this.http.patch<void>(
+            `${this.baseUrl}${API_CONFIG.endpoints.solicitudesBufete}/${id}`,
+            data
+        );
+    }
+
+
+    getCalificaciones(bufeteId: number): Observable<CalificacionBufete[]> {
+        return this.http.get<CalificacionBufete[]>(
+            `${this.baseUrl}${API_CONFIG.endpoints.calificacionesBufete}/bufete/${bufeteId}`
+        );
+    }
+
+    createCalificacion(
+        bufeteId: number,
+        data: CreateCalificacionBufeteRequest
+    ): Observable<CalificacionBufete> {
+        return this.http.post<CalificacionBufete>(
+            `${this.baseUrl}${API_CONFIG.endpoints.calificacionesBufete}/bufete/${bufeteId}`,
+            data
+        );
+    }
 }
