@@ -82,7 +82,12 @@ export class Reportes implements OnInit {
     });
   }
 
-  deleteReport(reportId: number, consultaId?: number): void {
+  deleteReport(reportId: number | string, consultaId?: number | null): void {
+    if (typeof reportId !== 'number') {
+      alert('Error: El ID del reporte no es válido.');
+      return;
+    }
+
     if (!confirm('¿Seguro que deseas eliminar este reporte?')) {
       return;
     }

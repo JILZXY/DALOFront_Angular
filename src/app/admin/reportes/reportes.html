@@ -19,7 +19,6 @@
           <tr>
             <th>ID</th>
             <th>Fecha</th>
-            <th>Estado</th>
             <th>Consulta ID</th>
             <th>Acciones</th>
           </tr>
@@ -28,14 +27,6 @@
           <tr *ngFor="let report of reportes; trackBy: trackByReportId">
             <td>{{ getReportId(report) }}</td>
             <td>{{ getFechaReporte(report) }}</td>
-            <td>
-              <span class="status-badge" [ngClass]="{
-                  'status-active': isReportActive(report),
-                  'status-inactive': !isReportActive(report)
-                }">
-                {{ isReportActive(report) ? 'Activo' : 'Inactivo' }}
-              </span>
-            </td>
             <td>{{ getConsultaId(report) || 'N/A' }}</td>
             <td class="action-buttons">
               <button *ngIf="getConsultaId(report)" class="btn btn-view"
