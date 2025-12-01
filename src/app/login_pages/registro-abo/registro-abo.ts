@@ -188,7 +188,7 @@ export class RegistroAbo implements OnInit {
 
       // Datos de Abogado
       cedulaProfesional: formData.cedula,
-      biografia: formData.biografia,
+      biografia: formData.biografia || null,
       especialidadesIds: this.selectedMaterias
     };
 

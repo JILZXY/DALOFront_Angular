@@ -22,7 +22,6 @@ export class CalificacionService {
         );
     }
 
-
     getPromedios(abogadoId: string): Observable<CalificacionPromedio> {
         return this.http.get<CalificacionPromedio>(
             `${this.baseUrl}${API_CONFIG.endpoints.calificaciones}/abogado/${abogadoId}/promedios`
@@ -35,20 +34,17 @@ export class CalificacionService {
         );
     }
 
-
     getPromedioGeneral(abogadoId: string): Observable<{ promedioGeneral: number }> {
         return this.http.get<{ promedioGeneral: number }>(
             `${this.baseUrl}${API_CONFIG.endpoints.calificaciones}/promedio/${abogadoId}`
         );
     }
 
-
     getPromediosPorRespuesta(respuestaId: number): Observable<any> {
         return this.http.get(
             `${this.baseUrl}${API_CONFIG.endpoints.calificaciones}/promedios/respuesta/${respuestaId}`
         );
     }
-
 
     create(
         abogadoId: string,

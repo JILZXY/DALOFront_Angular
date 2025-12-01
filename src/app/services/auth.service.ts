@@ -18,14 +18,12 @@ export class AuthService {
         private router: Router
     ) { }
 
-
     login(credentials: LoginRequest): Observable<AuthResponse> {
         return this.http.post<AuthResponse>(
             `${this.baseUrl}${API_CONFIG.endpoints.login}`,
             credentials
         );
     }
-
 
     register(data: RegisterRequest): Observable<AuthResponse> {
         return this.http.post<AuthResponse>(
@@ -41,13 +39,11 @@ export class AuthService {
         );
     }
 
-
     getCurrentUser(): Observable<Usuario> {
         return this.http.get<Usuario>(
             `${this.baseUrl}${API_CONFIG.endpoints.me}`
         );
     }
-
 
     getUserByEmail(email: string): Observable<Usuario> {
         return this.http.get<Usuario>(
@@ -55,13 +51,11 @@ export class AuthService {
         );
     }
 
-
     getUsuariosInactivos(): Observable<Usuario[]> {
         return this.http.get<Usuario[]>(
             `${this.baseUrl}/api/auth/inactivos`
         );
     }
-
 
     activarUsuario(id: string): Observable<void> {
         return this.http.patch<void>(
@@ -70,13 +64,11 @@ export class AuthService {
         );
     }
 
-
     getAllUsuarios(): Observable<Usuario[]> {
         return this.http.get<Usuario[]>(
             `${this.baseUrl}/api/usuarios`
         );
     }
-
 
     getUsuarioById(id: string): Observable<Usuario> {
         return this.http.get<Usuario>(
@@ -84,14 +76,12 @@ export class AuthService {
         );
     }
 
-
     updateUsuario(id: string, data: Partial<Usuario>): Observable<Usuario> {
         return this.http.put<Usuario>(
             `${this.baseUrl}/api/usuarios/${id}`,
             data
         );
     }
-
 
     deleteUsuario(id: string): Observable<void> {
         return this.http.delete<void>(
@@ -101,7 +91,6 @@ export class AuthService {
 
     logout(): void {
         this.authState.clearAuth();
-
         this.router.navigate(['/login']);
     }
 }
