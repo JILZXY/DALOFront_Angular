@@ -1,83 +1,192 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
 
 :host {
   display: block;
-  width: 100%;
-  margin: 0;
-  padding: 0;
+  font-family: 'Montserrat', sans-serif;
 }
 
-header {
-  font-family: 'Montserrat', sans-serif;
+/* --- Layout Principal --- */
+.header-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 80px;
+  /* Espacio para el header fijo */
+  background-color: #f4f6f9;
+}
+
+/* --- Header Superior --- */
+.main-header {
   background-color: #223240;
   color: #D9D9D9;
-  width: 100%;
   height: 80px;
-  display: flex;
-  align-items: center;
-  padding: 0 30px;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  box-shadow: 0px 20px 15px -20px rgba(0,0,0,0.5);
-  z-index: 1000;
+  width: 100%;
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 1000;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
   box-sizing: border-box;
 }
 
-.menu-toggle {
+.header-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menu-toggle-btn {
   background: none;
   border: none;
-  cursor: pointer;
-  padding: 8px;
-}
-
-.icono-menu {
-  height: 27px;
-  width: auto;
-}
-
-.page-title {
-  margin-left: 15px;
-  font-size: 20px;
-  font-weight: 820;
   color: #D9D9D9;
-  flex-grow:1;
+  font-size: 28px;
+  cursor: pointer;
+  margin-right: 15px;
 }
 
-.user-info {
-  display:flex;
-  flex-direction:column;
-  align-items: flex-end;
+.logo a {
+  font-size: 24px;
+  font-weight: 800;
+  color: #D9D9D9;
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+.user-section {
   text-align: right;
 }
 
 .user-name {
+  display: block;
   font-size: 16px;
   font-weight: 700;
 }
 
 .user-role {
   font-size: 12px;
-  font-weight:500;
-  color: #006DCC;
+  color: #00A8E8;
 }
 
-.overlay {
+/* --- Sidebar (Menú Lateral) --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  /* Oculto por defecto */
+  width: 280px;
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+  z-index: 1100;
+  transition: left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar-header {
+  background-color: #223240;
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-name-slide {
+  margin: 0;
+  font-size: 18px;
+}
+
+.user-role-slide {
+  margin: 0;
+  font-size: 13px;
+  color: #00A8E8;
+}
+
+.menu-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.menu-item:hover,
+.menu-item.active {
+  background-color: #f0f4f8;
+  color: #006DCC;
+  border-left: 4px solid #006DCC;
+}
+
+.menu-item img {
+  width: 24px;
+  height: 24px;
+  margin-right: 15px;
+  object-fit: contain;
+}
+
+.menu-divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 10px 0;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid #eee;
+}
+
+.menu-item.logout {
+  color: #D9534F;
+}
+
+.menu-item.logout:hover {
+  background-color: #fff5f5;
+}
+
+/* --- Overlay (Fondo oscuro) --- */
+.sidebar-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 5;
+  z-index: 1050;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity 0.3s;
 }
 
-.overlay.active {
+.sidebar-overlay.active {
   opacity: 1;
   visibility: visible;
 }

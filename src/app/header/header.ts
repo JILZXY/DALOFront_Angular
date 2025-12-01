@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthState } from '../state/auth.state';
 import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
@@ -17,33 +17,46 @@ export class HeaderComponent implements OnInit {
   currentUser$!: Observable<Usuario | null>;
   isAuthenticated$!: Observable<boolean>;
 
-  // Para acceso directo a propiedades
   currentUser: Usuario | null = null;
+  isOpen = false;
 
   constructor(
     public authState: AuthState,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    // Suscribirse a los observables
     this.currentUser$ = this.authState.currentUser$;
     this.isAuthenticated$ = this.authState.isAuthenticated$;
 
-    // También podemos mantener una referencia directa
     this.authState.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
   }
 
-  // ✨ Método para cerrar sesión
-  logout(): void {
+  // Abrir/cerrar sidebar
+  toggleSidebar(): void {
+    this.isOpen = !this.isOpen;
+  }
+
+  closeSidebar(): void {
+    this.isOpen = false;
+  }
+
+  // Cerrar sesión
+  logout(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+    }
+
     if (confirm('¿Estás seguro de cerrar sesión?')) {
       this.authService.logout();
+      this.closeSidebar();
     }
   }
 
-  // ✨ Métodos para verificar roles
+  // Métodos para verificar roles
   isCliente(): boolean {
     return this.authState.isCliente();
   }
@@ -56,13 +69,12 @@ export class HeaderComponent implements OnInit {
     return this.authState.isAdmin();
   }
 
-  // ✨ Obtener nombre del usuario
-  getNombreUsuario(): string {
+  // Getters para el template
+  get userName(): string {
     return this.currentUser?.nombre || 'Usuario';
   }
 
-  // ✨ Obtener rol en texto
-  getRolTexto(): string {
+  get userRole(): string {
     if (this.isCliente()) return 'Cliente';
     if (this.isAbogado()) return 'Abogado';
     if (this.isAdmin()) return 'Administrador';
