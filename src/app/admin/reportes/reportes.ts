@@ -110,26 +110,22 @@ export class Reportes implements OnInit {
 
   // Helpers para el template
   getReportId(report: Reporte): number | string {
-    return report.idReporte || report.id || 'N/A';
+    return report.id || 'N/A';
   }
 
   getFechaReporte(report: Reporte): string {
-    const fechaRaw = report.fechaReporte || report.fecha;
+    const fechaRaw = report.fechaReporte;
     return fechaRaw
       ? new Date(fechaRaw).toLocaleDateString('es-ES')
       : 'No disponible';
   }
 
-  isReportActive(report: Reporte): boolean {
-    return report.activo !== undefined ? report.activo : true;
-  }
-
   getConsultaId(report: Reporte): number | null {
-    return report.idConsulta || report.consultaId || null;
+    return report.consultaId || null;
   }
 
   trackByReportId(index: number, report: Reporte): number | string {
-    return report.idReporte || report.id || index;
+    return report.id || index;
   }
 
   onModalBackdropClick(event: MouseEvent): void {
