@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
+import { AuthState } from '../../state/auth.state';
+import { EstadoService } from '../../services/estado.service';
+import { RegisterRequest } from '../../models';
 
 @Component({
   selector: 'app-registro-user',
@@ -16,35 +19,22 @@ export class RegistroUser implements OnInit {
   currentTab: number = 1;
   isLoading: boolean = false;
   errorMessage: string = '';
-  
-  estados = [
-    "Chiapas", "Nuevo Leon", "Jalisco", "Ciudad de México", "Veracruz", "Aguascalientes"
-  ];
 
-  municipios: { [key: string]: string[] } = {
-    "Chiapas": ["San Cristobal", "Tuxtla Gutiérrez", "Tapachula", "Comitán de Domínguez", "Palenque"],
-    "Nuevo Leon": ["Monterrey", "San Nicolás", "Apodaca"],
-    "Jalisco": ["Guadalajara", "Zapopan", "Tlaquepaque"],
-    "Ciudad de México": ["Benito Juárez", "Coyoacán", "Cuauhtémoc"],
-    "Veracruz": ["Veracruz", "Xalapa", "Coatzacoalcos"],
-    "Aguascalientes": ["Aguascalientes", "Calvillo"]
-  };
-
-  municipiosDisponibles: string[] = [];
+  estados: any[] = [];
+  municipios: any[] = [];
+  municipiosFiltrados: any[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
+    private authService: AuthService,
+    private authState: AuthState,
+    private estadoService: EstadoService,
     private router: Router
   ) {
     this.registroForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/)]],
-      apellidos: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/)]],
-      telefono: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-      fechaNacimiento: ['', [Validators.required]],
-      genero: ['', Validators.required],
-      estado: ['', Validators.required],
-      municipio: ['', Validators.required],
+      estadoId: ['', Validators.required],
+      municipioId: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
@@ -52,36 +42,51 @@ export class RegistroUser implements OnInit {
   }
 
   ngOnInit(): void {
-    this.registroForm.get('estado')?.valueChanges.subscribe(estado => {
-      this.municipiosDisponibles = this.municipios[estado] || [];
-      this.registroForm.get('municipio')?.setValue('');
+    // Cargar estados desde el backend
+    this.estadoService.getAllEstados().subscribe({
+      next: (estados) => {
+        this.estados = estados;
+      },
+      error: (err) => {
+        console.error('Error al cargar estados:', err);
+        this.errorMessage = 'No se pudieron cargar los estados.';
+      }
+    });
+
+    // Cargar todos los municipios
+    this.estadoService.getAllMunicipios().subscribe({
+      next: (municipios) => {
+        this.municipios = municipios;
+      },
+      error: (err) => {
+        console.error('Error al cargar municipios:', err);
+      }
+    });
+
+    // Filtrar municipios cuando cambia el estado
+    this.registroForm.get('estadoId')?.valueChanges.subscribe(estadoId => {
+      if (estadoId) {
+        this.municipiosFiltrados = this.municipios.filter(
+          m => m.estadoId === Number(estadoId)
+        );
+        this.registroForm.get('municipioId')?.setValue('');
+      } else {
+        this.municipiosFiltrados = [];
+      }
     });
   }
 
   cambiarTab(tab: number): void {
     if (tab === 2) {
-      const controls = ['nombre', 'apellidos', 'telefono', 'fechaNacimiento', 'genero', 'estado', 'municipio'];
+      const controls = ['nombre', 'estadoId', 'municipioId'];
       const isValid = controls.every(c => this.registroForm.get(c)?.valid);
-      
+
       if (!isValid) {
         this.errorMessage = 'Por favor completa todos los datos personales correctamente.';
         return;
       }
-      
-      // Validar edad > 18
-      const fecha = new Date(this.registroForm.get('fechaNacimiento')?.value);
-      const hoy = new Date();
-      let edad = hoy.getFullYear() - fecha.getFullYear();
-      const m = hoy.getMonth() - fecha.getMonth();
-      if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
-        edad--;
-      }
-      if (edad < 18) {
-        this.errorMessage = 'Debes ser mayor de 18 años.';
-        return;
-      }
     }
-    
+
     this.errorMessage = '';
     this.currentTab = tab;
   }
@@ -98,30 +103,37 @@ export class RegistroUser implements OnInit {
     }
 
     this.isLoading = true;
+    this.errorMessage = '';
+
     const formData = this.registroForm.value;
 
-    const payload = {
+    // Preparar payload según el formato del backend
+    const payload: RegisterRequest = {
       nombre: formData.nombre,
-      apellidos: formData.apellidos,
-      telefono: formData.telefono,
-      fechaNacimiento: formData.fechaNacimiento,
-      genero: formData.genero,
-      idRol: 1, 
-      correo: formData.email,
-      contraseña: formData.password,
-      estado: formData.estado,
-      ciudad: formData.municipio
+      email: formData.email,
+      contrasena: formData.password,
+      municipioId: formData.municipioId ? Number(formData.municipioId) : null,
+      rolId: 1  // Cliente
     };
 
-    this.http.post('http://52.3.15.55:7000/usuarios', payload).subscribe({
-      next: () => {
-        alert('Registro exitoso');
-        this.router.navigate(['/login']);
+    this.authService.register(payload).subscribe({
+      next: (response) => {
+        // Usuario cliente se activa inmediatamente
+        this.authState.setAuth(response.token, response.usuario);
+
+        alert('¡Registro exitoso! Bienvenido a DALO.');
+        this.router.navigate(['/usuario/home']);
       },
-      error: (err) => {
+      error: (error) => {
         this.isLoading = false;
-        this.errorMessage = 'Error al registrar usuario. Intenta nuevamente.';
-        console.error(err);
+
+        if (error.status === 400) {
+          this.errorMessage = 'El correo ya está registrado. Intenta con otro.';
+        } else if (error.status === 0) {
+          this.errorMessage = 'Error de conexión. Verifica tu red.';
+        } else {
+          this.errorMessage = error.error?.error || 'Error al registrar. Intenta nuevamente.';
+        }
       }
     });
   }

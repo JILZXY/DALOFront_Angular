@@ -1,40 +1,52 @@
-<header>
-  <button class="menu-toggle" (click)="toggleSidebar()" aria-label="Abrir menú">
-    <img src="/Images/menu.png" alt="Abrir menú" class="icono-menu" />
-  </button>
-  <h2 class="page-title">{{ pageTitle }}</h2>
-  <div class="user-info">
-    <div class="user-name">{{ userName }}</div>
-    <div class="user-role">{{ userRole }}</div>
+<header class="main-header">
+  <div class="header-container">
+    <!-- Logo -->
+    <div class="logo">
+      <a routerLink="/">DALO</a>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="main-nav">
+      <!-- Mostrar solo si está autenticado -->
+      <ng-container *ngIf="isAuthenticated$ | async">
+
+        <!-- Links según rol -->
+        <ng-container *ngIf="isCliente()">
+          <a routerLink="/usuario/home">Inicio</a>
+          <a routerLink="/usuario/mis-preguntas">Mis Preguntas</a>
+          <a routerLink="/usuario/chat">Chat</a>
+        </ng-container>
+
+        <ng-container *ngIf="isAbogado()">
+          <a routerLink="/abogado/foro">Foro</a>
+          <a routerLink="/abogado/mis-respuestas">Mis Respuestas</a>
+          <a routerLink="/abogado/chat">Chat</a>
+        </ng-container>
+
+        <ng-container *ngIf="isAdmin()">
+          <a routerLink="/admin/inactivos">Usuarios Inactivos</a>
+          <a routerLink="/admin/reportes">Reportes</a>
+        </ng-container>
+
+      </ng-container>
+    </nav>
+
+    <!-- Usuario y logout -->
+    <div class="user-section">
+      <!-- Si está autenticado -->
+      <div *ngIf="isAuthenticated$ | async" class="user-info">
+        <span class="user-name">{{ getNombreUsuario() }}</span>
+        <span class="user-role">({{ getRolTexto() }})</span>
+        <button class="btn-logout" (click)="logout()">
+          Cerrar Sesión
+        </button>
+      </div>
+
+      <!-- Si NO está autenticado -->
+      <div *ngIf="!(isAuthenticated$ | async)" class="auth-links">
+        <a routerLink="/login" class="btn-login">Iniciar Sesión</a>
+        <a routerLink="/login/registro-usuario" class="btn-register">Registrarse</a>
+      </div>
+    </div>
   </div>
 </header>
-
-<div class="overlay" 
-     [class.active]="isSidebarActive" 
-     (click)="closeSidebar()">
-</div>
-
-<app-slide-user 
-  *ngIf="currentRole === 1" 
-  [isOpen]="isSidebarActive" 
-  (closed)="closeSidebar()">
-</app-slide-user>
-
-<app-slide-ab 
-  *ngIf="currentRole === 2" 
-  [isOpen]="isSidebarActive" 
-  (closed)="closeSidebar()">
-</app-slide-ab>
-
-<app-slide-admin 
-  *ngIf="currentRole === 3" 
-  [isOpen]="isSidebarActive" 
-  (closed)="closeSidebar()">
-</app-slide-admin>
-
-<!-- TU CÓDIGO DE HEADER (LOGO, MENÚ, ETC) VA AQUÍ -->
-
-<main>
-  <!-- ESTA ETIQUETA ES OBLIGATORIA -->
-  <router-outlet></router-outlet>
-</main>

@@ -1,91 +1,81 @@
 <section class="vista-registro">
   <div class="izquierda">
     <h1>ABOGADO</h1>
-    <p>Como abogado, formarás parte de una comunidad comprometida con brindar orientación legal gratuita, clara y responsable. Tendrás acceso a las preguntas anónimas realizadas por los usuarios y podrás responder según tu área de especialidad.</p>
-    <p>Tu participación es clave para generar confianza, acercar la justicia a quienes más lo necesitan y fortalecer la cultura legal desde un enfoque accesible y humano.</p>
+    <p>Como abogado, formarás parte de una comunidad comprometida con brindar orientación legal gratuita, clara y
+      responsable. Tendrás acceso a las preguntas anónimas realizadas por los usuarios y podrás responder según tu área
+      de especialidad.</p>
+    <p>Tu participación es clave para generar confianza, acercar la justicia a quienes más lo necesitan y fortalecer la
+      cultura legal desde un enfoque accesible y humano.</p>
   </div>
 
   <div class="derecha">
     <div class="form-wrapper">
       <h3>Crea tu cuenta <strong>DALO</strong></h3>
-      <h2>REGISTRO SESIÓN DE ABOGADO</h2>
+      <h2>REGISTRO DE ABOGADO</h2>
 
       <div class="tabs-container">
         <div class="tabs-header">
-          <button class="tab-button" [class.active]="currentTab === 1">1. Datos</button>
-          <button class="tab-button" [class.active]="currentTab === 2">2. Acceso</button>
-          <button class="tab-button" [class.active]="currentTab === 3">3. Perfil</button>
-          <button class="tab-button" [class.active]="currentTab === 4">4. Especialidad</button>
+          <button class="tab-button" [class.active]="currentTab === 1" type="button">1. Datos</button>
+          <button class="tab-button" [class.active]="currentTab === 2" type="button">2. Acceso</button>
+          <button class="tab-button" [class.active]="currentTab === 3" type="button">3. Perfil</button>
+          <button class="tab-button" [class.active]="currentTab === 4" type="button">4. Especialidad</button>
         </div>
       </div>
 
       <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
-        
+
+        <!-- TAB 1: DATOS PERSONALES -->
         <div *ngIf="currentTab === 1" class="tab-content">
           <div class="fila">
-            <div class="campo">
-              <label>Nombre(s)</label>
-              <input type="text" formControlName="nombre">
-            </div>
-            <div class="campo">
-              <label>Apellidos</label>
-              <input type="text" formControlName="apellidos">
+            <div class="campo full-width">
+              <label>Nombre Completo</label>
+              <input type="text" formControlName="nombre" placeholder="Tu nombre completo">
             </div>
           </div>
+
           <div class="fila">
-            <div class="campo">
-              <label>Teléfono</label>
-              <input type="text" formControlName="telefono" maxlength="10">
-            </div>
-            <div class="campo">
-              <label>Fecha Nacimiento</label>
-              <input type="date" formControlName="fechaNacimiento">
-            </div>
-          </div>
-          <div class="fila">
-            <div class="campo">
-              <label>Género</label>
-              <select formControlName="genero">
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-              </select>
-            </div>
             <div class="campo">
               <label>Estado</label>
-              <select formControlName="estado">
-                <option *ngFor="let est of estados" [value]="est">{{ est }}</option>
+              <select formControlName="estadoId">
+                <option value="">Selecciona Estado</option>
+                <option *ngFor="let estado of estados" [value]="estado.id">
+                  {{ estado.nombre }}
+                </option>
               </select>
             </div>
-          </div>
-          <div class="fila">
-             <div class="campo">
+            <div class="campo">
               <label>Municipio</label>
-              <select formControlName="municipio">
-                <option *ngFor="let mun of municipiosDisponibles" [value]="mun">{{ mun }}</option>
+              <select formControlName="municipioId" [disabled]="!registroForm.get('estadoId')?.value">
+                <option value="">Selecciona Municipio</option>
+                <option *ngFor="let municipio of municipiosFiltrados" [value]="municipio.id">
+                  {{ municipio.nombre }}
+                </option>
               </select>
             </div>
           </div>
-          
+
           <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
-          
+
           <button type="button" class="btn-submit" (click)="cambiarTab(2)">CONTINUAR</button>
         </div>
 
+        <!-- TAB 2: ACCESO -->
         <div *ngIf="currentTab === 2" class="tab-content">
           <div class="fila">
             <div class="campo full-width">
-              <label>Email</label>
-              <input type="email" formControlName="email">
+              <label>Correo Electrónico</label>
+              <input type="email" formControlName="email" placeholder="correo@ejemplo.com">
             </div>
           </div>
+
           <div class="fila">
             <div class="campo">
-              <label>Contraseña (Mín 6 caracteres)</label>
-              <input type="password" formControlName="password">
+              <label>Contraseña (Mínimo 6 caracteres)</label>
+              <input type="password" formControlName="password" placeholder="******">
             </div>
             <div class="campo">
               <label>Confirmar Contraseña</label>
-              <input type="password" formControlName="confirmPassword">
+              <input type="password" formControlName="confirmPassword" placeholder="******">
             </div>
           </div>
 
@@ -97,24 +87,29 @@
           </div>
         </div>
 
+        <!-- TAB 3: PERFIL -->
         <div *ngIf="currentTab === 3" class="tab-content">
           <div class="campo-foto">
             <div class="preview-container" *ngIf="previewUrl">
-                <img [src]="previewUrl" class="foto-preview">
+              <img [src]="previewUrl" class="foto-preview" alt="Vista previa">
             </div>
             <label class="btn-upload">
-                Subir Foto de Perfil
-                <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+              Subir Foto de Perfil
+              <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
             </label>
           </div>
 
           <div class="campo full-width">
             <label>Biografía Corta (150 caracteres)</label>
-            <textarea formControlName="biografia" rows="3" maxlength="150"></textarea>
+            <textarea formControlName="biografia" rows="3" maxlength="150"
+              placeholder="Describe brevemente tu experiencia profesional"></textarea>
+            <small>{{ registroForm.get('biografia')?.value?.length || 0 }}/150 caracteres</small>
           </div>
+
           <div class="campo full-width">
             <label>Descripción de Servicios</label>
-            <textarea formControlName="descripcion" rows="4"></textarea>
+            <textarea formControlName="descripcion" rows="4"
+              placeholder="Describe los servicios legales que ofreces"></textarea>
           </div>
 
           <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
@@ -125,24 +120,27 @@
           </div>
         </div>
 
+        <!-- TAB 4: ESPECIALIDAD -->
         <div *ngIf="currentTab === 4" class="tab-content">
           <div class="campo full-width">
             <label>Cédula Profesional</label>
-            <input type="text" formControlName="cedula">
+            <input type="text" formControlName="cedula" placeholder="1234567">
           </div>
 
           <h3>Selecciona tus especialidades</h3>
-          
+
           <div class="materias-grid">
-            <div 
-              class="materia-card" 
-              *ngFor="let m of materias" 
-              (click)="toggleMateria(m.id)"
-              [class.selected]="isSelected(m.id)"
-            >
+            <div class="materia-card" *ngFor="let m of materias" (click)="toggleMateria(m.id)"
+              [class.selected]="isSelected(m.id)">
               <img [src]="m.icono" [alt]="m.nombre" class="materia-icon">
               <span class="materia-title">{{ m.nombre }}</span>
             </div>
+          </div>
+
+          <div class="info-box">
+            <p><strong>Nota importante:</strong></p>
+            <p>Tu cuenta será revisada por un administrador antes de activarse. Recibirás una notificación cuando tu
+              cuenta esté lista para usar.</p>
           </div>
 
           <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
@@ -150,7 +148,7 @@
           <div class="botones-accion">
             <button type="button" class="btn-secondary" (click)="cambiarTab(3)">Atrás</button>
             <button type="submit" class="btn-submit" [disabled]="isLoading">
-                {{ isLoading ? 'Registrando...' : 'FINALIZAR REGISTRO' }}
+              {{ isLoading ? 'Registrando...' : 'FINALIZAR REGISTRO' }}
             </button>
           </div>
         </div>

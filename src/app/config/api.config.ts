@@ -1,9 +1,10 @@
 export const API_CONFIG = {
-    baseUrl: 'http://localhost:7000',
+    baseUrl: 'http://100.30.46.199:7000',
     endpoints: {
 
         login: '/api/auth/login',
         register: '/api/auth/register',
+        registerAbogado: '/api/auth/register/abogado',
         me: '/api/usuarios/me',
 
         estados: '/api/estados',

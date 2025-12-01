@@ -2,23 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, finalize, tap } from 'rxjs/operators';
-import { throwError } from 'rxjs';
-
-interface Usuario {
-  id: number;
-  nombre: string;
-  email: string;
-  idRol: number;
-}
-
-interface LoginResponse {
-  usuario: Usuario;
-  token: string;
-  error?: string; 
-}
+import { AuthService } from '../../services/auth.service';
+import { AuthState } from '../../state/auth.state';
+import { LoginRequest } from '../../models';
 
 @Component({
   selector: 'app-login',
@@ -28,28 +14,24 @@ interface LoginResponse {
   styleUrls: ['./login.css']
 })
 export class Login implements OnInit {
-
   correo: string = '';
   contrasena: string = '';
   mensaje: string = '';
   mensajeColor: string = '#000';
-  isLoading: boolean = false; 
+  isLoading: boolean = false;
 
-  private apiUrl: string = 'http://52.3.15.55:7000/api/login';
-
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private authState: AuthState
+  ) { }
 
   ngOnInit(): void {
-    if (this.isLoggedIn()) {
-      this.router.navigate(['/usuario/home']);
+    if (this.authState.isAuthenticated) {
+      this.redirectByRole();
     }
   }
 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
-  }
-
-  
   login(event: Event): void {
     event.preventDefault();
 
@@ -59,47 +41,64 @@ export class Login implements OnInit {
       return;
     }
 
-    this.isLoading = true; 
+    this.isLoading = true;
     this.mensajeColor = '#006DCC';
     this.mensaje = 'Iniciando sesión...';
 
-    const body = {
-      correo: this.correo,
-      contraseña: this.contrasena,
+    const credentials: LoginRequest = {
+      email: this.correo,
+      contrasena: this.contrasena
     };
 
-    this.http.post<LoginResponse>(this.apiUrl, body)
-      .pipe(
-        tap((data) => {
-          localStorage.setItem('usuario', JSON.stringify(data.usuario));
-          localStorage.setItem('token', data.token);
+    this.authService.login(credentials).subscribe({
+      next: (response) => {
+        if (!response.usuario.activo) {
+          this.mensajeColor = '#F0AD4E';
+          this.mensaje = 'Tu cuenta está pendiente de activación. Un administrador debe validar tu cédula profesional.';
+          this.isLoading = false;
+          return;
+        }
 
-          this.mensajeColor = '#5CB85C';
-          this.mensaje = '¡Inicio de sesión exitoso! Redirigiendo...';
+        this.authState.setAuth(response.token, response.usuario);
 
-          const usuario: Usuario = data.usuario;
-          switch (usuario.idRol) {
-            case 1: this.router.navigate(['/usuario/home']); break;
-            case 2: this.router.navigate(['/abogado/foro']); break;
-            case 3: this.router.navigate(['/admin/inactivos']); break;
-            default: this.router.navigate(['/usuario/home']);
-          }
-        }),
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 0) {
-            this.mensaje = 'Error de conexión. Inténtalo más tarde.';
-          } else {
-            this.mensaje = error.error?.error || 'Credenciales inválidas.';
-          }
-          this.mensajeColor = '#D9534F';
-          
-          return throwError(() => new Error(this.mensaje));
-        }),
-        finalize(() => {
-          this.isLoading = false; 
-        })
-      )
-      .subscribe(); 
+        this.mensajeColor = '#5CB85C';
+        this.mensaje = '¡Inicio de sesión exitoso! Redirigiendo...';
+
+        setTimeout(() => {
+          this.redirectByRole();
+        }, 500);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.mensajeColor = '#D9534F';
+
+        if (error.status === 0) {
+          this.mensaje = 'Error de conexión. Verifica tu red e inténtalo más tarde.';
+        } else if (error.status === 401) {
+          this.mensaje = 'Credenciales incorrectas. Verifica tu correo y contraseña.';
+        } else {
+          this.mensaje = error.error?.error || 'Error al iniciar sesión. Intenta nuevamente.';
+        }
+      }
+    });
+  }
+
+  private redirectByRole(): void {
+    const role = this.authState.userRole;
+
+    switch (role) {
+      case 1:
+        this.router.navigate(['/usuario/home']);
+        break;
+      case 2:
+        this.router.navigate(['/abogado/foro']);
+        break;
+      case 3:
+        this.router.navigate(['/admin/inactivos']);
+        break;
+      default:
+        this.router.navigate(['/usuario/home']);
+    }
   }
 
   clearMensaje(): void {

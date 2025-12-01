@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { API_CONFIG } from '../config/api.config';
-import { LoginRequest, RegisterRequest, AuthResponse, Usuario } from '../models';
+import { LoginRequest, RegisterRequest, RegisterAbogadoRequest, AuthResponse, Usuario } from '../models';
+import { AuthState } from '../state/auth.state';
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +12,11 @@ import { LoginRequest, RegisterRequest, AuthResponse, Usuario } from '../models'
 export class AuthService {
     private baseUrl = API_CONFIG.baseUrl;
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private authState: AuthState,
+        private router: Router
+    ) { }
 
 
     login(credentials: LoginRequest): Observable<AuthResponse> {
@@ -24,6 +30,13 @@ export class AuthService {
     register(data: RegisterRequest): Observable<AuthResponse> {
         return this.http.post<AuthResponse>(
             `${this.baseUrl}${API_CONFIG.endpoints.register}`,
+            data
+        );
+    }
+
+    registerAbogado(data: RegisterAbogadoRequest): Observable<AuthResponse> {
+        return this.http.post<AuthResponse>(
+            `${this.baseUrl}${API_CONFIG.endpoints.registerAbogado}`,
             data
         );
     }
@@ -84,5 +97,11 @@ export class AuthService {
         return this.http.delete<void>(
             `${this.baseUrl}/api/usuarios/${id}`
         );
+    }
+
+    logout(): void {
+        this.authState.clearAuth();
+
+        this.router.navigate(['/login']);
     }
 }
