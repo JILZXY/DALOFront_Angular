@@ -1,112 +1,88 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
-
-interface Abogado {
-  cedulaProfesional: string;
-  biografia?: string;
-  descripcion?: string;
-}
-
-interface Usuario {
-  idUsuario: number;
-  nombre: string;
-  email: string;
-  activo: boolean;
-  abogado: Abogado;
-}
-
-interface Alert {
-  message: string;
-  type: 'success' | 'error';
-  id: number;
-}
+import { trigger, transition, style, animate } from '@angular/animations';
+import { AuthService } from '../../services/auth.service';
+import { UsuarioState } from '../../state/usuario.state';
+import { Usuario } from '../../models';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-inactive-users',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './inactivos.html',
-  styleUrls: ['./inactivos.css']
+  styleUrls: ['./inactivos.css'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-10px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
+      ])
+    ])
+  ]
 })
 export class Inactivos implements OnInit {
-  private readonly API_BASE = 'http://52.3.15.55:7000';
-  
-  inactiveUsers: Usuario[] = [];
-  isLoading = true;
-  alerts: Alert[] = [];
-  private alertCounter = 0;
+  usuariosInactivos$: Observable<Usuario[]>;
+  isLoading = false;
+  errorMessage = '';
+  successMessage = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private authService: AuthService,
+    private usuarioState: UsuarioState
+  ) {
+    this.usuariosInactivos$ = this.usuarioState.usuariosInactivos$;
+  }
 
   ngOnInit(): void {
     this.loadInactiveUsers();
   }
 
-  async loadInactiveUsers(): Promise<void> {
-    try {
-      this.isLoading = true;
-      const users = await firstValueFrom(
-        this.http.get<Usuario[]>(`${this.API_BASE}/usuarios/activos`)
-      );
-      
-      // Filtrar solo usuarios inactivos que sean abogados
-      this.inactiveUsers = users.filter(user => !user.activo && user.abogado);
-      
-    } catch (error) {
-      console.error('Error al cargar usuarios:', error);
-      this.showAlert('Error al cargar los usuarios inactivos', 'error');
-    } finally {
-      this.isLoading = false;
+  loadInactiveUsers(): void {
+    this.isLoading = true;
+    this.authService.getUsuariosInactivos().subscribe({
+      next: (usuarios) => {
+        this.usuarioState.setUsuariosInactivos(usuarios);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar usuarios inactivos:', err);
+        this.errorMessage = 'No se pudieron cargar los usuarios inactivos.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  activarUsuario(id: string): void {
+    if (!confirm('¿Estás seguro de activar a este abogado?')) {
+      return;
     }
-  }
 
-  async activateUser(userId: number, index: number): Promise<void> {
-    try {
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json'
-      });
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
 
-      await firstValueFrom(
-        this.http.put(
-          `${this.API_BASE}/usuarios/${userId}/sin-contrasena`,
-          { activo: true },
-          { headers }
-        )
-      );
+    this.authService.activarUsuario(id).subscribe({
+      next: () => {
+        // Actualizar el estado localmente
+        this.usuarioState.activarUsuario(id);
 
-      this.showAlert('Usuario activado exitosamente', 'success');
-      
-      // Remover el usuario de la lista
-      this.inactiveUsers.splice(index, 1);
-      
-    } catch (error) {
-      console.error('Error al activar usuario:', error);
-      this.showAlert('Error al activar el usuario. Intente nuevamente.', 'error');
-    }
-  }
+        this.successMessage = 'Usuario activado exitosamente.';
+        this.isLoading = false;
 
-  showAlert(message: string, type: 'success' | 'error' = 'success'): void {
-    const alert: Alert = {
-      message,
-      type,
-      id: this.alertCounter++
-    };
-    
-    this.alerts.push(alert);
-    
-    // Remover la alerta después de 5 segundos
-    setTimeout(() => {
-      this.alerts = this.alerts.filter(a => a.id !== alert.id);
-    }, 5000);
-  }
-
-  trackByUserId(index: number, user: Usuario): number {
-    return user.idUsuario;
-  }
-
-  trackByAlertId(index: number, alert: Alert): number {
-    return alert.id;
+        // Limpiar mensaje después de 3 segundos
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      },
+      error: (err) => {
+        console.error('Error al activar usuario:', err);
+        this.errorMessage = 'Error al activar el usuario. Intente nuevamente.';
+        this.isLoading = false;
+      }
+    });
   }
 }

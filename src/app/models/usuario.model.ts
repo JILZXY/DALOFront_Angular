@@ -1,3 +1,5 @@
+import { Abogado } from './abogado.model';
+
 export interface Usuario {
     idUsuario: string;
     nombre: string;
@@ -8,6 +10,7 @@ export interface Usuario {
     activo: boolean;
     municipio?: Municipio;
     rol?: Rol;
+    abogado?: Abogado;
 }
 
 export interface Municipio {

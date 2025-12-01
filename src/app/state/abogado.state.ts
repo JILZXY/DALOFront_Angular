@@ -50,7 +50,7 @@ export class AbogadoState {
      * Buscar abogado por ID en el state
      */
     findAbogadoById(id: string): Abogado | undefined {
-        return this.abogados.find(a => a.idUsuario === id);
+        return this.abogados.find(a => a.idAbogado === id);
     }
 
     /**
@@ -58,12 +58,12 @@ export class AbogadoState {
      */
     updateAbogado(abogadoActualizado: Abogado): void {
         const abogados = this.abogadosSubject.value.map(a =>
-            a.idUsuario === abogadoActualizado.idUsuario ? abogadoActualizado : a
+            a.idAbogado === abogadoActualizado.idAbogado ? abogadoActualizado : a
         );
         this.abogadosSubject.next(abogados);
 
         // Si es el abogado actual, actualizarlo también
-        if (this.abogadoActual?.idUsuario === abogadoActualizado.idUsuario) {
+        if (this.abogadoActual?.idAbogado === abogadoActualizado.idAbogado) {
             this.abogadoActualSubject.next(abogadoActualizado);
         }
     }
