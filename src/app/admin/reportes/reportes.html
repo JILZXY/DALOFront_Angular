@@ -5,99 +5,79 @@
   </div>
 
 
-  <div *ngIf="isLoading" class="loading">
+  <div *ngIf="isLoading$ | async" class="loading">
     <p>Cargando reportes...</p>
   </div>
 
-  <div 
-    *ngIf="!isLoading && reportes.length > 0" 
-    class="reports-container">
-    <div class="table-header">
-      <h2 class="table-title">Lista de Reportes</h2>
+  <ng-container *ngIf="reportes$ | async as reportes">
+    <div *ngIf="(isLoading$ | async) === false && reportes.length > 0" class="reports-container">
+      <div class="table-header">
+        <h2 class="table-title">Lista de Reportes</h2>
+      </div>
+      <table class="reports-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Consulta ID</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="reportsTableBody">
+          <tr *ngFor="let report of reportes; trackBy: trackByReportId">
+            <td>{{ getReportId(report) }}</td>
+            <td>{{ getFechaReporte(report) }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="{
+                  'status-active': isReportActive(report),
+                  'status-inactive': !isReportActive(report)
+                }">
+                {{ isReportActive(report) ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td>{{ getConsultaId(report) || 'N/A' }}</td>
+            <td class="action-buttons">
+              <button *ngIf="getConsultaId(report)" class="btn btn-view"
+                (click)="viewConsultation(getConsultaId(report)!)">
+                Ver Consulta
+              </button>
+              <button class="btn btn-delete" (click)="deleteReport(getReportId(report), getConsultaId(report))">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <table class="reports-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Fecha</th>
-          <th>Estado</th>
-          <th>Consulta ID</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="reportsTableBody">
-        <tr 
-          *ngFor="let report of reportes; trackBy: trackByReportId">
-          <td>{{ getReportId(report) }}</td>
-          <td>{{ getFechaReporte(report) }}</td>
-          <td>
-            <span 
-              class="status-badge"
-              [ngClass]="{
-                'status-active': isReportActive(report),
-                'status-inactive': !isReportActive(report)
-              }">
-              {{ isReportActive(report) ? 'Activo' : 'Inactivo' }}
-            </span>
-          </td>
-          <td>{{ getConsultaId(report) || 'N/A' }}</td>
-          <td class="action-buttons">
-            <button 
-              *ngIf="getConsultaId(report)"
-              class="btn btn-view"
-              (click)="viewConsultation(getConsultaId(report)!)">
-              Ver Consulta
-            </button>
-            <button 
-              class="btn btn-delete"
-              (click)="deleteReport(getReportId(report), getConsultaId(report))">
-              Eliminar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
 
-  <div 
-    *ngIf="!isLoading && showNoData" 
-    class="no-data">
-    <div class="no-data-icon">📋</div>
-    <h3>No hay reportes disponibles</h3>
-    <p>No se encontraron reportes en el sistema.</p>
-  </div>
+    <div *ngIf="(isLoading$ | async) === false && reportes.length === 0" class="no-data">
+      <div class="no-data-icon">📋</div>
+      <h3>No hay reportes disponibles</h3>
+      <p>No se encontraron reportes en el sistema.</p>
+    </div>
+  </ng-container>
 </div>
 
-<div 
-  *ngIf="showModal" 
-  class="modal"
-  (click)="onModalBackdropClick($event)">
+<div *ngIf="showModal" class="modal" (click)="onModalBackdropClick($event)">
   <div class="modal-content">
     <div class="modal-header">
       <h2 class="modal-title">Detalles de la Consulta</h2>
       <span class="close" (click)="closeModal()">&times;</span>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" *ngIf="selectedConsulta">
       <div class="consultation-details">
         <div class="detail-row">
           <div class="detail-label">ID:</div>
-          <div class="detail-value">{{ getConsultaInfo('id') }}</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Fecha:</div>
-          <div class="detail-value">{{ getConsultaInfo('fecha') }}</div>
-        </div>
-        <div class="detail-row">
-          <div class="detail-label">Usuario ID:</div>
-          <div class="detail-value">{{ getConsultaInfo('userId') }}</div>
+          <div class="detail-value">{{ selectedConsulta.idConsulta || selectedConsulta.id }}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Título:</div>
-          <div class="detail-value">{{ getConsultaInfo('titulo') }}</div>
+          <div class="detail-value">{{ selectedConsulta.titulo }}</div>
         </div>
         <div class="detail-row">
           <div class="detail-label">Pregunta:</div>
-          <div class="detail-value">{{ getConsultaInfo('pregunta') }}</div>
+          <div class="detail-value">{{ selectedConsulta.pregunta || selectedConsulta.descripcion }}</div>
         </div>
       </div>
 
@@ -105,22 +85,17 @@
         <h3 class="section-title">
           {{ respuestas.length > 0 ? 'Respuestas (' + respuestas.length + ')' : 'Respuestas Asociadas' }}
         </h3>
-        
+
         <div *ngIf="respuestas.length > 0">
-          <div 
-            *ngFor="let respuesta of respuestas; trackBy: trackByRespuestaId"
-            class="response-card">
+          <div *ngFor="let respuesta of respuestas" class="response-card">
             <div class="response-content">
-              <strong>ID:</strong> {{ getRespuestaInfo(respuesta, 'id') }}<br>
-              <strong>Texto:</strong> {{ getRespuestaInfo(respuesta, 'texto') }}<br>
-              <strong>Fecha:</strong> {{ getRespuestaInfo(respuesta, 'fecha') }}
+              <strong>ID:</strong> {{ respuesta.idRespuesta || respuesta.id }}<br>
+              <strong>Texto:</strong> {{ respuesta.respuesta || respuesta.texto }}<br>
             </div>
           </div>
         </div>
 
-        <p 
-          *ngIf="respuestas.length === 0"
-          style="color:#7f8c8d; text-align:center; padding:20px;">
+        <p *ngIf="respuestas.length === 0" style="color:#7f8c8d; text-align:center; padding:20px;">
           No hay respuestas asociadas a esta consulta.
         </p>
       </div>
