@@ -1,22 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { Subscription, of } from 'rxjs'; 
-import { delay } from 'rxjs/operators';
-
-interface Abogado {
-  idUsuario: number;
-  nombre: string;
-  apellidos: string;
-  estado: string;
-  ciudad: string;
-  especialidades: string[]; 
-  calificacion: number;
-  foto: string;
-  email: string;
-}
+import { AbogadoService } from '../../services/abogado.service';
+import { Abogado } from '../../models';
 
 @Component({
   selector: 'app-contactar-abogado',
@@ -25,8 +12,7 @@ interface Abogado {
   templateUrl: './contactar-abogado.html',
   styleUrls: ['./contactar-abogado.css']
 })
-export class ContactarAbogado implements OnInit, OnDestroy { 
-
+export class ContactarAbogado implements OnInit { 
   abogados: Abogado[] = [];
   isLoading: boolean = true;
   errorMensaje: string = '';
@@ -35,104 +21,77 @@ export class ContactarAbogado implements OnInit, OnDestroy {
   estadoDropdownAbierto: boolean = false;
   ciudadDropdownAbierto: boolean = false;
   
-  materiaActiva: string | null = null;
-  estadoActivo: string | null = null;
-  ciudadActiva: string | null = null;
+  materiaActiva: number | null = null;
+  estadoActivo: number | null = null;
+  ciudadActiva: number | null = null;
   terminoBusqueda: string = '';
-  
-  private baseUrl = 'http://52.3.15.55:7000/usuarios';
-  
-  private cargaSubscription: Subscription | null = null;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  // Mapping for filters (hardcoded for now as per previous context)
+  materiasMap: { [key: string]: number } = {
+    'penal': 1,
+    'civil': 2,
+    'procesal': 3,
+    'laboral': 4,
+    'mercantil': 5,
+    'constitucional': 6,
+    'general': 7
+  };
+
+  constructor(
+    private abogadoService: AbogadoService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.cargarAbogadosSimulados();
+    this.cargarAbogados();
   }
 
-  ngOnDestroy(): void {
-    if (this.cargaSubscription) {
-      this.cargaSubscription.unsubscribe();
-    }
-  }
-
-  cargarAbogados(url: string): void {
-    this.cargarAbogadosSimulados();
-  }
-
-  cargarAbogadosSimulados(): void {
+  cargarAbogados(): void {
     this.isLoading = true;
     this.errorMensaje = '';
-    this.abogados = [];
     this.cerrarDropdowns();
 
-    if (this.cargaSubscription) {
-      this.cargaSubscription.unsubscribe();
+    // If search term exists, use search
+    if (this.terminoBusqueda.trim()) {
+      this.abogadoService.searchByName(this.terminoBusqueda).subscribe({
+        next: (data) => this.handleSuccess(data),
+        error: (err) => this.handleError(err)
+      });
+      return;
     }
 
-    const abogadosFalsos: Abogado[] = [
-      {
-        idUsuario: 101,
-        nombre: 'Lic. Roberto',
-        apellidos: 'Gómez Bolaños',
-        estado: 'Chiapas',
-        ciudad: 'Tuxtla Gutiérrez',
-        especialidades: ['Derecho Penal', 'Derecho Civil'],
-        calificacion: 4.8,
-        foto: '', 
-        email: 'roberto@ejemplo.com'
-      },
-      {
-        idUsuario: 102,
-        nombre: 'Lic. Ana',
-        apellidos: 'Martínez',
-        estado: 'Chiapas',
-        ciudad: 'Tapachula',
-        especialidades: ['Derecho Laboral'],
-        calificacion: 5.0,
-        foto: '',
-        email: 'ana@ejemplo.com'
-      },
-      {
-        idUsuario: 103,
-        nombre: 'Lic. Carlos',
-        apellidos: 'Salinas',
-        estado: 'Chiapas',
-        ciudad: 'San Cristóbal',
-        especialidades: ['Derecho Mercantil', 'Derecho Fiscal'],
-        calificacion: 3.5,
-        foto: '',
-        email: 'carlos@ejemplo.com'
-      },
-      {
-        idUsuario: 104,
-        nombre: 'Lic. Sofía',
-        apellidos: 'Vergara',
-        estado: 'Chiapas',
-        ciudad: 'Comitán',
-        especialidades: ['Derecho Familiar'],
-        calificacion: 4.2,
-        foto: '',
-        email: 'sofia@ejemplo.com'
-      }
-    ];
-
-    this.cargaSubscription = of(abogadosFalsos)
-      .pipe(delay(800)) 
-      .subscribe({
-        next: (data) => {
-          this.abogados = data;
-          if (this.abogados.length === 0) {
-            this.errorMensaje = 'No se encontraron abogados con esos criterios.';
-          }
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error(err);
-          this.errorMensaje = 'Error al cargar los abogados simulados.';
-          this.isLoading = false;
-        }
+    // If filters exist, use filter
+    if (this.materiaActiva || this.estadoActivo || this.ciudadActiva) {
+      this.abogadoService.filtrar({
+        materiaId: this.materiaActiva || undefined,
+        estadoId: this.estadoActivo || undefined,
+        municipioId: this.ciudadActiva || undefined
+      }).subscribe({
+        next: (data) => this.handleSuccess(data),
+        error: (err) => this.handleError(err)
       });
+      return;
+    }
+
+    // Default: get all
+    this.abogadoService.getAll().subscribe({
+      next: (data) => this.handleSuccess(data),
+      error: (err) => this.handleError(err)
+    });
+  }
+
+  private handleSuccess(data: Abogado[]): void {
+    this.abogados = data;
+    this.isLoading = false;
+    if (this.abogados.length === 0) {
+      this.errorMensaje = 'No se encontraron abogados con esos criterios.';
+    }
+  }
+
+  private handleError(err: any): void {
+    console.error('Error cargando abogados:', err);
+    this.errorMensaje = 'Ocurrió un error al cargar la lista de abogados.';
+    this.isLoading = false;
   }
 
   toggleDropdown(dropdown: 'materia' | 'estado' | 'ciudad'): void {
@@ -149,20 +108,24 @@ export class ContactarAbogado implements OnInit, OnDestroy {
 
   filtrarPorMateria(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.materiaActiva = input.value;
-    this.cargarAbogadosSimulados();
+    const materiaKey = input.value;
+    this.materiaActiva = this.materiasMap[materiaKey] || null;
+    this.cargarAbogados();
   }
   
   filtrarPorEstado(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.estadoActivo = input.value;
-    this.cargarAbogadosSimulados();
+    // Placeholder logic for state ID mapping if needed, assuming value is ID for now or ignored
+    // Since the HTML uses 'chiapas', we might need a map or update HTML to use IDs.
+    // For now, let's assume we don't have state IDs ready and just log it, or use a dummy ID if backend requires number.
+    // The user didn't provide state/city IDs, so I'll comment this out or use a dummy.
+    console.log('Filtro estado no implementado completamente sin IDs');
+    // this.estadoActivo = ...
+    // this.cargarAbogados();
   }
 
   filtrarPorCiudad(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.ciudadActiva = input.value;
-    this.cargarAbogadosSimulados();
+     // Similar to state, need IDs.
+     console.log('Filtro ciudad no implementado completamente sin IDs');
   }
   
   limpiarFiltros(): void {
@@ -170,21 +133,29 @@ export class ContactarAbogado implements OnInit, OnDestroy {
     this.estadoActivo = null;
     this.ciudadActiva = null;
     this.terminoBusqueda = '';
-    this.cargarAbogadosSimulados();
+    this.cargarAbogados();
   }
 
   buscarPorNombre(): void {
-    if (this.terminoBusqueda.trim() === '') {
-      this.limpiarFiltros();
-      return;
-    }
-    this.cargarAbogadosSimulados();
+    this.cargarAbogados();
   }
-  
   contactarAbogado(abogado: Abogado): void {
-    // Navegar al chat con el ID del abogado como parámetro
-    this.router.navigate(['/usuario/chat'], { 
-      queryParams: { abogadoId: abogado.idUsuario, nombre: `${abogado.nombre} ${abogado.apellidos}` } 
-    });
+    const confirmacion = window.confirm(
+      `Al iniciar un chat con ${abogado.usuario?.nombre || 'el abogado'}, él podrá ver tu nombre completo.\n\n¿Deseas continuar?`
+    );
+
+    if (confirmacion) {
+      this.router.navigate(['/usuario/chat'], { 
+        queryParams: { 
+          abogadoId: abogado.idAbogado || abogado.idUsuario, 
+          nombre: `${abogado.usuario?.nombre}` 
+        } 
+      });
+    }
+  }
+
+  verPerfil(abogado: Abogado): void {
+     const id = abogado.idAbogado || abogado.idUsuario;
+     this.router.navigate(['/usuario/ver-perfil-abogado', id]);
   }
 }
