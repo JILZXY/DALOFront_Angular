@@ -23,24 +23,19 @@ export class MateriaCards {
   readonly selectedId = signal<string | null>(null);
 
   readonly materias: Materia[] = [
-    { id: 'area-civil', nombre: 'DERECHO CIVIL', icono: '/Images/CIVIL.png' },
-    { id: 'area-familiar', nombre: 'DERECHO FAMILIAR', icono: '/Images/FAMILIAR.png' },
-    { id: 'area-penal', nombre: 'DERECHO PENAL', icono: '/Images/PENAL.png' },
-    { id: 'area-laboral', nombre: 'DERECHO LABORAL', icono: '/Images/LABORAL.png' },
-    { id: 'area-mercantil', nombre: 'DERECHO MERCANTIL', icono: '/Images/MERCANTIL.png' },
-    { id: 'area-constitucional', nombre: 'DERECHO CONSTITUCIONAL', subtitulo: '', icono: '/Images/CONSTITUCIONAL.png' },
-    { id: 'area-general', nombre: 'GENERAL', subtitulo: '(Desconozco la materia que requiero)', icono: '/Images/GENERAL.png' },
+    { id: '1', nombre: 'DERECHO PENAL', icono: '/Images/PENAL.png' },
+    { id: '2', nombre: 'DERECHO CIVIL', icono: '/Images/CIVIL.png' },
+    { id: '3', nombre: 'DERECHO PROCESAL', icono: '/Images/PROCESAL.png' },
+    { id: '4', nombre: 'DERECHO LABORAL', icono: '/Images/LABORAL.png' },
+    { id: '5', nombre: 'DERECHO MERCANTIL', icono: '/Images/MERCANTIL.png' },
+    { id: '6', nombre: 'DERECHO CONSTITUCIONAL', subtitulo: '', icono: '/Images/CONSTITUCIONAL.png' },
+    { id: '7', nombre: 'GENERAL', subtitulo: '(Desconozco la materia que requiero)', icono: '/Images/GENERAL.png' },
   ];
 
   constructor(private router: Router) {
     effect(() => {
       const currentId = this.selectedId();
-      if (currentId) {
-        const idArea = currentId.replace('area-', '');
-        this.areaSelected.emit(idArea);
-      } else {
-        this.areaSelected.emit(null);
-      }
+      this.areaSelected.emit(currentId);
     });
   }
 

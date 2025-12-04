@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { MateriaCards } from '../materia-cards/materia-cards';
 import { ConsultaService } from '../../services/consulta.service';
 import { ConsultaState } from '../../state/consulta.state';
-import { EspecialidadService } from '../../services/especialidad.service';
 import { CreateConsultaRequest } from '../../models';
 
 @Component({
@@ -32,48 +31,25 @@ export class PublicarPregunta implements OnInit {
   errorMessage: string = '';
   isLoading: boolean = false;
 
+  // Mapping based on the IDs provided by the user (1-7)
   private materiaMapping: any = {
-    'penal': { id: 'penal', idNumerico: 1, nombre: 'DERECHO PENAL', logo: '/Images/logo_penal.png' },
-    'civil': { id: 'civil', idNumerico: 2, nombre: 'DERECHO CIVIL', logo: '/Images/logo_civil.png' },
-    'procesal': { id: 'procesal', idNumerico: 3, nombre: 'DERECHO PROCESAL', logo: '/Images/logo_procesal.png' },
-    'laboral': { id: 'laboral', idNumerico: 4, nombre: 'DERECHO LABORAL', logo: '/Images/logo_laboral.png' },
-    'mercantil': { id: 'mercantil', idNumerico: 5, nombre: 'DERECHO MERCANTIL', logo: '/Images/logo_mercantil.png' },
-    'constitucional': { id: 'constitucional', idNumerico: 6, nombre: 'DERECHO CONSTITUCIONAL', logo: '/Images/logo_constitucional.png' },
-    'general': { id: 'general', idNumerico: 7, nombre: 'GENERAL', logo: '/Images/logo_general.png' },
-    'familiar': { id: 'familiar', idNumerico: 8, nombre: 'DERECHO FAMILIAR', logo: '/Images/logo_laboral.png' }
+    '1': { id: '1', idNumerico: 1, nombre: 'DERECHO PENAL' },
+    '2': { id: '2', idNumerico: 2, nombre: 'DERECHO CIVIL' },
+    '3': { id: '3', idNumerico: 3, nombre: 'DERECHO PROCESAL' },
+    '4': { id: '4', idNumerico: 4, nombre: 'DERECHO LABORAL' },
+    '5': { id: '5', idNumerico: 5, nombre: 'DERECHO MERCANTIL' },
+    '6': { id: '6', idNumerico: 6, nombre: 'DERECHO CONSTITUCIONAL' },
+    '7': { id: '7', idNumerico: 7, nombre: 'GENERAL' }
   };
 
   constructor(
     private router: Router,
     private consultaService: ConsultaService,
-    private consultaState: ConsultaState,
-    private especialidadService: EspecialidadService
+    private consultaState: ConsultaState
   ) { }
 
   ngOnInit(): void {
-    this.fetchEspecialidades();
-  }
-
-  fetchEspecialidades(): void {
-    this.especialidadService.getAll().subscribe({
-      next: (especialidades) => {
-        console.log('Especialidades cargadas:', especialidades);
-        // Actualizar IDs en el mapping basado en el nombre
-        especialidades.forEach(esp => {
-          // Usamos nombreMateria en lugar de nombre
-          const nombreNormalizado = esp.nombreMateria.toUpperCase().trim();
-
-          for (const key in this.materiaMapping) {
-            const mapping = this.materiaMapping[key];
-            if (mapping.nombre === nombreNormalizado) {
-              mapping.idNumerico = esp.id;
-              console.log(`Mapeado ${mapping.nombre} a ID ${esp.id}`);
-            }
-          }
-        });
-      },
-      error: (err) => console.error('Error al cargar especialidades:', err)
-    });
+    // No API call needed for specialties as per user request
   }
 
   updateTitleCounter(): void {

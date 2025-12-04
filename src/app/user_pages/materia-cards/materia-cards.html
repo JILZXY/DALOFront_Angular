@@ -1,29 +1,24 @@
 <div class="areas-legales-container">
-<section class="areas-legales">
-<h2>SELECCIONA LA MATERIA DE TU PREGUNTA</h2>
+  <section class="areas-legales">
+    <h2>SELECCIONA LA MATERIA DE TU PREGUNTA</h2>
 
-<div class="cards-grid">
-  @for (materia of materias; track materia.id) {
-    <button 
-      [id]="materia.id" 
-      class="area" 
-      [class.selected]="isSelected(materia.id)"
-      (click)="handleAreaClick(materia.id)"
-      aria-label="Seleccionar {{ materia.nombre }}"
-    >
-      <div class="area-inner">
-        <img [src]="materia.icono" [alt]="'Icono ' + materia.nombre" class="area-icon" />
-        
-        <h3>{{ materia.nombre }}</h3>
-        
-        @if (materia.subtitulo) {
+    <div class="cards-grid">
+      @for (materia of materias; track materia.id) {
+      <button type="button" [id]="materia.id" class="area" [class.selected]="isSelected(materia.id)"
+        (click)="handleAreaClick(materia.id)" aria-label="Seleccionar {{ materia.nombre }}">
+        <div class="area-inner">
+          <img [src]="materia.icono" [alt]="'Icono ' + materia.nombre" class="area-icon" />
+
+          <h3>{{ materia.nombre }}</h3>
+
+          @if (materia.subtitulo) {
           <h4>{{ materia.subtitulo }}</h4>
-        }
-      </div>
-    </button>
-  }
-</div>
+          }
+        </div>
+      </button>
+      }
+    </div>
 
 
-</section>
+  </section>
 </div>
