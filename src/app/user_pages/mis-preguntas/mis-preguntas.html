@@ -9,9 +9,9 @@
 
       <div class="pregunta-header">
         <div class="materia-tag">
-          <img [src]="getMateriaLogo(p.especialidades[0]?.nombreMateria)"
-            [alt]="'Logo ' + (p.especialidades[0]?.nombreMateria || 'General')" class="materia-logo">
-          <span>{{ p.especialidades[0]?.nombreMateria || 'General' }}</span>
+          <img [src]="getMateriaLogo(p.especialidades?.[0]?.nombreMateria)"
+            [alt]="'Logo ' + (p.especialidades?.[0]?.nombreMateria || 'General')" class="materia-logo">
+          <span>{{ p.especialidades?.[0]?.nombreMateria || 'General' }}</span>
         </div>
         <div class="pregunta-meta">
           <span class="estado-tag" [ngClass]="p.estado === 'Respondida' ? 'respondida' : 'pendiente'">
@@ -28,7 +28,7 @@
 
       <div class="pregunta-footer">
         <div class="interacciones">
-          <span>{{ p.respuestas.length || 0 }} Respuestas</span>
+          <span>{{ p.respuestas?.length || 0 }} Respuestas</span>
           <span>0 Vistas</span>
         </div>
         <button class="btn-ver-comentarios" (click)="goToComentarios(p.idConsulta)">
