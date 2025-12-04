@@ -1,48 +1,52 @@
-<div *ngIf="isLoading" class="loading-container">
+<div *ngIf="isLoading$ | async" class="loading-container">
   <p>Cargando tus preguntas...</p>
 </div>
 
-<section class="preguntas-container" *ngIf="!isLoading && preguntas.length > 0">
+<ng-container *ngIf="(preguntas$ | async) as preguntas">
+  <section class="preguntas-container" *ngIf="!(isLoading$ | async) && preguntas.length > 0">
 
-  <div class="pregunta-card" *ngFor="let p of preguntas">
-    
-    <div class="pregunta-header">
-      <div class="materia-tag">
-        <img [src]="p.materia.logo" [alt]="'Logo ' + p.materia.nombre" class="materia-logo">
-        <span>{{ p.materia.nombre }}</span>
+    <div class="pregunta-card" *ngFor="let p of preguntas">
+
+      <div class="pregunta-header">
+        <div class="materia-tag">
+          <img [src]="getMateriaLogo(p.especialidades[0]?.nombreMateria)"
+            [alt]="'Logo ' + (p.especialidades[0]?.nombreMateria || 'General')" class="materia-logo">
+          <span>{{ p.especialidades[0]?.nombreMateria || 'General' }}</span>
+        </div>
+        <div class="pregunta-meta">
+          <span class="estado-tag" [ngClass]="p.estado === 'Respondida' ? 'respondida' : 'pendiente'">
+            {{ p.estado }}
+          </span>
+          <span class="tiempo-publicado">{{ formatTimeAgo(p.fechaPublicacion) }}</span>
+        </div>
       </div>
-      <div class="pregunta-meta">
-        <span class="estado-tag" [ngClass]="p.estado === 'Respondida' ? 'respondida' : 'pendiente'">
-          {{ p.estado }}
-        </span>
-        <span class="tiempo-publicado">{{ formatTimeAgo(p.fecha) }}</span>
+
+      <div class="pregunta-body">
+        <h3 class="pregunta-titulo">{{ p.titulo }}</h3>
+        <p class="pregunta-descripcion">{{ p.pregunta }}</p>
       </div>
-    </div>
 
-    <div class="pregunta-body">
-      <h3 class="pregunta-titulo">{{ p.titulo }}</h3>
-      <p class="pregunta-descripcion">{{ p.descripcion }}</p>
-    </div>
+      <div class="pregunta-footer">
+        <div class="interacciones">
+          <span>{{ p.respuestas.length || 0 }} Respuestas</span>
+          <span>0 Vistas</span>
+        </div>
+        <button class="btn-ver-comentarios" (click)="goToComentarios(p.idConsulta)">
+          Ver Comentarios
+          <img src="Images/chat.png" alt="Comentarios">
+        </button>
+      </div>
 
-    <div class="pregunta-footer">
-      <div class="interacciones">
-        <span>{{ p.respuestasCount }} Respuestas</span>
-        <span>0 Vistas</span> </div>
-      <button class="btn-ver-comentarios" (click)="goToComentarios(p.id)">
-        Ver Comentarios
-        <img src="/Images/chat.png" alt="Comentarios">
-      </button>
     </div>
+  </section>
 
+  <div id="noPreguntasMessage" class="no-preguntas" *ngIf="!(isLoading$ | async) && preguntas.length === 0">
+    <img src="Images/Logo beige.png" alt="No hay preguntas">
+    <h3>No tienes preguntas publicadas</h3>
+    <p>¡Comienza publicando tu primera pregunta!</p>
+
+    <button (click)="goToPublicar()" class="btn-crear-pregunta">
+      Publicar Pregunta
+    </button>
   </div>
-</section>
-
-<div id="noPreguntasMessage" class="no-preguntas" *ngIf="!isLoading && preguntas.length === 0">
-  <img src="/Images/Logo beige.png" alt="No hay preguntas">
-  <h3>No tienes preguntas publicadas</h3>
-  <p>¡Comienza publicando tu primera pregunta!</p>
-  
-  <button (click)="goToPublicar()" class="btn-crear-pregunta">
-    Publicar Pregunta
-  </button>
-</div>
+</ng-container>

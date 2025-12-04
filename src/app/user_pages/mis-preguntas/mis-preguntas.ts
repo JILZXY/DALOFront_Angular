@@ -1,24 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { Router, RouterModule } from '@angular/router'; 
-
-interface PreguntaGuardada {
-  id: string;
-  titulo: string;
-  descripcion: string;
-  fecha: string;
-  materia: {
-    id: string;
-    nombre: string;
-    logo: string;
-  };
-  usuario: {
-    id: number;
-    nombre: string;
-  };
-  respuestasCount?: number; 
-  estado?: string;
-}
+import { Observable } from 'rxjs';
+import { ConsultaService } from '../../services/consulta.service';
+import { ConsultaState } from '../../state/consulta.state';
+import { Consulta } from '../../models';
 
 @Component({
   selector: 'app-mis-preguntas',
@@ -29,53 +15,46 @@ interface PreguntaGuardada {
 })
 export class MisPreguntas implements OnInit {
 
-  preguntas: PreguntaGuardada[] = [];
-  isLoading: boolean = true;
+  preguntas$: Observable<Consulta[]>;
+  isLoading$: Observable<boolean>;
+  errorMessage: string = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private consultaService: ConsultaService,
+    private consultaState: ConsultaState
+  ) {
+    this.preguntas$ = this.consultaState.misConsultas$;
+    this.isLoading$ = this.consultaState.loading$;
+  }
 
   ngOnInit(): void {
     this.loadQuestions();
   }
 
   loadQuestions(): void {
-    this.isLoading = true;
-    
-    setTimeout(() => {
-      try {
-        const storedQuestions = localStorage.getItem('misPreguntas');
-        if (storedQuestions) {
-          this.preguntas = JSON.parse(storedQuestions).reverse(); 
-
-          this.preguntas.forEach(p => {
-            p.respuestasCount = p.respuestasCount ?? Math.floor(Math.random() * 5); 
-            p.estado = p.estado ?? (p.respuestasCount > 0 ? 'Respondida' : 'Pendiente');
-          });
-
-        } else {
-          this.preguntas = []; 
-        }
-      } catch (e) {
-        console.error("Error cargando preguntas de localStorage", e);
-        this.preguntas = [];
+    this.consultaState.setLoading(true);
+    this.consultaService.getMisConsultas().subscribe({
+      next: (consultas) => {
+        this.consultaState.setMisConsultas(consultas);
+        this.consultaState.setLoading(false);
+      },
+      error: (err) => {
+        console.error('Error al cargar mis preguntas:', err);
+        this.errorMessage = 'No se pudieron cargar tus preguntas. Intenta nuevamente.';
+        this.consultaState.setLoading(false);
       }
-      
-      this.isLoading = false;
-    }, 500); 
+    });
   }
 
-  
   goToPublicar(): void {
     this.router.navigate(['/usuario/publicar']);
   }
 
-  
-  goToComentarios(preguntaId: string): void {
-    
+  goToComentarios(preguntaId: number): void {
     this.router.navigate(['/usuario/comentarios'], { queryParams: { id: preguntaId } });
   }
 
-  
   formatTimeAgo(fecha: string): string {
     if (!fecha) {
       return 'fecha no disponible';
@@ -91,7 +70,7 @@ export class MisPreguntas implements OnInit {
       const dias = Math.floor(diferencia / 86400000);
       
       if (minutos < 1) {
-        return 'hace 0 min';
+        return 'hace un momento';
       } else if (minutos < 60) {
         return `hace ${minutos} min`;
       } else if (horas < 24) {
@@ -103,5 +82,19 @@ export class MisPreguntas implements OnInit {
       console.error('Error al formatear tiempo:', error);
       return 'Fecha inválida';
     }
+  }
+
+  getMateriaLogo(nombre: string | undefined): string {
+    if (!nombre) return 'Images/GENERAL.png';
+    
+    const nombreLower = nombre.toLowerCase();
+    if (nombreLower.includes('civil')) return 'Images/CIVIL.png';
+    if (nombreLower.includes('penal')) return 'Images/Derecho Penal.png';
+    if (nombreLower.includes('laboral')) return 'Images/LABORAL.png';
+    if (nombreLower.includes('mercantil')) return 'Images/MERCANTIL.png';
+    if (nombreLower.includes('constitucional')) return 'Images/CONSTITUCIONAL.png';
+    if (nombreLower.includes('procesal')) return 'Images/PROCESAL.png';
+    
+    return 'Images/GENERAL.png';
   }
 }
