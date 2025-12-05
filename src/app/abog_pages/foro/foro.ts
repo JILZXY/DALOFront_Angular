@@ -1,24 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { Subscription, of } from 'rxjs'; 
-import { delay } from 'rxjs/operators';
-
-interface Consulta {
-  idConsulta: number;
-  titulo: string;
-  descripcion: string;
-  fecha: string;
-  idUsuario: number;
-  idMateria: number;
-  municipio: string;
-  estado: string;
-  estatus: string;
-  usuario?: { nombre: string; };
-  materia?: { nombre: string; };
-}
+import { Subscription } from 'rxjs';
+import { ConsultaService } from '../../services/consulta.service';
+import { EspecialidadService } from '../../services/especialidad.service';
+import { EstadoService } from '../../services/estado.service';
+import { ConsultaState } from '../../state/consulta.state';
+import { EspecialidadState } from '../../state/especialidad.state';
+import { Consulta, Especialidad, Estado, Municipio } from '../../models';
 
 @Component({
   selector: 'app-foro',
@@ -28,8 +18,12 @@ interface Consulta {
   styleUrls: ['./foro.css']
 })
 export class Foro implements OnInit, OnDestroy {
-
   consultas: Consulta[] = [];
+  especialidades: Especialidad[] = [];
+  estados: Estado[] = [];
+  municipios: Municipio[] = [];
+  municipiosFiltrados: Municipio[] = [];
+
   isLoading: boolean = true;
   errorMensaje: string | null = null;
 
@@ -37,95 +31,126 @@ export class Foro implements OnInit, OnDestroy {
   estadoDropdownAbierto: boolean = false;
   ciudadDropdownAbierto: boolean = false;
 
-  materiaActiva: string | null = null;
-  estadoActivo: string | null = null;
-  ciudadActiva: string | null = null;
+  especialidadActiva: number | null = null;
+  estadoActivo: number | null = null;
+  municipioActivo: number | null = null;
 
   private subscriptions = new Subscription();
 
   constructor(
-    private http: HttpClient,
+    private consultaService: ConsultaService,
+    private especialidadService: EspecialidadService,
+    private estadoService: EstadoService,
+    private consultaState: ConsultaState,
+    private especialidadState: EspecialidadState,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.cargarConsultasSimuladas();
+    this.cargarDatosIniciales();
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
-  cargarConsultasSimuladas(): void {
-    this.isLoading = true;
-    this.errorMensaje = null;
-    this.consultas = [];
-
-    const datosFalsos: Consulta[] = [
-      {
-        idConsulta: 101,
-        titulo: "Problema con testamento familiar",
-        descripcion: "Mi abuelo falleció y no dejó testamento claro. Mis tíos quieren quedarse con la casa pero mi padre vivió ahí 20 años. ¿Qué podemos hacer? La propiedad está ubicada en el centro de la ciudad y no tenemos escrituras actualizadas.",
-        fecha: new Date().toISOString(),
-        idUsuario: 5,
-        idMateria: 2,
-        municipio: "Tuxtla Gutiérrez",
-        estado: "Chiapas",
-        estatus: "pendiente",
-        usuario: { nombre: "María González" },
-        materia: { nombre: "Derecho Civil" }
+ 
+  cargarDatosIniciales(): void {
+    const especialidadesSub = this.especialidadService.getAll().subscribe({
+      next: (especialidades) => {
+        this.especialidades = especialidades;
+        this.especialidadState.setEspecialidades(especialidades);
       },
-      {
-        idConsulta: 102,
-        titulo: "Despido injustificado sin liquidación",
-        descripcion: "Llevo 5 años en la empresa y me despidieron ayer sin darme ningún documento. Solo me dijeron que ya no regrese. ¿Cómo calculo mi liquidación? Ganaba $12,000 mensuales mas prestaciones de ley.",
-        fecha: new Date(Date.now() - 86400000).toISOString(),
-        idUsuario: 8,
-        idMateria: 4,
-        municipio: "Tapachula",
-        estado: "Chiapas",
-        estatus: "abierta",
-        usuario: { nombre: "Carlos Ruiz" },
-        materia: { nombre: "Derecho Laboral" }
-      },
-      {
-        idConsulta: 103,
-        titulo: "Divorcio express y custodia",
-        descripcion: "Quiero tramitar mi divorcio pero mi pareja no quiere firmar y amenaza con quitarme a los niños. Necesito asesoría urgente sobre los pasos a seguir para proteger a mis hijos durante el proceso.",
-        fecha: new Date(Date.now() - 172800000).toISOString(),
-        idUsuario: 12,
-        idMateria: 2,
-        municipio: "San Cristóbal",
-        estado: "Chiapas",
-        estatus: "pendiente",
-        usuario: { nombre: "Ana López" },
-        materia: { nombre: "Derecho Familiar" }
-      },
-      {
-        idConsulta: 104,
-        titulo: "Incumplimiento de contrato mercantil",
-        descripcion: "Un proveedor no entregó la mercancía pagada hace un mes. Tengo facturas y correos confirmando el pedido. El monto asciende a $50,000 pesos. ¿Procede una demanda mercantil inmediata?",
-        fecha: new Date(Date.now() - 250000000).toISOString(),
-        idUsuario: 20,
-        idMateria: 5,
-        municipio: "Comitán",
-        estado: "Chiapas",
-        estatus: "abierta",
-        usuario: { nombre: "Empresa XYZ" },
-        materia: { nombre: "Derecho Mercantil" }
+      error: (error) => {
+        console.error('Error al cargar especialidades:', error);
       }
-    ];
+    });
+    this.subscriptions.add(especialidadesSub);
 
-    const mockSub = of(datosFalsos)
-      .pipe(delay(600))
-      .subscribe(data => {
-        this.consultas = data;
-        this.isLoading = false;
-      });
+    const estadosSub = this.estadoService.getAllEstados().subscribe({
+      next: (estados) => {
+        this.estados = estados;
+      },
+      error: (error) => {
+        console.error('Error al cargar estados:', error);
+      }
+    });
+    this.subscriptions.add(estadosSub);
 
-    this.subscriptions.add(mockSub);
+    const municipiosSub = this.estadoService.getAllMunicipios().subscribe({
+      next: (municipios) => {
+        this.municipios = municipios;
+      },
+      error: (error) => {
+        console.error('Error al cargar municipios:', error);
+      }
+    });
+    this.subscriptions.add(municipiosSub);
+
+    this.cargarConsultas();
   }
 
+  
+  cargarConsultas(): void {
+  this.isLoading = true;
+  this.errorMensaje = null;
+  this.consultaState.setLoading(true);
+
+  let observable;
+
+  console.log('🔍 Filtros activos:', {
+    especialidad: this.especialidadActiva,
+    estado: this.estadoActivo,
+    municipio: this.municipioActivo
+  });
+
+  if (this.especialidadActiva && this.estadoActivo && this.municipioActivo) {
+    console.log('📡 Llamando: getByMateriaYLocalidad');
+    observable = this.consultaService.getByMateriaYLocalidad(
+      this.especialidadActiva,
+      this.estadoActivo,
+      this.municipioActivo
+    );
+  } else if (this.especialidadActiva) {
+    console.log('📡 Llamando: getByMateria');
+    observable = this.consultaService.getByMateria(this.especialidadActiva);
+  } else if (this.estadoActivo || this.municipioActivo) {
+    console.log('📡 Llamando: getByLocalidad');
+    observable = this.consultaService.getByLocalidad(
+      this.estadoActivo || undefined,
+      this.municipioActivo || undefined
+    );
+  } else {
+    console.log('📡 Llamando: getAll');
+    observable = this.consultaService.getAll();
+  }
+
+  const consultasSub = observable.subscribe({
+    next: (consultas) => {
+      console.log('✅ Consultas recibidas del backend:', consultas);
+      console.log('📊 Total consultas:', consultas.length);
+
+     this.consultas = consultas;
+
+
+      console.log('✅ Consultas después de filtrar por estado:', this.consultas);
+      console.log('📊 Total después de filtrar:', this.consultas.length);
+
+      this.isLoading = false;
+      this.consultaState.setLoading(false);
+    },
+    error: (error) => {
+      console.error('❌ Error al cargar consultas:', error);
+      this.errorMensaje = 'No se pudieron cargar las consultas. Intenta nuevamente.';
+      this.isLoading = false;
+      this.consultaState.setLoading(false);
+    }
+  });
+
+  this.subscriptions.add(consultasSub);
+}
+
+  
   verDetalle(id: number): void {
     this.router.navigate(['/abogado/consultas'], { queryParams: { id: id } });
   }
@@ -146,36 +171,102 @@ export class Foro implements OnInit, OnDestroy {
     }
   }
 
-  seleccionarFiltro(tipo: 'materia' | 'estado' | 'ciudad', valor: string): void {
-    if (tipo === 'materia') this.materiaActiva = valor;
-    if (tipo === 'estado') this.estadoActivo = valor;
-    if (tipo === 'ciudad') this.ciudadActiva = valor;
-
+  
+  seleccionarEspecialidad(id: number): void {
+    this.especialidadActiva = id;
     this.materiaDropdownAbierto = false;
-    this.estadoDropdownAbierto = false;
-    this.ciudadDropdownAbierto = false;
-
-    this.cargarConsultasSimuladas();
+    this.cargarConsultas();
   }
+
+ 
+  seleccionarEstado(id: number): void {
+    this.estadoActivo = id;
+    this.municipioActivo = null;
+    
+    this.municipiosFiltrados = this.municipios.filter(
+      m => m.estadoId === this.estadoActivo
+    );
+    
+    this.estadoDropdownAbierto = false;
+    this.cargarConsultas();
+  }
+
+  
+  seleccionarMunicipio(id: number): void {
+    this.municipioActivo = id;
+    this.ciudadDropdownAbierto = false;
+    this.cargarConsultas();
+  }
+
 
   limpiarFiltros(): void {
-    this.materiaActiva = null;
+    this.especialidadActiva = null;
     this.estadoActivo = null;
-    this.ciudadActiva = null;
-    this.cargarConsultasSimuladas();
+    this.municipioActivo = null;
+    this.municipiosFiltrados = [];
+    this.cargarConsultas();
   }
 
+  
+  getNombreEspecialidad(id: number | null): string {
+    if (!id) return 'MATERIA';
+    const especialidad = this.especialidades.find(e => e.id === id);
+    return especialidad ? especialidad.nombreMateria : 'MATERIA';
+  }
+
+  getNombreEstado(id: number | null): string {
+    if (!id) return 'ESTADO';
+    const estado = this.estados.find(e => e.id === id);
+    return estado ? estado.nombre : 'ESTADO';
+  }
+
+  getNombreMunicipio(id: number | null): string {
+    if (!id) return 'CIUDAD';
+    const municipio = this.municipios.find(m => m.id === id);
+    return municipio ? municipio.nombre : 'CIUDAD';
+  }
+
+  
   formatTime(fecha: string): string {
     if (!fecha) return '';
     const date = new Date(fecha);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
 
+    if (diffMinutes < 60) return `Hace ${diffMinutes} min`;
+    if (diffHours < 24) return `Hace ${diffHours}h`;
     if (diffDays === 0) return 'Hoy';
     if (diffDays === 1) return 'Ayer';
-    if (diffDays < 7) return `Hace ${diffDays} días`;
+    if (diffDays < 7) return `Hace ${diffDays}d`;
     
-    return date.toLocaleDateString('es-ES');
+    return date.toLocaleDateString('es-MX', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
   }
+
+  
+  getMateriaConsulta(consulta: Consulta): string {
+    if (!consulta.especialidades || consulta.especialidades.length === 0) {
+      return 'General';
+    }
+    return consulta.especialidades[0].nombreMateria;
+  }
+
+  getMunicipioConsulta(consulta: any): string {
+  if (consulta.municipio && typeof consulta.municipio === 'object') {
+    return consulta.municipio.nombre || '';
+  }
+  
+  if (consulta.municipioId && typeof consulta.municipioId === 'number') {
+    const municipio = this.municipios.find(m => m.id === consulta.municipioId);
+    return municipio ? municipio.nombre : '';
+  }
+  
+  return '';
+}
 }
