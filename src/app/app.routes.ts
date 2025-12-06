@@ -4,10 +4,8 @@ import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-  // Redirección inicial
   { path: '', redirectTo: '/login/landing', pathMatch: 'full' },
 
-  // Rutas públicas (Login y Registro)
   {
     path: 'login',
     children: [
@@ -34,17 +32,15 @@ export const routes: Routes = [
     ]
   },
 
-  // Rutas protegidas con Header
   {
     path: '',
     component: HeaderComponent,
-    canActivate: [authGuard], // ✨ Protege todas las rutas hijas
+    canActivate: [authGuard], 
     children: [
-      // ===== RUTAS DE ABOGADO =====
       {
         path: 'abogado',
         canActivate: [roleGuard],
-        data: { roles: [2, 3] }, // ✨ Solo Abogado (2) o Admin (3)
+        data: { roles: [2, 3] }, 
         children: [
           { path: 'ayuda', loadComponent: () => import('./abog_pages/ayuda-abog/ayuda-abog').then(m => m.AyudaAbog) },
           { path: 'chat', loadComponent: () => import('./abog_pages/chat-abogado/chat-abogado').then(m => m.ChatAbogado) },
@@ -66,22 +62,20 @@ export const routes: Routes = [
         ]
       },
 
-      // ===== RUTAS DE ADMIN =====
       {
         path: 'admin',
         canActivate: [roleGuard],
-        data: { roles: [3] }, // ✨ Solo Admin (3)
+        data: { roles: [3] }, 
         children: [
           { path: 'inactivos', loadComponent: () => import('./admin/inactivos/inactivos').then(m => m.Inactivos) },
           { path: 'reportes', loadComponent: () => import('./admin/reportes/reportes').then(m => m.Reportes) },
         ]
       },
 
-      // ===== RUTAS DE USUARIO/CLIENTE =====
       {
         path: 'usuario',
         canActivate: [roleGuard],
-        data: { roles: [1, 3] }, // ✨ Solo Cliente (1) o Admin (3)
+        data: { roles: [1, 3] }, 
         children: [
           { path: 'chat', loadComponent: () => import('./user_pages/chat-usuarios/chat-usuarios').then(m => m.ChatUsuarios) },
           { path: 'comentarios', loadComponent: () => import('./user_pages/comentarios-pregunta/comentarios-pregunta').then(m => m.ComentariosPregunta) },
@@ -96,7 +90,6 @@ export const routes: Routes = [
     ]
   },
 
-  // Ruta 404 - Página no encontrada
   {
     path: '**',
     redirectTo: '/login/landing'

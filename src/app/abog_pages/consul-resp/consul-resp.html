@@ -1,133 +1,145 @@
 <div class="nav-actions">
-    <button class="btn-back" (click)="goBack()">
-        ← Volver
-    </button>
+  <button class="btn-back" (click)="goBack()">
+    ← Volver al Foro
+  </button>
 </div>
 
+<!-- Loading -->
 <div *ngIf="isLoading" class="loading-state">
-    <p>Cargando consulta...</p>
+  <div class="spinner"></div>
+  <p>Cargando consulta...</p>
 </div>
 
+<!-- Error -->
 <div *ngIf="!isLoading && errorMensaje" class="error-state">
-    <p>{{ errorMensaje }}</p>
-    <button class="btn-back" (click)="goBack()">Regresar</button>
+  <p>{{ errorMensaje }}</p>
+  <button class="btn-back" (click)="goBack()">Regresar</button>
 </div>
 
+<!-- Contenido Principal -->
 <main class="respuesta-main" *ngIf="!isLoading && consulta">
+  
+  <!-- Consulta Original -->
+  <section class="consulta-original">
+    <div class="consulta-header">
+      <div class="user-meta">
+        <span class="user-icon">👤</span>
+        <span class="user-name">Usuario Anónimo</span>
+        <span class="meta-date">{{ formatTime(consulta.fechaPublicacion) }}</span>
+        <span class="materia-tag">{{ getMateria() }}</span>
+      </div>
+      
+      <button class="btn-reportar" (click)="abrirModalReporte()" title="Reportar esta consulta">
+        🚩 Reportar
+      </button>
+    </div>
     
-    <section class="consulta-original">
-        <div class="consulta-header">
-            <div class="user-meta">
-                <span class="user-name">{{ consulta.usuario?.nombre || 'Usuario Anónimo' }}</span>
-                <span class="meta-date">{{ formatTime(consulta.fecha) }}</span>
-                <span class="materia-tag">{{ consulta.materia?.nombre }}</span>
-            </div>
-            
-            <button class="btn-reportar" (click)="abrirModalReporte()" title="Reportar esta consulta">
-                <img src="/Images/report_flag.png" alt="Reportar" class="icon-flag">
-            </button>
-        </div>
-        
-        <div class="consulta-body">
-            <h2>{{ consulta.titulo }}</h2>
-            <p>{{ consulta.descripcion }}</p>
-        </div>
-    </section>
+    <div class="consulta-body">
+      <h2>{{ consulta.titulo }}</h2>
+      <p>{{ consulta.pregunta }}</p>
+    </div>
+  </section>
 
-    <section class="nueva-respuesta-section">
-        <h3>Tu Respuesta Profesional</h3>
-        <div class="form-respuesta">
-            <textarea 
-                [(ngModel)]="nuevaRespuesta" 
-                placeholder="Escribe tu asesoría legal aquí. Sé claro y profesional..."
-                rows="4"
-                [disabled]="enviandoRespuesta">
-            </textarea>
-            
-            <div class="form-actions">
-                <span class="error-text" *ngIf="errorRespuesta">{{ errorRespuesta }}</span>
-                <button 
-                    class="btn-enviar" 
-                    (click)="enviarRespuesta()"
-                    [disabled]="enviandoRespuesta || !nuevaRespuesta.trim()">
-                    {{ enviandoRespuesta ? 'Enviando...' : 'Enviar Respuesta' }}
-                </button>
-            </div>
-        </div>
-    </section>
+  <!-- Nueva Respuesta -->
+  <section class="nueva-respuesta-section">
+    <h3>Tu Respuesta Profesional</h3>
+    <div class="form-respuesta">
+      <textarea 
+        [(ngModel)]="nuevaRespuesta" 
+        placeholder="Escribe tu asesoría legal aquí. Sé claro y profesional..."
+        rows="5"
+        [disabled]="enviandoRespuesta">
+      </textarea>
+      
+      <div class="form-actions">
+        <span class="error-text" *ngIf="errorRespuesta">{{ errorRespuesta }}</span>
+        <button 
+          class="btn-enviar" 
+          (click)="enviarRespuesta()"
+          [disabled]="enviandoRespuesta || !nuevaRespuesta.trim()">
+          {{ enviandoRespuesta ? 'Enviando...' : 'Enviar Respuesta' }}
+        </button>
+      </div>
+    </div>
+  </section>
 
-    <section class="respuestas-lista">
-        <h3>Respuestas de Colegas ({{ respuestas.length }})</h3>
-        
-        <div *ngIf="respuestas.length === 0" class="no-respuestas">
-            <p>Aún no hay respuestas. ¡Sé el primero en responder!</p>
-        </div>
+  <!-- Lista de Respuestas -->
+  <section class="respuestas-lista">
+    <h3>Respuestas de Colegas ({{ respuestas.length }})</h3>
+    
+    <div *ngIf="respuestas.length === 0" class="no-respuestas">
+      <p>Aún no hay respuestas. ¡Sé el primero en responder!</p>
+    </div>
 
-        <div class="card-wrapper" *ngFor="let resp of respuestas">
-            <div class="respuesta-card">
-                <div class="abogado-info">
-                    <img [src]="resp.abogado?.foto || '/Images/logo azul.png'" alt="Foto Abogado" class="abogado-foto">
-                    <div class="abogado-meta">
-                        <span class="abogado-name">
-                            {{ resp.abogado?.nombre }} {{ resp.abogado?.apellidos }}
-                            <span *ngIf="resp.idUsuarioAbogado === currentUser?.id">(Tú)</span>
-                        </span>
-                        <span class="resp-date">{{ formatTime(resp.fecha) }}</span>
-                    </div>
-                </div>
-                <div class="respuesta-content">
-                    <p>{{ resp.contenido }}</p>
-                </div>
-            </div>
+    <div class="card-wrapper" *ngFor="let resp of respuestas">
+      <div class="respuesta-card" [class.mi-respuesta]="isMiRespuesta(resp)">
+        <div class="abogado-info">
+          <div class="abogado-avatar">
+            {{ getNombreAbogado(resp).charAt(0) }}
+          </div>
+          <div class="abogado-meta">
+            <span class="abogado-name">
+              {{ getNombreAbogado(resp) }}
+              <span *ngIf="isMiRespuesta(resp)" class="badge-tuyo">(Tú)</span>
+            </span>
+            <span class="resp-date">{{ formatTime(resp.fechaRespuesta) }}</span>
+          </div>
         </div>
-    </section>
+        <div class="respuesta-content">
+          <p>{{ resp.respuesta }}</p>
+        </div>
+        <div class="respuesta-footer">
+          <span class="likes-count">👍 {{ resp.likes || 0 }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
 
 </main>
 
-
-<div class="modal-overlay" *ngIf="isReportModalVisible">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Reportar Consulta</h3>
-            <button class="btn-close" (click)="cerrarModalReporte()">&times;</button>
-        </div>
-        
-        <div class="modal-body">
-            <p>¿Por qué deseas reportar esta consulta?</p>
-            
-            <div class="radio-group">
-                <label>
-                    <input type="radio" name="motivo" value="Spam" [(ngModel)]="reportReason"> Spam o contenido basura
-                </label>
-                <label>
-                    <input type="radio" name="motivo" value="Inapropiado" [(ngModel)]="reportReason"> Contenido inapropiado/ofensivo
-                </label>
-                <label>
-                    <input type="radio" name="motivo" value="Informacion Falsa" [(ngModel)]="reportReason"> Información falsa
-                </label>
-                <label>
-                    <input type="radio" name="motivo" value="Otro" [(ngModel)]="reportReason"> Otro motivo
-                </label>
-            </div>
-
-            <textarea 
-                *ngIf="reportReason === 'Otro'"
-                class="custom-reason"
-                [(ngModel)]="customReason"
-                placeholder="Describe el motivo...">
-            </textarea>
-
-            <div class="error-text" *ngIf="errorReporte">{{ errorReporte }}</div>
-        </div>
-
-        <div class="modal-footer">
-            <button class="btn-cancel" (click)="cerrarModalReporte()">Cancelar</button>
-            <button 
-                class="btn-submit-report" 
-                (click)="enviarReporte()"
-                [disabled]="enviandoReporte">
-                {{ enviandoReporte ? 'Enviando...' : 'Reportar' }}
-            </button>
-        </div>
+<!-- Modal de Reporte -->
+<div class="modal-overlay" *ngIf="isReportModalVisible" (click)="cerrarModalReporte()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Reportar Consulta</h3>
+      <button class="btn-close" (click)="cerrarModalReporte()">&times;</button>
     </div>
+    
+    <div class="modal-body">
+      <p>¿Por qué deseas reportar esta consulta?</p>
+      
+      <div class="radio-group">
+        <label *ngFor="let motivo of motivosReporte">
+          <input 
+            type="radio" 
+            name="motivo" 
+            [value]="motivo.id" 
+            [(ngModel)]="motivoReporteId">
+          {{ motivo.descripcion }}
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Comentarios adicionales (opcional):</label>
+        <textarea 
+          class="custom-reason"
+          [(ngModel)]="comentariosReporte"
+          placeholder="Describe el motivo con más detalle..."
+          rows="3">
+        </textarea>
+      </div>
+
+      <div class="error-text" *ngIf="errorReporte">{{ errorReporte }}</div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="cerrarModalReporte()">Cancelar</button>
+      <button 
+        class="btn-submit-report" 
+        (click)="enviarReporte()"
+        [disabled]="enviandoReporte || !motivoReporteId">
+        {{ enviandoReporte ? 'Enviando...' : 'Enviar Reporte' }}
+      </button>
+    </div>
+  </div>
 </div>
