@@ -21,13 +21,11 @@ export class PerfilAbogado implements OnInit, OnDestroy {
   isLoading: boolean = true;
   errorMensaje: string | null = null;
 
-  // Datos del abogado
   nombreAbogado: string = '';
   especializacionAbogado: string = '';
   ubicacionAbogado: string = '';
   descripcionAbogado: string = '';
 
-  // Calificaciones
   calificaciones = {
     general: '0.0',
     profesionalismo: '0.0',
@@ -36,7 +34,6 @@ export class PerfilAbogado implements OnInit, OnDestroy {
     empatia: '0.0'
   };
 
-  // Estadísticas
   totalRespuestas: number = 0;
   totalLikes: number = 0;
 
@@ -54,15 +51,12 @@ export class PerfilAbogado implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Obtener ID del abogado (puede venir de la URL o del usuario actual)
     const routeSub = this.route.queryParamMap.subscribe(params => {
       const id = params.get('id');
       
       if (id) {
-        // Ver perfil de otro abogado
         this.abogadoId = id;
       } else {
-        // Ver mi propio perfil
         this.abogadoId = this.authState.currentUser?.idUsuario || '';
       }
 
