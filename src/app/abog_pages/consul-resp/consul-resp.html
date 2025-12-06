@@ -4,22 +4,18 @@
   </button>
 </div>
 
-<!-- Loading -->
 <div *ngIf="isLoading" class="loading-state">
   <div class="spinner"></div>
   <p>Cargando consulta...</p>
 </div>
 
-<!-- Error -->
 <div *ngIf="!isLoading && errorMensaje" class="error-state">
   <p>{{ errorMensaje }}</p>
   <button class="btn-back" (click)="goBack()">Regresar</button>
 </div>
 
-<!-- Contenido Principal -->
 <main class="respuesta-main" *ngIf="!isLoading && consulta">
   
-  <!-- Consulta Original -->
   <section class="consulta-original">
     <div class="consulta-header">
       <div class="user-meta">
@@ -40,7 +36,6 @@
     </div>
   </section>
 
-  <!-- Nueva Respuesta -->
   <section class="nueva-respuesta-section">
     <h3>Tu Respuesta Profesional</h3>
     <div class="form-respuesta">
@@ -63,7 +58,6 @@
     </div>
   </section>
 
-  <!-- Lista de Respuestas -->
   <section class="respuestas-lista">
     <h3>Respuestas de Colegas ({{ respuestas.length }})</h3>
     
@@ -97,7 +91,6 @@
 
 </main>
 
-<!-- Modal de Reporte -->
 <div class="modal-overlay" *ngIf="isReportModalVisible" (click)="cerrarModalReporte()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
