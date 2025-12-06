@@ -1,25 +1,32 @@
 <div class="container">
   
   <div class="loading-container" *ngIf="isLoading">
+    <div class="spinner"></div>
     <p>Cargando tu historial...</p>
   </div>
 
-  <div class="timeline" *ngIf="!isLoading">
+  <div class="error-container" *ngIf="!isLoading && errorMensaje">
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <div class="timeline" *ngIf="!isLoading && !errorMensaje">
     
     <div class="timeline-item" *ngFor="let item of respuestas">
       <div class="timeline-marker"></div>
       
       <div class="card">
         <div class="card-header">
-          <span class="status-badge" [class.calificada]="item.calificacion" [class.pendiente]="!item.calificacion">
+          <span class="status-badge" 
+                [class.calificada]="item.calificacion" 
+                [class.pendiente]="!item.calificacion">
             {{ item.calificacion ? 'Calificada' : 'Pendiente' }}
           </span>
           <span class="date">{{ formatTime(item.fechaRespuesta) }}</span>
         </div>
 
         <div class="pregunta-contexto">
-          <h4>{{ item.preguntaTitulo }}</h4>
-          <p>"{{ item.preguntaDescripcion }}"</p>
+          <h4>{{ getTituloConsulta(item) }}</h4>
+          <p>"{{ getPreguntaConsulta(item) }}"</p>
           <div class="usuario-tag">
             <small>Usuario Anónimo</small>
           </div>
@@ -27,10 +34,10 @@
 
         <div class="respuesta-content">
           <div class="mi-respuesta-label">Tu Respuesta:</div>
-          <p>{{ item.contenidoRespuesta }}</p>
+          <p>{{ item.respuesta }}</p>
         </div>
 
-        <div class="card-actions">
+        <div class="card-footer">
           <button class="btn-ver" (click)="verCalificacion(item)">
             {{ item.calificacion ? 'Ver Calificación' : 'Ver Estado' }}
           </button>
@@ -40,6 +47,7 @@
 
     <div class="no-results" *ngIf="respuestas.length === 0">
       <p>Aún no has respondido ninguna consulta.</p>
+      <a routerLink="/abogado/foro" class="btn-ir-foro">Ir al Foro</a>
     </div>
 
   </div>
@@ -49,45 +57,55 @@
   <div class="modal-content" (click)="$event.stopPropagation()">
     <button class="close-btn" (click)="cerrarModal()">&times;</button>
 
-    <div *ngIf="modalTipo === 'con-calificacion' && calificacionSeleccionada" class="modal-body">
-      <h3>¡Te han calificado!</h3>
-      
-      <div class="score-circle">
-        <span class="score-num">{{ calificacionSeleccionada.promedio | number:'1.1-1' }}</span>
-        <div class="stars-row">
-          <span *ngFor="let s of getEstrellas(calificacionSeleccionada.promedio)" [class.gold]="s !== '☆'">{{ s }}</span>
-        </div>
-      </div>
-
-      <div class="metrics-grid">
-        <div class="metric">
-          <span>Profesionalismo</span>
-          <div class="bar-bg"><div class="bar-fill" [style.width.%]="(calificacionSeleccionada.profesionalismo / 5) * 100"></div></div>
-          <strong>{{ calificacionSeleccionada.profesionalismo }}</strong>
-        </div>
-        <div class="metric">
-          <span>Atención</span>
-          <div class="bar-bg"><div class="bar-fill" [style.width.%]="(calificacionSeleccionada.atencion / 5) * 100"></div></div>
-          <strong>{{ calificacionSeleccionada.atencion }}</strong>
-        </div>
-        <div class="metric">
-          <span>Claridad</span>
-          <div class="bar-bg"><div class="bar-fill" [style.width.%]="(calificacionSeleccionada.claridad / 5) * 100"></div></div>
-          <strong>{{ calificacionSeleccionada.claridad }}</strong>
-        </div>
-        <div class="metric">
-          <span>Empatía</span>
-          <div class="bar-bg"><div class="bar-fill" [style.width.%]="(calificacionSeleccionada.empatia / 5) * 100"></div></div>
-          <strong>{{ calificacionSeleccionada.empatia }}</strong>
-        </div>
-      </div>
+<div *ngIf="modalTipo === 'con-calificacion' && calificacionSeleccionada" class="modal-body">
+  <h3>¡Te han calificado!</h3>
+  
+  <div class="score-circle">
+    <span class="score-num">{{ getPromedioCalificacion(calificacionSeleccionada) | number:'1.1-1' }}</span>
+    <div class="stars-row">
+      <span *ngFor="let s of getEstrellas(getPromedioCalificacion(calificacionSeleccionada))" 
+            [class.gold]="s !== '☆'">{{ s }}</span>
     </div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric">
+      <span>Profesionalismo</span>
+      <div class="bar-bg">
+        <div class="bar-fill" [style.width.%]="(calificacionSeleccionada.profesionalismo / 5) * 100"></div>
+      </div>
+      <strong>{{ calificacionSeleccionada.profesionalismo }}</strong>
+    </div>
+    <div class="metric">
+      <span>Atención</span>
+      <div class="bar-bg">
+        <div class="bar-fill" [style.width.%]="(calificacionSeleccionada.atencion / 5) * 100"></div>
+      </div>
+      <strong>{{ calificacionSeleccionada.atencion }}</strong>
+    </div>
+    <div class="metric">
+      <span>Claridad</span>
+      <div class="bar-bg">
+        <div class="bar-fill" [style.width.%]="(calificacionSeleccionada.claridad / 5) * 100"></div>
+      </div>
+      <strong>{{ calificacionSeleccionada.claridad }}</strong>
+    </div>
+    <div class="metric">
+      <span>Empatía</span>
+      <div class="bar-bg">
+        <div class="bar-fill" [style.width.%]="(calificacionSeleccionada.empatia / 5) * 100"></div>
+      </div>
+      <strong>{{ calificacionSeleccionada.empatia }}</strong>
+    </div>
+  </div>
+
+</div>
 
     <div *ngIf="modalTipo === 'sin-calificacion'" class="modal-body pending-state">
       <div class="icon-pending">⏳</div>
       <h3>Esperando Calificación</h3>
       <p>El usuario ha visto tu respuesta pero aún no ha dejado una reseña.</p>
-      <p class="tip">Consejo: Las respuestas rápidas y amables suelen recibir mejores puntuaciones.</p>
+      <p class="tip">💡 Consejo: Las respuestas rápidas y amables suelen recibir mejores puntuaciones.</p>
     </div>
 
   </div>

@@ -1,111 +1,139 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Subscription, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { RespuestaConsultaService } from '../../services/respuesta-consulta.service';
+import { CalificacionService } from '../../services/calificacion.service';
+import { ConsultaService } from '../../services/consulta.service';
+import { AuthState } from '../../state/auth.state';
+import { RespuestaConsultaState } from '../../state/respuesta-consulta.state';
+import { RespuestaConsulta, Calificacion, Consulta } from '../../models';
 
-interface Usuario {
-  nombre: string;
-}
-
-interface Calificacion {
-  profesionalismo: number;
-  atencion: number;
-  claridad: number;
-  empatia: number;
-  promedio: number;
-  comentario?: string;
-}
-
-interface Respuesta {
-  idRespuesta: number;
-  preguntaTitulo: string;
-  preguntaDescripcion: string;
-  contenidoRespuesta: string;
-  fechaRespuesta: string;
-  usuarioCliente: Usuario;
-  calificacion?: Calificacion; 
+interface RespuestaConCalificacion extends RespuestaConsulta {
+  calificacion?: Calificacion;
+  consulta?: Consulta;
 }
 
 @Component({
   selector: 'app-mis-respuestas',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './mis-respuestas.html',
   styleUrls: ['./mis-respuestas.css']
 })
 export class MisRespuestas implements OnInit, OnDestroy {
-
-  respuestas: Respuesta[] = [];
+  respuestas: RespuestaConCalificacion[] = [];
   isLoading: boolean = true;
+  errorMensaje: string | null = null;
   
   mostrarModal: boolean = false;
   modalTipo: 'con-calificacion' | 'sin-calificacion' = 'sin-calificacion';
   calificacionSeleccionada: Calificacion | null = null;
 
-  private sub: Subscription = new Subscription();
+  private subscriptions = new Subscription();
+  private abogadoId: string = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private respuestaService: RespuestaConsultaService,
+    private calificacionService: CalificacionService,
+    private consultaService: ConsultaService,
+    private authState: AuthState,
+    private respuestaState: RespuestaConsultaState
+  ) {}
 
   ngOnInit(): void {
-    this.cargarDatosSimulados();
+    this.abogadoId = this.authState.currentUser?.idUsuario || '';
+    
+    if (this.abogadoId) {
+      this.cargarMisRespuestas();
+    } else {
+      this.errorMensaje = 'No se pudo identificar el usuario.';
+      this.isLoading = false;
+    }
   }
 
   ngOnDestroy(): void {
-    this.sub.unsubscribe();
+    this.subscriptions.unsubscribe();
   }
 
-  cargarDatosSimulados(): void {
+  
+  cargarMisRespuestas(): void {
     this.isLoading = true;
+    this.errorMensaje = null;
 
-    const datos: Respuesta[] = [
-      {
-        idRespuesta: 1,
-        preguntaTitulo: "¿Pueden despedirme estando embarazada?",
-        preguntaDescripcion: "Llevo 3 meses en la empresa y notifiqué mi embarazo. Hoy me dijeron que mi contrato terminó.",
-        contenidoRespuesta: "El despido por motivo de embarazo es ilegal y constituye discriminación. Tienes derecho a la reinstalación o a una indemnización constitucional. Te sugiero acudir a la PROFEDET inmediatamente.",
-        fechaRespuesta: new Date().toISOString(),
-        usuarioCliente: { nombre: "Laura M." },
-        calificacion: {
-          profesionalismo: 5,
-          atencion: 5,
-          claridad: 5,
-          empatia: 4,
-          promedio: 4.8
-        }
+    const respuestasSub = this.respuestaService.getByAbogadoId(this.abogadoId).subscribe({
+      next: (respuestas) => {
+        this.respuestas = respuestas;
+        this.respuestaState.setMisRespuestas(respuestas);
+        
+        this.cargarConsultas();
+        this.cargarCalificaciones();
       },
-      {
-        idRespuesta: 2,
-        preguntaTitulo: "Divorcio incausado costo",
-        preguntaDescripcion: "Quiero saber cuánto cuesta aproximadamente y cuánto tarda un divorcio donde ambos estamos de acuerdo.",
-        contenidoRespuesta: "Si es de mutuo acuerdo (voluntario), el proceso es mucho más rápido, oscilando entre 1 y 3 meses dependiendo de la carga del juzgado. Los honorarios varían, pero puedo ofrecerte una asesoría inicial gratuita.",
-        fechaRespuesta: new Date(Date.now() - 86400000 * 2).toISOString(),
-        usuarioCliente: { nombre: "Pedro S." } 
-      },
-      {
-        idRespuesta: 3,
-        preguntaTitulo: "Herencia sin testamento",
-        preguntaDescripcion: "Mi padre falleció sin dejar testamento. Somos 3 hermanos y mi madre. ¿Cómo se reparte?",
-        contenidoRespuesta: "Al no haber testamento, se abre una sucesión legítima (intestamentaria). La herencia se reparte en partes iguales entre los hijos y la esposa (quien hereda como un hijo más si no tiene bienes propios).",
-        fechaRespuesta: new Date(Date.now() - 86400000 * 5).toISOString(),
-        usuarioCliente: { nombre: "Familia R." },
-        calificacion: {
-          profesionalismo: 4,
-          atencion: 5,
-          claridad: 4,
-          empatia: 3,
-          promedio: 4.0
-        }
+      error: (error) => {
+        console.error('Error al cargar respuestas:', error);
+        this.errorMensaje = 'No se pudieron cargar tus respuestas.';
+        this.isLoading = false;
       }
-    ];
+    });
 
-    this.sub = of(datos).pipe(delay(800)).subscribe(data => {
-      this.respuestas = data;
+    this.subscriptions.add(respuestasSub);
+  }
+
+  
+  cargarConsultas(): void {
+    let consultasCargadas = 0;
+    const totalConsultas = this.respuestas.length;
+
+    if (totalConsultas === 0) {
       this.isLoading = false;
+      return;
+    }
+
+    this.respuestas.forEach((respuesta, index) => {
+      const consultaSub = this.consultaService.getById(respuesta.idConsulta).subscribe({
+        next: (consulta) => {
+          this.respuestas[index] = {
+            ...respuesta,
+            consulta: consulta
+          };
+          consultasCargadas++;
+          
+          if (consultasCargadas === totalConsultas) {
+            this.isLoading = false;
+          }
+        },
+        error: (error) => {
+          console.error(`Error al cargar consulta ${respuesta.idConsulta}:`, error);
+          consultasCargadas++;
+          
+          if (consultasCargadas === totalConsultas) {
+            this.isLoading = false;
+          }
+        }
+      });
+      this.subscriptions.add(consultaSub);
     });
   }
 
-  verCalificacion(respuesta: Respuesta): void {
+  
+  cargarCalificaciones(): void {
+    this.respuestas.forEach((respuesta, index) => {
+      const calificacionSub = this.calificacionService.getPromediosPorRespuesta(respuesta.idRespuesta).subscribe({
+        next: (data: any) => {
+          if (data && data.calificacion) {
+            this.respuestas[index].calificacion = data.calificacion;
+          }
+        },
+        error: (error) => {
+          console.log(`Respuesta ${respuesta.idRespuesta} sin calificación`);
+        }
+      });
+      this.subscriptions.add(calificacionSub);
+    });
+  }
+
+  
+  verCalificacion(respuesta: RespuestaConCalificacion): void {
     if (respuesta.calificacion) {
       this.calificacionSeleccionada = respuesta.calificacion;
       this.modalTipo = 'con-calificacion';
@@ -116,24 +144,50 @@ export class MisRespuestas implements OnInit, OnDestroy {
     this.mostrarModal = true;
   }
 
+  
   cerrarModal(): void {
     this.mostrarModal = false;
   }
 
+  
   getEstrellas(promedio: number): string[] {
     const estrellas = [];
     const enteras = Math.floor(promedio);
     const media = promedio % 1 >= 0.5;
     
     for (let i = 0; i < enteras; i++) estrellas.push('★');
-    if (media) estrellas.push('½'); 
+    if (media) estrellas.push('½');
     while (estrellas.length < 5) estrellas.push('☆');
     
     return estrellas;
   }
 
+  
   formatTime(fecha: string): string {
-    const d = new Date(fecha);
-    return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-MX', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+
+  getTituloConsulta(respuesta: RespuestaConCalificacion): string {
+    return respuesta.consulta?.titulo || `Consulta #${respuesta.idConsulta}`;
+  }
+
+  
+  getPreguntaConsulta(respuesta: RespuestaConCalificacion): string {
+    return respuesta.consulta?.pregunta || 'Cargando...';
+  }
+
+  
+  getPromedioCalificacion(calificacion: Calificacion): number {
+    const { profesionalismo, atencion, claridad, empatia } = calificacion;
+    return (profesionalismo + atencion + claridad + empatia) / 4;
   }
 }
