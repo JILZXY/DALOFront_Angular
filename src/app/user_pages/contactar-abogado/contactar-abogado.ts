@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { Router } from '@angular/router';
 import { AbogadoService } from '../../services/abogado.service';
-import { Abogado } from '../../models';
+import { EstadoService } from '../../services/estado.service';
+import { Abogado, Estado, Municipio } from '../../models';
 
 @Component({
   selector: 'app-contactar-abogado',
@@ -14,6 +15,9 @@ import { Abogado } from '../../models';
 })
 export class ContactarAbogado implements OnInit { 
   abogados: Abogado[] = [];
+  estados: Estado[] = [];
+  municipios: Municipio[] = [];
+  
   isLoading: boolean = true;
   errorMensaje: string = '';
 
@@ -26,7 +30,7 @@ export class ContactarAbogado implements OnInit {
   ciudadActiva: number | null = null;
   terminoBusqueda: string = '';
 
-  // Mapping for filters (hardcoded for now as per previous context)
+  // Mapping for filters
   materiasMap: { [key: string]: number } = {
     'penal': 1,
     'civil': 2,
@@ -39,11 +43,27 @@ export class ContactarAbogado implements OnInit {
 
   constructor(
     private abogadoService: AbogadoService,
+    private estadoService: EstadoService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.cargarEstados();
     this.cargarAbogados();
+  }
+
+  cargarEstados(): void {
+    this.estadoService.getAllEstados().subscribe({
+      next: (data) => this.estados = data,
+      error: (err) => console.error('Error al cargar estados', err)
+    });
+  }
+
+  cargarMunicipios(estadoId: number): void {
+    this.estadoService.getAllMunicipios(estadoId).subscribe({
+      next: (data) => this.municipios = data,
+      error: (err) => console.error('Error al cargar municipios', err)
+    });
   }
 
   cargarAbogados(): void {
@@ -51,7 +71,6 @@ export class ContactarAbogado implements OnInit {
     this.errorMensaje = '';
     this.cerrarDropdowns();
 
-    // If search term exists, use search
     if (this.terminoBusqueda.trim()) {
       this.abogadoService.searchByName(this.terminoBusqueda).subscribe({
         next: (data) => this.handleSuccess(data),
@@ -60,24 +79,34 @@ export class ContactarAbogado implements OnInit {
       return;
     }
 
-    // If filters exist, use filter
-    if (this.materiaActiva || this.estadoActivo || this.ciudadActiva) {
-      this.abogadoService.filtrar({
-        materiaId: this.materiaActiva || undefined,
-        estadoId: this.estadoActivo || undefined,
-        municipioId: this.ciudadActiva || undefined
-      }).subscribe({
+    const filters: any = {};
+
+    if (this.materiaActiva && this.materiaActiva !== 7) {
+      filters.materiaId = this.materiaActiva;
+    }
+
+    if (this.estadoActivo) {
+      filters.estadoId = this.estadoActivo;
+    }
+
+    if (this.ciudadActiva) {
+      filters.municipioId = this.ciudadActiva;
+    }
+
+    const hasFilters = Object.keys(filters).length > 0;
+
+    if (hasFilters) {
+       this.abogadoService.filtrar(filters).subscribe({
         next: (data) => this.handleSuccess(data),
         error: (err) => this.handleError(err)
       });
-      return;
+    } else {
+      // If no specific filters (or General selected with no other filters), get all
+      this.abogadoService.getAll().subscribe({
+        next: (data) => this.handleSuccess(data),
+        error: (err) => this.handleError(err)
+      });
     }
-
-    // Default: get all
-    this.abogadoService.getAll().subscribe({
-      next: (data) => this.handleSuccess(data),
-      error: (err) => this.handleError(err)
-    });
   }
 
   private handleSuccess(data: Abogado[]): void {
@@ -109,23 +138,28 @@ export class ContactarAbogado implements OnInit {
   filtrarPorMateria(event: Event): void {
     const input = event.target as HTMLInputElement;
     const materiaKey = input.value;
-    this.materiaActiva = this.materiasMap[materiaKey] || null;
+    // If input value is a number (from dynamic list if we had one) or string key
+    // Here we use the map
+    this.materiaActiva = this.materiasMap[materiaKey] || parseInt(materiaKey) || null;
     this.cargarAbogados();
   }
   
   filtrarPorEstado(event: Event): void {
-    // Placeholder logic for state ID mapping if needed, assuming value is ID for now or ignored
-    // Since the HTML uses 'chiapas', we might need a map or update HTML to use IDs.
-    // For now, let's assume we don't have state IDs ready and just log it, or use a dummy ID if backend requires number.
-    // The user didn't provide state/city IDs, so I'll comment this out or use a dummy.
-    console.log('Filtro estado no implementado completamente sin IDs');
-    // this.estadoActivo = ...
-    // this.cargarAbogados();
+    const input = event.target as HTMLInputElement;
+    const estadoId = parseInt(input.value);
+    this.estadoActivo = estadoId;
+    this.ciudadActiva = null; // Reset city when state changes
+    this.municipios = []; // Clear municipalities
+    if (estadoId) {
+      this.cargarMunicipios(estadoId);
+    }
+    this.cargarAbogados();
   }
 
   filtrarPorCiudad(event: Event): void {
-     // Similar to state, need IDs.
-     console.log('Filtro ciudad no implementado completamente sin IDs');
+    const input = event.target as HTMLInputElement;
+    this.ciudadActiva = parseInt(input.value);
+    this.cargarAbogados();
   }
   
   limpiarFiltros(): void {
@@ -133,12 +167,14 @@ export class ContactarAbogado implements OnInit {
     this.estadoActivo = null;
     this.ciudadActiva = null;
     this.terminoBusqueda = '';
+    this.municipios = []; // Clear municipalities
     this.cargarAbogados();
   }
 
   buscarPorNombre(): void {
     this.cargarAbogados();
   }
+
   contactarAbogado(abogado: Abogado): void {
     const confirmacion = window.confirm(
       `Al iniciar un chat con ${abogado.usuario?.nombre || 'el abogado'}, él podrá ver tu nombre completo.\n\n¿Deseas continuar?`

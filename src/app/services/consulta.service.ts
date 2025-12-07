@@ -165,4 +165,11 @@ export class ConsultaService {
             `${this.baseUrl}/abogado/${abogadoId}`
         );
     }
+
+    marcarMejorRespuesta(idRespuesta: number): Observable<void> {
+        return this.http.put<void>(
+            `${this.baseUrl}${API_CONFIG.endpoints.respuestas}/mejor/${idRespuesta}`,
+            {}
+        );
+    }
 }

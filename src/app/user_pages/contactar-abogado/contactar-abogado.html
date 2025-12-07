@@ -46,9 +46,11 @@
         <span class="dropdown-arrow">▼</span>
       </button>
       <div class="dropdown-content" id="estadoDropdown" [class.show]="estadoDropdownAbierto">
-        <label>
-          <input type="radio" name="estado" value="chiapas" (change)="filtrarPorEstado($event)"> Chiapas
+        <label *ngFor="let estado of estados">
+          <input type="radio" name="estado" [value]="estado.id" [checked]="estadoActivo === estado.id"
+            (change)="filtrarPorEstado($event)"> {{ estado.nombre }}
         </label>
+        <div *ngIf="estados.length === 0" class="no-items">Cargando estados...</div>
       </div>
     </div>
 
@@ -59,21 +61,12 @@
         <span class="dropdown-arrow">▼</span>
       </button>
       <div class="dropdown-content" id="ciudadDropdown" [class.show]="ciudadDropdownAbierto">
-        <label>
-          <input type="radio" name="ciudad" value="tuxtla" (change)="filtrarPorCiudad($event)"> Tuxtla Gutiérrez
+        <label *ngFor="let municipio of municipios">
+          <input type="radio" name="ciudad" [value]="municipio.id" [checked]="ciudadActiva === municipio.id"
+            (change)="filtrarPorCiudad($event)"> {{ municipio.nombre }}
         </label>
-        <label>
-          <input type="radio" name="ciudad" value="tapachula" (change)="filtrarPorCiudad($event)"> Tapachula
-        </label>
-        <label>
-          <input type="radio" name="ciudad" value="comitan" (change)="filtrarPorCiudad($event)"> Comitán
-        </label>
-        <label>
-          <input type="radio" name="ciudad" value="ocosingo" (change)="filtrarPorCiudad($event)"> Ocosingo
-        </label>
-        <label>
-          <input type="radio" name="ciudad" value="benito%20juarez" (change)="filtrarPorCiudad($event)"> Benito Juárez
-        </label>
+        <div *ngIf="!estadoActivo" class="no-items">Selecciona un estado primero</div>
+        <div *ngIf="estadoActivo && municipios.length === 0" class="no-items">Cargando municipios...</div>
       </div>
     </div>
 

@@ -1,47 +1,21 @@
-// File: src/app/user_pages/comentarios-pregunta/comentarios-pregunta.ts
-
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule, Location } from '@angular/common'; // Importar Location
-import { RouterModule, ActivatedRoute } from '@angular/router'; // Importar ActivatedRoute
+import { CommonModule, Location } from '@angular/common';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { forkJoin, Subscription, throwError } from 'rxjs';
+import { forkJoin, Subscription, throwError, Observable, Subscriber } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 
-// --- Interfaces (basadas en tu .js) ---
-interface Usuario {
-  id: number;
-  nombre: string;
-}
+// Services & State
+import { ConsultaService } from '../../services/consulta.service';
+import { ConsultaState } from '../../state/consulta.state';
+import { RespuestaConsultaState } from '../../state/respuesta-consulta.state';
+import { CalificacionService } from '../../services/calificacion.service';
 
-interface Pregunta {
-  idConsulta: number;
-  titulo: string;
-  descripcion: string;
-  fecha: string;
-  idMateria: number;
-  idUsuario: number;
-  materia: { nombre: string; logo: string; };
-  usuario: { nombre: string; };
-  mejorRespuestaId: number | null;
-}
-
-interface Respuesta {
-  idRespuesta: number;
-  contenido: string;
-  fecha: string;
-  esMejorRespuesta: boolean;
-  calificacionPromedio: number;
-  abogado: { nombre: string; apellidos: string; foto: string; };
-  // Propiedades que añadiremos dinámicamente
-  yaCalificada?: boolean;
-}
-
-interface Calificacion {
-  idCalificacion: number;
-  idUsuarioCliente: number;
-  idRespuesta: number;
-}
+// Models
+import { Consulta, RespuestaConsulta } from '../../models/consulta.model';
+import { Usuario } from '../../models/usuario.model';
+import { API_CONFIG } from '../../config/api.config';
 
 @Component({
   selector: 'app-comentarios-pregunta',
@@ -56,17 +30,20 @@ interface Calificacion {
 })
 export class ComentariosPregunta implements OnInit, OnDestroy {
 
-  // --- Estado de la Vista ---
-  pregunta: Pregunta | null = null;
-  respuestas: Respuesta[] = [];
-  isLoading: boolean = true;
+  // --- State Accessors ---
+  get pregunta(): Consulta | null { return this.consultaState.consultaActual; }
+  get respuestas(): RespuestaConsulta[] { return this.respuestaState.respuestas; }
+  get isLoading(): boolean { return this._isLoading; }
+
+  // --- Local State ---
+  private _isLoading: boolean = true;
   errorMensaje: string | null = null;
   private currentUser: Usuario | null = null;
-  private preguntaId: string | null = null;
+  private preguntaId: number | null = null;
 
-  // --- Estado del Modal ---
+  // --- Modal State ---
   isModalVisible: boolean = false;
-  respuestaParaCalificar: Respuesta | null = null;
+  respuestaParaCalificar: RespuestaConsulta | null = null;
   calificacionData = {
     claridad: '',
     tiempo: '',
@@ -74,100 +51,92 @@ export class ComentariosPregunta implements OnInit, OnDestroy {
   };
   errorModal: string | null = null;
 
+  // --- Sets to track local dynamic properties ---
+  respuestasCalificadasIds = new Set<number>();
+
   private subscriptions = new Subscription();
-  private apiUrl = 'http://52.3.15.55:7000'; // URL base de tu API
+  private baseUrl = API_CONFIG.baseUrl; 
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient,
-    private location: Location // Servicio para el botón "Volver"
+    private location: Location,
+    private consultaService: ConsultaService,
+    public consultaState: ConsultaState,
+    public respuestaState: RespuestaConsultaState,
+    private calificacionService: CalificacionService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
-    // 1. Obtener usuario de localStorage
+    // 1. Get user from localStorage
     try {
       this.currentUser = JSON.parse(localStorage.getItem('usuario') || 'null');
     } catch (e) { console.error('Error al parsear usuario', e); }
 
-    // 2. Obtener ID de la pregunta de la URL
+    // 2. Get Question ID
     const routeSub = this.route.queryParamMap.subscribe(params => {
-      // Usamos 'id' (el queryParam que definimos en 'mis-preguntas.ts')
-      const id = params.get('id'); 
-      if (id) {
-        this.preguntaId = id;
-        this.cargarDatosCompletos(id);
+      const idStr = params.get('id'); 
+      if (idStr) {
+        this.preguntaId = Number(idStr);
+        this.cargarDatos(this.preguntaId);
       } else {
         this.errorMensaje = "No se proporcionó un ID de pregunta.";
-        this.isLoading = false;
+        this._isLoading = false;
       }
     });
     this.subscriptions.add(routeSub);
   }
 
   ngOnDestroy(): void {
-    // Limpiar todas las suscripciones
     this.subscriptions.unsubscribe();
+    this.consultaState.setConsultaActual(null);
+    this.respuestaState.clear();
   }
 
-  /**
-   * Carga toda la información de la página en paralelo
-   */
-  cargarDatosCompletos(idPregunta: string): void {
-    this.isLoading = true;
+  cargarDatos(id: number): void {
+    this._isLoading = true;
     this.errorMensaje = null;
-    const usuarioId = this.currentUser?.id;
+    const usuarioId = this.currentUser?.idUsuario;
 
-    // 3. Peticiones en paralelo con forkJoin
-    const pregunta$ = this.http.get<Pregunta>(`${this.apiUrl}/consultas/${idPregunta}`);
-    const respuestas$ = this.http.get<Respuesta[]>(`${this.apiUrl}/respuestas/consulta/${idPregunta}`);
-    // Solo pedir calificaciones si hay un usuario logueado
-    const calificaciones$ = usuarioId
-      ? this.http.get<Calificacion[]>(`${this.apiUrl}/calificaciones/usuario/${usuarioId}`)
-      : this.http.get<Calificacion[]>(`${this.apiUrl}/calificaciones`); // Fallback
+    const consulta$ = this.consultaService.getById(id);
+    const respuestas$ = this.consultaService.getRespuestas(id);
+    
+    // Fallback/Custom logic for user ratings if "CalificacionService" doesn't support "my ratings"
+    // Using raw HTTP based on previous implementation
+    const calificaciones$ = usuarioId 
+        ? this.http.get<any[]>(`${this.baseUrl}/calificaciones/usuario/${usuarioId}`)
+        : new Observable<any[]>((sub: Subscriber<any[]>) => { sub.next([]); sub.complete(); });
 
     const loadSub = forkJoin({
-      pregunta: pregunta$,
-      respuestas: respuestas$,
-      calificaciones: calificaciones$
-    })
-    .pipe(
-      tap(({ pregunta, respuestas, calificaciones }) => {
-        // 4. Procesar datos
-        this.pregunta = pregunta;
-        
-        // Marcar respuestas ya calificadas
-        const calificacionesHechas = new Set(calificaciones.map(c => c.idRespuesta));
-        this.respuestas = respuestas.map(r => ({
-          ...r,
-          yaCalificada: calificacionesHechas.has(r.idRespuesta)
-        }));
-      }),
-      catchError((err: HttpErrorResponse) => {
-        // --- INICIO DE LA CORRECCIÓN ---
-        // 1. Define el mensaje de error en una variable local (que es string)
-        const errorMsg = "Error al cargar los datos. Inténtalo de nuevo.";
+        consulta: consulta$,
+        respuestas: respuestas$,
+        calificaciones: calificaciones$
+    }).pipe(
+        finalize(() => this._isLoading = false)
+    ).subscribe({
+        next: (results) => {
+            this.consultaState.setConsultaActual(results.consulta);
+            this.respuestaState.setRespuestas(results.respuestas);
             
-        // 2. Asigna el string a la propiedad de la clase
-        this.errorMensaje = errorMsg; 
-            
-        console.error(err);
-            
-        // 3. Pasa la variable local (string) a throwError
-        return throwError(() => new Error(errorMsg)); 
-        // --- FIN DE LA CORRECCIÓN ---
-      }),
-      finalize(() => {
-        this.isLoading = false;
-      })
-    )
-    .subscribe();
-
+            // Update Local Maps
+            if (Array.isArray(results.calificaciones)) {
+                 const califSet = new Set<number>(results.calificaciones.map((c: any) => Number(c.idRespuesta)));
+                 this.respuestasCalificadasIds = califSet;
+            }
+        },
+        error: (err) => {
+            console.error(err);
+            this.errorMensaje = "Error al cargar los datos.";
+        }
+    });
+    
     this.subscriptions.add(loadSub);
   }
 
-  // --- Métodos del Modal ---
-  abrirModalCalificacion(respuesta: Respuesta): void {
-    if (respuesta.yaCalificada) return; // No abrir si ya está calificada
+  // --- Modal Methods ---
+  abrirModalCalificacion(respuesta: RespuestaConsulta): void {
+    if (this.respuestasCalificadasIds.has(respuesta.idRespuesta)) return; 
+    
     this.respuestaParaCalificar = respuesta;
     this.isModalVisible = true;
     this.errorModal = null;
@@ -189,58 +158,46 @@ export class ComentariosPregunta implements OnInit, OnDestroy {
     this.errorModal = null;
 
     const body = {
-      idUsuarioCliente: this.currentUser.id,
+      idUsuarioCliente: this.currentUser.idUsuario,
       idRespuesta: this.respuestaParaCalificar.idRespuesta,
       claridad: parseInt(this.calificacionData.claridad),
       tiempoRespuesta: parseInt(this.calificacionData.tiempo),
       empatia: parseInt(this.calificacionData.empatia)
     };
-    
-    const califSub = this.http.post(`${this.apiUrl}/calificaciones`, body)
-      .pipe(
-        tap(() => {
-          // Éxito: cerrar modal y recargar datos
-          this.cerrarModalCalificacion();
-          if (this.preguntaId) {
-            this.cargarDatosCompletos(this.preguntaId); // Recargar para actualizar estado
-          }
-        }),
-        catchError((err) => {
-          this.errorModal = "Hubo un error al enviar la calificación.";
-          console.error(err);
-          return throwError(() => new Error(this.errorModal!));
-        })
-      )
-      .subscribe();
-      
-    this.subscriptions.add(califSub);
+
+    // Raw HTTP call to match previous implementation
+    this.http.post(`${this.baseUrl}/calificaciones`, body).subscribe({
+        next: () => {
+            this.cerrarModalCalificacion();
+            if (this.respuestaParaCalificar) {
+                this.respuestasCalificadasIds.add(this.respuestaParaCalificar.idRespuesta);
+            }
+            // Could reload data to show updated stars if backend updates them instantly
+            if (this.preguntaId) this.cargarDatos(this.preguntaId);
+        },
+        error: (err) => {
+            this.errorModal = "Hubo un error al enviar la calificación.";
+            console.error(err);
+        }
+    });
   }
 
-  // --- Métodos de Acciones ---
+  // --- Actions ---
   marcarComoMejorRespuesta(idRespuesta: number): void {
-    if (this.pregunta?.mejorRespuestaId) return; // No permitir si ya hay una
+    if (this.pregunta?.estado === 'cerrada') return;
 
-    const mejorSub = this.http.put(`${this.apiUrl}/respuestas/mejor/${idRespuesta}`, {})
-      .pipe(
-        tap(() => {
-          // Éxito: recargar los datos
-          if (this.preguntaId) {
-            this.cargarDatosCompletos(this.preguntaId);
-          }
-        }),
-        catchError((err) => {
-          this.errorMensaje = "Error al marcar la respuesta.";
-          console.error(err);
-          return throwError(() => new Error(this.errorMensaje!));
-        })
-      )
-      .subscribe();
-      
-    this.subscriptions.add(mejorSub);
+    this.consultaService.marcarMejorRespuesta(idRespuesta).subscribe({
+        next: () => {
+            if (this.preguntaId) this.cargarDatos(this.preguntaId);
+        },
+        error: (err) => {
+            console.error(err);
+            this.errorMensaje = "Error al marcar mejor respuesta.";
+        }
+    });
   }
 
-  // --- Métodos de Utilidad para el Template ---
-  
+  // --- Template Helpers ---
   getEstrellas(calificacion: number): string[] {
     const estrellas: string[] = [];
     const numCalificacion = Number(calificacion) || 0; 
@@ -274,5 +231,10 @@ export class ComentariosPregunta implements OnInit, OnDestroy {
 
   goBack(): void {
     this.location.back();
+  }
+  
+  // Helper to check if a response is rated by current user
+  isCalificada(idRespuesta: number): boolean {
+      return this.respuestasCalificadasIds.has(idRespuesta);
   }
 }
