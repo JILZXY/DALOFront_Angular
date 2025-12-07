@@ -24,6 +24,26 @@
     </div>
 
     <div class="main-content">
+        <!-- Requests Section (Admin) -->
+        <div class="requests-section" *ngIf="(solicitudes$ | async)?.length"
+            style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffeeba;">
+            <h3 style="color: #856404; margin-top: 0;">Solicitudes Pendientes</h3>
+            <div *ngFor="let solicitud of (solicitudes$ | async)"
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; padding: 10px 0;">
+                <div>
+                    <strong>{{ solicitud.abogado?.usuario?.nombre || 'Abogado' }}</strong> quiere unirse.
+                    <br>
+                    <small>{{ solicitud.fechaSolicitud | date }}</small>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button (click)="aprobarSolicitud(solicitud.id)"
+                        style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Aprobar</button>
+                    <button (click)="rechazarSolicitud(solicitud.id)"
+                        style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Rechazar</button>
+                </div>
+            </div>
+        </div>
+
         <div class="left-column">
             <div class="filter-section">
                 <h2>Encuentre a nuestros abogados segun la especialidad que requiera</h2>

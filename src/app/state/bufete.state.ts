@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Bufete, SolicitudBufete } from '../models';
+import { Bufete, SolicitudBufete, EstadoSolicitud } from '../models';
+import { BufeteService } from '../services/bufete.service';
+import { SolicitudBufeteService } from '../services/solicitud-bufete.service';
 
 @Injectable({
     providedIn: 'root'
@@ -111,6 +113,67 @@ export class BufeteState {
     /**
      * Limpiar estado
      */
+    constructor(
+        private bufeteService: BufeteService,
+        private solicitudService: SolicitudBufeteService
+    ) {}
+
+    // --- Actions ---
+
+    loadBufetes(): void {
+        this.bufeteService.getAll().subscribe(bufetes => {
+            this.setBufetes(bufetes);
+        });
+    }
+
+    createBufete(data: any): Observable<Bufete> {
+        const obs = this.bufeteService.create(data);
+        obs.subscribe(bufete => {
+            this.addBufete(bufete);
+            this.setBufeteActual(bufete);
+        });
+        return obs;
+    }
+
+    unirseBufete(bufeteId: number): Observable<SolicitudBufete> {
+        return this.solicitudService.create({ bufeteId });
+    }
+
+    loadMisBufetes(): void {
+        this.bufeteService.getMisBufetes().subscribe(bufetes => {
+            this.setMisBufetes(bufetes);
+            if (bufetes.length > 0) {
+                // Assuming single bufete for now or selecting first
+                this.setBufeteActual(bufetes[0]);
+                this.loadSolicitudes(bufetes[0].id);
+            }
+        });
+    }
+
+    loadSolicitudes(bufeteId: number): void {
+        this.solicitudService.getByBufeteId(bufeteId).subscribe(solicitudes => {
+            this.setSolicitudes(solicitudes);
+        });
+    }
+
+    aprobarSolicitud(solicitudId: number): Observable<void> {
+        return this.updateSolicitudEstado(solicitudId, EstadoSolicitud.APROBADO);
+    }
+
+    rechazarSolicitud(solicitudId: number): Observable<void> {
+        return this.updateSolicitudEstado(solicitudId, EstadoSolicitud.RECHAZADO);
+    }
+
+    private updateSolicitudEstado(solicitudId: number, estado: string): Observable<void> {
+        const obs = this.solicitudService.updateEstado(solicitudId, { estado });
+        obs.subscribe(() => {
+             // Remove from local list after processed
+             const current = this.solicitudesSubject.value;
+             this.setSolicitudes(current.filter(s => s.id !== solicitudId));
+        });
+        return obs;
+    }
+
     clear(): void {
         this.bufetesSubject.next([]);
         this.misBufetesSubject.next([]);

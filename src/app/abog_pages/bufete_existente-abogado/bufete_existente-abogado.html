@@ -6,16 +6,34 @@
         </svg>
     </button>
 
-    <div class="content-wrapper">
-        <div class="icon-container">
-            <!-- Icon resembling two overlapping circles -->
-            <svg width="150" height="150" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="35" cy="50" r="30" fill="#1a2b3c" />
-                <circle cx="65" cy="50" r="30" fill="#1a2b3c" />
-                <!-- Intersection effect simulation (simplified) -->
-                <path d="M50 24 A30 30 0 0 1 50 76 A30 30 0 0 1 50 24" fill="white" fill-opacity="0.2" />
-            </svg>
+    <div class="content-wrapper" style="width: 100%; max-width: 800px; padding: 20px;">
+        <h1 style="text-align: center; color: #1a2b3c; margin-bottom: 30px;">BUSCAR BUFETE</h1>
+
+        <div class="bufetes-list" style="display: flex; flex-direction: column; gap: 15px;">
+            <div *ngFor="let bufete of bufetes$ | async"
+                style="background: white; padding: 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+                <div class="bufete-info">
+                    <h3 style="margin: 0; color: #223240; font-size: 1.2rem;">{{ bufete.nombre }}</h3>
+                    <p style="margin: 5px 0 0; color: #666; font-size: 0.9rem;">{{ bufete.descripcion || 'Sin
+                        descripción' }}</p>
+                    <div style="margin-top: 5px;">
+                        <span *ngFor="let esp of bufete.especialidades"
+                            style="background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;">
+                            {{ esp.nombreMateria }}
+                        </span>
+                    </div>
+                </div>
+
+                <button (click)="unirse(bufete)"
+                    style="background-color: #223240; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                    SOLICITAR UNIRSE
+                </button>
+            </div>
+
+            <div *ngIf="(bufetes$ | async)?.length === 0" style="text-align: center; color: #666; margin-top: 20px;">
+                No hay bufetes disponibles.
+            </div>
         </div>
-        <h1>YA TIENE UN<br>BUFETE EXISTENTE</h1>
     </div>
 </div>

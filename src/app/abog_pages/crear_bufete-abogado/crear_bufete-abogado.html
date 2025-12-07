@@ -22,9 +22,14 @@
             </div>
 
             <div class="input-card">
-                <label>Escriba el codigo de Acceso al Buffet</label>
-                <input type="text" [(ngModel)]="codigoAcceso" placeholder="Solo letras y numeros (10 Caracteres)"
-                    maxlength="10" class="text-input">
+                <label>Nombre del Bufete</label>
+                <input type="text" [(ngModel)]="nombre" placeholder="Ej. Garcia & Asociados" class="text-input">
+            </div>
+
+            <div class="input-card">
+                <label>Descripción</label>
+                <textarea [(ngModel)]="descripcion" placeholder="Breve descripción..." class="text-input"
+                    rows="3"></textarea>
             </div>
         </div>
     </div>

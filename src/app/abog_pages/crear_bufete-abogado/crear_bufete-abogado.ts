@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { BufeteState } from '../../state/bufete.state';
 
 @Component({
     selector: 'app-crear-bufete-abogado',
@@ -14,11 +15,15 @@ import { FormsModule } from '@angular/forms';
 export class CrearBufeteAbogado implements OnInit {
 
     private apiUrl = 'http://52.3.15.55:7000/bufetes';
-    codigoAcceso: string = '';
+    nombre: string = '';
+    descripcion: string = '';
     previewUrl: string | ArrayBuffer | null = null;
     selectedFile: File | null = null;
-
-    constructor(private http: HttpClient, private router: Router) { }
+    
+    constructor(
+        private bufeteState: BufeteState, 
+        private router: Router
+    ) { }
 
     ngOnInit(): void {
     }
@@ -28,23 +33,25 @@ export class CrearBufeteAbogado implements OnInit {
     }
 
     crear(): void {
-        console.log('Crear bufete clicked');
-        // Implement API call here
-        this.router.navigate(['/abogado/mi-bufete']);
+        if (!this.nombre.trim()) return;
+
+        const requestData = {
+            nombre: this.nombre,
+            descripcion: this.descripcion,
+            especialidadesIds: [1], // Default or fetch from somewhere
+            logo: null
+        };
+
+        this.bufeteState.createBufete(requestData).subscribe({
+            next: (bufete: any) => {
+                console.log('Bufete creado:', bufete);
+                this.router.navigate(['/abogado/mi-bufete']);
+            },
+            error: (err: any) => console.error(err)
+        });
     }
 
     onFileSelected(event: any): void {
-        const file: File = event.target.files[0];
-        if (file) {
-            this.selectedFile = file;
-            console.log('File selected:', file.name);
-
-            // Create preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.previewUrl = e.target?.result || null;
-            };
-            reader.readAsDataURL(file);
-        }
+        // Logic kept for potential future use
     }
 }

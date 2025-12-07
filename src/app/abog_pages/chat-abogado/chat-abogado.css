@@ -291,14 +291,14 @@
 }
 
 .chat-main .sent-bubble {
-  background-color: #DCF8C6;
-  color: #000;
+  background-color: #223240;
+  color: white;
   border-top-right-radius: 0;
 }
 
 .chat-main .received-bubble {
   background-color: #FFFFFF;
-  color: #000;
+  color: #223240;
   border-top-left-radius: 0;
   border: 1px solid #e0e0e0;
 }
