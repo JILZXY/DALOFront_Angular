@@ -2,21 +2,11 @@
   <!-- Header Superior -->
   <header class="top-header">
     <div class="menu-icon">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="3" y="3" width="6" height="6" fill="white"/>
-        <rect x="3" y="9" width="6" height="6" fill="white"/>
-        <rect x="3" y="15" width="6" height="6" fill="white"/>
-        <rect x="9" y="3" width="6" height="6" fill="white"/>
-        <rect x="9" y="9" width="6" height="6" fill="white"/>
-        <rect x="9" y="15" width="6" height="6" fill="white"/>
-        <rect x="15" y="3" width="6" height="6" fill="white"/>
-        <rect x="15" y="9" width="6" height="6" fill="white"/>
-        <rect x="15" y="15" width="6" height="6" fill="white"/>
-      </svg>
+      <!-- Icon or Back button -->
+      <a routerLink="/usuario/home" style="color: white; text-decoration: none;">&larr;</a>
     </div>
     <div class="user-info-header">
-      <div class="user-name-header">{{ usuarioActual.nombre }}</div>
-      <div class="user-type-header">{{ usuarioActual.tipo }}</div>
+      <div class="user-name-header">Mis Chats (Clientes)</div>
     </div>
   </header>
 
@@ -25,74 +15,67 @@
     <aside class="contacts-sidebar">
       <!-- Barra de Búsqueda -->
       <div class="search-bar">
-        <input 
-          type="text" 
-          placeholder="Buscar..." 
-          class="search-input"
-          [(ngModel)]="terminoBusqueda"
-        />
-        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="11" cy="11" r="8" stroke="white" stroke-width="2"/>
-          <path d="m21 21-4.35-4.35" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <input type="text" placeholder="Buscar..." class="search-input" [(ngModel)]="terminoBusqueda" />
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <circle cx="11" cy="11" r="8" stroke="white" stroke-width="2" />
+          <path d="m21 21-4.35-4.35" stroke="white" stroke-width="2" stroke-linecap="round" />
         </svg>
       </div>
 
-      <!-- Lista de Contactos -->
+      <!-- Lista de Contactos (Chats) -->
       <div class="contacts-list">
-        <div 
-          *ngFor="let contacto of getContactosFiltrados()" 
-          class="contact-item"
-          [class.active]="contactoSeleccionado?.id === contacto.id"
-          (click)="seleccionarContacto(contacto)"
-        >
+        <div *ngFor="let chat of getChatsFiltrados(chats$ | async)" class="contact-item"
+          [class.active]="(chatActual$ | async)?.id === chat.id" (click)="seleccionarChat(chat)">
           <div class="contact-avatar">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="8" r="4" fill="#223240"/>
-              <path d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#223240" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="12" cy="8" r="4" fill="#223240" />
+              <path d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#223240" stroke-width="2"
+                stroke-linecap="round" />
             </svg>
           </div>
           <div class="contact-info">
-            <div class="contact-name">{{ contacto.nombre }}</div>
-            <div class="contact-role">{{ contacto.rol }}</div>
+            <div class="contact-name">{{ getNombreContacto(chat) }}</div>
+            <div class="contact-role">{{ getRolContacto(chat) }}</div>
           </div>
           <div class="contact-meta">
-            <div class="contact-date" *ngIf="contacto.ultimaFecha">{{ contacto.ultimaFecha }}</div>
-            <div class="unread-badge" *ngIf="contacto.mensajesNoLeidos > 0">
-              {{ contacto.mensajesNoLeidos }}
-            </div>
+            <div class="contact-date" *ngIf="chat.ultimoMensaje">{{ getHora(chat.ultimoMensaje.fecha) }}</div>
+            <!-- Unread count not yet in model, omitted for now -->
           </div>
+        </div>
+
+        <div *ngIf="(chats$ | async)?.length === 0" class="no-items"
+          style="padding: 20px; text-align: center; color: #666;">
+          No tienes chats activos.
         </div>
       </div>
     </aside>
 
     <!-- Área Principal de Chat -->
-    <main class="chat-main" *ngIf="contactoSeleccionado">
+    <main class="chat-main" *ngIf="(chatActual$ | async) as chat">
       <!-- Header del Chat -->
       <div class="chat-header">
         <div class="chat-contact-avatar">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="8" r="4" fill="#223240"/>
-            <path d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#223240" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="8" r="4" fill="#223240" />
+            <path d="M6 21c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#223240" stroke-width="2" stroke-linecap="round" />
           </svg>
         </div>
         <div class="chat-contact-info">
-          <div class="chat-contact-name">{{ contactoSeleccionado.nombre }}</div>
-          <div class="chat-contact-role">{{ contactoSeleccionado.rol }}</div>
+          <div class="chat-contact-name">{{ getNombreContacto(chat) }}</div>
+          <div class="chat-contact-role">{{ getRolContacto(chat) }}</div>
         </div>
       </div>
 
       <!-- Mensajes -->
       <div class="chat-messages">
-        <div 
-          *ngFor="let mensaje of contactoSeleccionado.mensajes" 
-          class="message-wrapper"
-          [class.sent]="mensaje.esEnviado"
-          [class.received]="!mensaje.esEnviado"
-        >
-          <div class="message-bubble" [class.sent-bubble]="mensaje.esEnviado" [class.received-bubble]="!mensaje.esEnviado">
-            {{ mensaje.contenido }}
+        <div *ngFor="let mensaje of mensajes$ | async" class="message-wrapper" [class.sent]="esEnviadoPorMi(mensaje)"
+          [class.received]="!esEnviadoPorMi(mensaje)">
+          <div class="message-bubble" [class.sent-bubble]="esEnviadoPorMi(mensaje)"
+            [class.received-bubble]="!esEnviadoPorMi(mensaje)">
+            {{ mensaje.mensaje }}
           </div>
-          <div class="message-time">{{ mensaje.fecha }}</div>
+          <div class="message-time">{{ getHora(mensaje.fecha) }}</div>
         </div>
       </div>
 
@@ -100,30 +83,24 @@
       <div class="message-input-container">
         <button class="attach-button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2" stroke-linecap="round" />
           </svg>
         </button>
-        <input 
-          type="text" 
-          class="message-input"
-          placeholder="Escribe tu mensaje"
-          [(ngModel)]="mensajeNuevo"
-          (keyup.enter)="enviarMensaje()"
-        />
+        <input type="text" class="message-input" placeholder="Escribe tu mensaje" [(ngModel)]="mensajeNuevo"
+          (keyup.enter)="enviarMensaje()" />
         <button class="send-button" (click)="enviarMensaje()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 12l14-7-7 14-2-8-8-2z" fill="white"/>
+            <path d="M5 12l14-7-7 14-2-8-8-2z" fill="white" />
           </svg>
         </button>
       </div>
     </main>
 
     <!-- Estado vacío cuando no hay contacto seleccionado -->
-    <main class="chat-main empty-state" *ngIf="!contactoSeleccionado">
+    <main class="chat-main empty-state" *ngIf="!(chatActual$ | async)">
       <div class="empty-message">
         <p>Selecciona un contacto para comenzar a chatear</p>
       </div>
     </main>
   </div>
 </div>
-
