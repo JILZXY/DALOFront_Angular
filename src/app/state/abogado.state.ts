@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Abogado } from '../models';
+import { AbogadoService } from '../services/abogado.service';
 
 @Injectable({
     providedIn: 'root'
@@ -17,6 +18,8 @@ export class AbogadoState {
     // Estado de carga
     private loadingSubject = new BehaviorSubject<boolean>(false);
     public loading$: Observable<boolean> = this.loadingSubject.asObservable();
+
+    constructor(private abogadoService: AbogadoService) {}
 
     /**
      * Obtener abogados (valor instantáneo)
@@ -82,5 +85,49 @@ export class AbogadoState {
         this.abogadosSubject.next([]);
         this.abogadoActualSubject.next(null);
         this.loadingSubject.next(false);
+    }
+
+    // --- Implementaciones de los nuevos endpoints ---
+
+    loadByEspecialidad(id: number): void {
+        this.setLoading(true);
+        this.abogadoService.getAbogadosByEspecialidadOnly(id).subscribe({
+            next: (data) => {
+                this.setAbogados(data);
+                this.setLoading(false);
+            },
+            error: (error) => {
+                console.error('Error loading lawyers by specialty', error);
+                this.setLoading(false);
+            }
+        });
+    }
+
+    loadByMunicipio(id: number): void {
+        this.setLoading(true);
+        this.abogadoService.getAbogadosByMunicipioOnly(id).subscribe({
+            next: (data) => {
+                this.setAbogados(data);
+                this.setLoading(false);
+            },
+            error: (error) => {
+                console.error('Error loading lawyers by municipality', error);
+                this.setLoading(false);
+            }
+        });
+    }
+
+    loadByEstado(id: number): void {
+        this.setLoading(true);
+        this.abogadoService.getAbogadosByEstadoOnly(id).subscribe({
+            next: (data) => {
+                this.setAbogados(data);
+                this.setLoading(false);
+            },
+            error: (error) => {
+                console.error('Error loading lawyers by state', error);
+                this.setLoading(false);
+            }
+        });
     }
 }

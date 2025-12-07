@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { Router } from '@angular/router';
 import { AbogadoService } from '../../services/abogado.service';
+import { AbogadoState } from '../../state/abogado.state';
 import { EstadoService } from '../../services/estado.service';
 import { Abogado, Estado, Municipio } from '../../models';
 
@@ -47,12 +48,27 @@ export class ContactarAbogado implements OnInit {
 
   constructor(
     private abogadoService: AbogadoService,
+    private abogadoState: AbogadoState,
     private estadoService: EstadoService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.cargarEstados();
+    
+    // Subscribe to State
+    this.abogadoState.abogados$.subscribe(abogados => {
+        this.abogados = abogados;
+        if (this.isLoading && abogados.length > 0) {
+            this.isLoading = false; 
+        }
+    });
+
+    // Also subscribe to loading to sync valid state
+    this.abogadoState.loading$.subscribe(loading => {
+        this.isLoading = loading;
+    });
+
     this.cargarAbogados();
   }
 
@@ -71,56 +87,50 @@ export class ContactarAbogado implements OnInit {
   }
 
   cargarAbogados(): void {
-    this.isLoading = true;
     this.errorMensaje = '';
     this.cerrarDropdowns();
 
-    // 1. Search by Name
+    // 1. Search by Name (Still direct or migrate? User asked for *filters* to use state methods)
     if (this.terminoBusqueda.trim()) {
+      this.isLoading = true;
       this.abogadoService.searchByName(this.terminoBusqueda).subscribe({
-        next: (data) => this.handleSuccess(data),
+        next: (data) => {
+             this.abogadoState.setAbogados(data);
+             this.handleSuccess(data); // Sync local state/error msg
+        },
         error: (err) => this.handleError(err)
       });
       return;
     }
 
-    // 2. Filter by Materia (Specific Endpoint)
-    // Note: If both materia AND location are selected, we prioritize one or the other
-    // based on typical user flow, or fall back to generic filter if API doesn't support combo on specific endpoints.
-    // The requirement implies specific endpoints for specific actions.
-    // If Materia is active (and not General which is 7 in this map)
+    // 2. Filter by Materia (Using State Method)
     if (this.materiaActiva && this.materiaActiva !== 7) {
-       // If we strictly follow "Use Endpoint X for Materia", we use it:
-       // However, if Location is ALSO active, the specific endpoint might not handle it.
-       // Assuming specific endpoints are mutually exclusive or primary:
-       this.abogadoService.getByMateria(this.materiaActiva).subscribe({
-           next: (data) => {
-               // Client-side intersection if location is also selected (optional refinement)
-               if (this.estadoActivo) {
-                   data = data.filter(a => a.usuario?.municipio?.estado?.id === this.estadoActivo);
-                   if (this.ciudadActiva) {
-                       data = data.filter(a => a.usuario?.municipio?.id === this.ciudadActiva);
-                   }
-               }
-               this.handleSuccess(data);
-           },
-           error: (err) => this.handleError(err)
-       });
+       this.abogadoState.loadByEspecialidad(this.materiaActiva);
+       // Note: The previous client-side filtering for Location+Materia is removed 
+       // to strictly use the requested endpoints. If user wants that combo, 
+       // they likely need a specific API or we accept that "Materia" filter overrides "Location".
+       // Or we can client-side filter in the Subscription if needed, but the State replaces the list.
        return;
     }
 
-    // 3. Filter by Location (Specific Endpoint)
+    // 3. Filter by Location (Using State Methods)
+    if (this.ciudadActiva) {
+        this.abogadoState.loadByMunicipio(this.ciudadActiva);
+        return;
+    }
+
     if (this.estadoActivo) {
-        this.abogadoService.getByLocalidad(this.estadoActivo, this.ciudadActiva || undefined).subscribe({
-            next: (data) => this.handleSuccess(data),
-            error: (err) => this.handleError(err)
-        });
+        this.abogadoState.loadByEstado(this.estadoActivo);
         return;
     }
 
     // 4. Default: Get All
+    this.isLoading = true;
     this.abogadoService.getAll().subscribe({
-        next: (data) => this.handleSuccess(data),
+        next: (data) => {
+            this.abogadoState.setAbogados(data);
+            this.handleSuccess(data);
+        },
         error: (err) => this.handleError(err)
     });
   }
@@ -155,10 +165,6 @@ export class ContactarAbogado implements OnInit {
     const input = event.target as HTMLInputElement;
     const materiaKey = input.value;
     
-    // Clear other filters when switching main filter type if desired, 
-    // but usually users expect additive. 
-    // For specific endpoints, we treat Materia as primary if selected.
-    
     this.materiaActiva = this.materiasMap[materiaKey] || parseInt(materiaKey) || null;
     this.cargarAbogados();
   }
@@ -167,17 +173,6 @@ export class ContactarAbogado implements OnInit {
     const input = event.target as HTMLInputElement;
     const estadoId = parseInt(input.value);
     
-    // If switching to Location filter and Materia was active, we might want to clear it 
-    // OR keep it and let the client-side filtering handle it. 
-    // For now, let's reset Materia if Location is explicitly chosen to avoid confusion
-    // about which specific endpoint is driving the data.
-    if (this.materiaActiva) {
-        // Option: this.materiaActiva = null; 
-        // But users might want "Criminal Lawyers in Jalisco".
-        // My implementation above handles Materia FIRST, then filters by location client-side.
-        // If Materia is NULL, I use Location endpoint.
-    }
-
     this.estadoActivo = estadoId;
     this.ciudadActiva = null; 
     this.municipios = []; 

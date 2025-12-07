@@ -92,7 +92,6 @@
     <button class="close-btn" (click)="cerrarPerfil()">&times;</button>
 
     <div class="profile-header">
-      <img src="/Images/logo azul.png" alt="Foto Abogado" class="profile-image">
       <div class="profile-info">
         <h2>{{ selectedAbogado.usuario?.nombre }}</h2>
         <span class="profile-cedula">Cédula: {{ selectedAbogado.cedulaProfesional }}</span>
@@ -154,7 +153,6 @@
         <div class="abogado-content">
 
           <div class="abogado-info">
-            <img src="/Images/logo azul.png" alt="Foto de {{ abogado.usuario?.nombre }}" class="abogado-foto">
             <div class="abogado-detalles">
               <h3 class="abogado-nombre">{{ abogado.usuario?.nombre }}</h3>
               <p class="abogado-ubicacion">{{ abogado.usuario?.municipio?.nombre || 'Ubicación no disponible' }}, {{

@@ -65,6 +65,25 @@ export class AbogadoService {
         );
     }
 
+    // New specific endpoints requested by user
+    getAbogadosByEspecialidadOnly(especialidadId: number): Observable<Abogado[]> {
+        return this.http.get<Abogado[]>(
+            `${this.baseUrl}${API_CONFIG.endpoints.abogados}/especialidad/${especialidadId}`
+        );
+    }
+
+    getAbogadosByMunicipioOnly(municipioId: number): Observable<Abogado[]> {
+        return this.http.get<Abogado[]>(
+            `${this.baseUrl}${API_CONFIG.endpoints.abogados}/municipio/${municipioId}`
+        );
+    }
+
+    getAbogadosByEstadoOnly(estadoId: number): Observable<Abogado[]> {
+        return this.http.get<Abogado[]>(
+            `${this.baseUrl}${API_CONFIG.endpoints.abogados}/estado/${estadoId}`
+        );
+    }
+
 
     filtrar(filters: {
         materiaId?: number;
