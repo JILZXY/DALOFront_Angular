@@ -55,4 +55,11 @@ export class CalificacionService {
             data
         );
     }
+
+    registrarCalificacion(data: any): Observable<Calificacion> {
+        return this.http.post<Calificacion>(
+            `${this.baseUrl}${API_CONFIG.endpoints.calificaciones}`,
+            data
+        );
+    }
 }

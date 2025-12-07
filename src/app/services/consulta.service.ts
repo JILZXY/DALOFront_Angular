@@ -141,8 +141,8 @@ export class ConsultaService {
         );
     }
 
-    likeRespuesta(id: number): Observable<void> {
-        return this.http.post<void>(
+    likeRespuesta(id: number): Observable<any> {
+        return this.http.post<any>(
             `${this.baseUrl}${API_CONFIG.endpoints.respuestas}/${id}/like`,
             {}
         );

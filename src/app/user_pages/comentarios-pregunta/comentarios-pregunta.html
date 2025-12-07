@@ -5,18 +5,6 @@
   </button>
 </section>
 
-<div class="loading-overlay" *ngIf="isLoading">
-  <div class="loading-spinner">
-    <p>Cargando respuestas...</p>
-  </div>
-</div>
-
-<div class="error-container" *ngIf="!isLoading && errorMensaje">
-  <h3>Oops! Algo salió mal</h3>
-  <p>{{ errorMensaje }}</p>
-  <button (click)="goBack()" class="btn-regresar">Volver</button>
-</div>
-
 <div *ngIf="!isLoading && !errorMensaje && pregunta">
 
   <section class="pregunta-original">
@@ -29,7 +17,6 @@
           </div>
         </div>
         <div class="materia-icon">
-          <!-- TODO: Handle multiple specialties properly. For now showing first one or General -->
           <img src="/Images/logo_general.png" [alt]="pregunta.especialidades[0]?.nombreMateria || 'General'">
           <span>{{ pregunta.especialidades[0]?.nombreMateria || 'General' }}</span>
         </div>
@@ -42,141 +29,41 @@
   </section>
 
   <section class="comentarios-section">
-    <h2>Respuestas de Abogados ({{ respuestas.length }})</h2>
-
     <div class="comentarios-container">
+        <div *ngIf="!isLoading && !errorMensaje && pregunta">
 
-      <div class="no-comentarios" *ngIf="respuestas.length === 0">
-        <img src="/Images/logo azul.png" alt="Sin comentarios">
-        <h3>No hay respuestas aún</h3>
-        <p>Sé paciente, los abogados pronto responderán a tu pregunta.</p>
-      </div>
+          <section class="comentarios-section">
+            <h2>Respuestas de Abogados ({{ respuestas.length }})</h2>
 
-      <div class="comentario-card" *ngFor="let respuesta of respuestas" [class.mejor-respuesta]="false">
-        <!-- Missing 'esMejorRespuesta' in RespuestaConsulta model?? Check this. -->
-        <!-- Wait, RespuestaConsulta has 'likes', but not 'esMejorRespuesta'? 
-                Actually, the backend might handle 'mejor respuesta' by linking it in Consulta?? 
-                Original code used: [class.mejor-respuesta]="respuesta.esMejorRespuesta".
-                Consulta model has 'respuestas: RespuestaConsulta[]'. 
-                I need to check if response object has 'esMejor' or if it's derived from 'pregunta.mejorRespuestaId' (which implies one best?). 
-                Actually the previous interface had 'mejorRespuestaId'. The new model has NO 'mejorRespuestaId' visible in `Consulta`.
-                However, I added 'marcarMejorRespuesta' to service. 
-                I will assume for now 'esMejor' logic is missing in the model or handled differently.
-                I will skip visual highlighting of 'mejor respuesta' IF the model doesn't support it, 
-                OR I will check if I missed something in `RespuestaConsulta` model.
-                Actually, looking at `Consulta` model again:
-                export interface Consulta { ... idConsulta, ... }
-                export interface RespuestaConsulta { ... idRespuesta, ... likes, abogado? }
-                No 'esMejor' field visible in the model I read.
-                So I will remove 'class.mejor-respuesta' logic and button 'Marcar como Mejor' if I can't support it, 
-                OR I will leave it comment out.
-                BUT, user requirement says "actualiza la vista ... ver las respuestas".
-                I will include the button but maybe disable/hide it if I can't track it, 
-                OR I will assume the backend might return it and use `(respuesta as any).esMejorRespuesta` if needed.
-                Let's stick to safe property access.
-           -->
+            <div class="comentarios-container">
 
-        <div class="comentario-header">
-          <div class="abogado-info">
-            <img src="/Images/logo azul.png" alt="Foto Abogado" class="abogado-foto">
-            <div class="abogado-datos">
-              <span class="abogado-nombre">{{ respuesta.abogado?.usuario?.nombre || 'Abogado' }}</span>
-              <span class="comentario-tiempo">{{ formatTimeAgo(respuesta.fechaRespuesta) }}</span>
+              <div class="no-comentarios" *ngIf="respuestas.length === 0">
+                <img src="/Images/logo azul.png" alt="Sin comentarios">
+                <h3>No hay respuestas aún</h3>
+                <p>Sé paciente, los abogados pronto responderán a tu pregunta.</p>
+              </div>
+
+              <div class="comentario-card" *ngFor="let respuesta of respuestas" [class.mejor-respuesta]="false">
+                <div class="comentario-header">
+                  <div class="abogado-info">
+                    <img src="/Images/logo azul.png" alt="Foto Abogado" class="abogado-foto">
+                    <div class="abogado-datos">
+                      <span class="abogado-nombre">{{ respuesta.abogado?.usuario?.nombre || 'Abogado' }}</span>
+                      <span class="comentario-tiempo">{{ formatTimeAgo(respuesta.fechaRespuesta) }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="comentario-contenido">
+                  <p>{{ respuesta.respuesta }}</p>
+                </div>
+
+                <div class="comentario-footer">
+                  <!-- Interactions removed per user request -->
+                </div>
+
+              </div>
             </div>
-          </div>
+          </section>
+
         </div>
-
-        <div class="comentario-contenido">
-          <p>{{ respuesta.respuesta }}</p>
-        </div>
-
-        <div class="comentario-footer">
-          <div class="calificacion-display">
-            <!-- CalificacionPromedio is not on RespuestaConsulta. It has 'likes'. 
-                 The previous code used 'calificacionPromedio'.
-                 The new model only has 'likes'. 
-                 I'll show Likes instead of stars if average is missing.
-                 Or I'll assume backend returns it.
-            -->
-            <div class="likes-container" *ngIf="respuesta.likes !== undefined">
-              <span>❤️ {{ respuesta.likes }} Likes</span>
-            </div>
-          </div>
-
-          <div class="comentario-acciones">
-            <button class="btn-accion btn-calificar" (click)="abrirModalCalificacion(respuesta)"
-              [disabled]="isCalificada(respuesta.idRespuesta)">
-              {{ isCalificada(respuesta.idRespuesta) ? 'Calificada' : 'Calificar' }}
-            </button>
-
-            <button class="btn-accion btn-mejor" *ngIf="pregunta.estado !== 'cerrada'"
-              (click)="marcarComoMejorRespuesta(respuesta.idRespuesta)">
-              Marcar como Mejor
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-</div>
-
-<div class="modal-calificacion" *ngIf="isModalVisible">
-  <div class="modal-overlay" (click)="cerrarModalCalificacion()"></div>
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title">Calificar Respuesta</h3>
-      <button class="btn-cerrar-modal" (click)="cerrarModalCalificacion()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <p>Califica al abogado en base a los siguientes criterios (5 es Excelente):</p>
-
-      <div class="modal-error" *ngIf="errorModal">
-        {{ errorModal }}
-      </div>
-
-      <div class="criterios-container">
-        <div class="criterio-item">
-          <label for="claridad">Claridad:</label>
-          <select class="select-calificacion" id="claridad" name="claridad" [(ngModel)]="calificacionData.claridad">
-            <option value="" disabled>Seleccionar</option>
-            <option value="1">1 - Muy Malo</option>
-            <option value="2">2 - Malo</option>
-            <option value="3">3 - Regular</option>
-            <option value="4">4 - Bueno</option>
-            <option value="5">5 - Excelente</option>
-          </select>
-        </div>
-
-        <div class="criterio-item">
-          <label for="tiempo">Tiempo de Respuesta:</label>
-          <select class="select-calificacion" id="tiempo" name="tiempo" [(ngModel)]="calificacionData.tiempo">
-            <option value="" disabled>Seleccionar</option>
-            <option value="1">1 - Muy Lento</option>
-            <option value="2">2 - Lento</option>
-            <option value="3">3 - Adecuado</option>
-            <option value="4">4 - Rápido</option>
-            <option value="5">5 - Muy Rápido</option>
-          </select>
-        </div>
-
-        <div class="criterio-item">
-          <label for="empatia">Empatía:</label>
-          <select class="select-calificacion" id="empatia" name="empatia" [(ngModel)]="calificacionData.empatia">
-            <option value="" disabled>Seleccionar</option>
-            <option value="1">1 - Muy Malo</option>
-            <option value="2">2 - Malo</option>
-            <option value="3">3 - Regular</option>
-            <option value="4">4 - Bueno</option>
-            <option value="5">5 - Excelente</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancelar" (click)="cerrarModalCalificacion()">Cancelar</button>
-      <button class="btn-enviar-calificacion" (click)="enviarCalificacion()">Calificar</button>
-    </div>
-  </div>
-</div>
