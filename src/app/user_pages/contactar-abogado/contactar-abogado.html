@@ -86,6 +86,57 @@
   </div>
 </section>
 
+<!-- Profile Modal -->
+<div class="modal-overlay" *ngIf="isPerfilModalOpen && selectedAbogado" (click)="cerrarPerfil()">
+  <div class="modal-content profile-modal" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="cerrarPerfil()">&times;</button>
+
+    <div class="profile-header">
+      <img src="/Images/logo azul.png" alt="Foto Abogado" class="profile-image">
+      <div class="profile-info">
+        <h2>{{ selectedAbogado.usuario?.nombre }}</h2>
+        <span class="profile-cedula">Cédula: {{ selectedAbogado.cedulaProfesional }}</span>
+        <div class="profile-rating">
+          <span class="star-icon">⭐</span>
+          <span class="rating-value">{{ (selectedAbogado.calificacionPromedio || 0).toFixed(1) }}</span>
+          <span class="rating-label">Calificación Promedio</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-body">
+
+      <div class="profile-section">
+        <h3>Biografía</h3>
+        <p>{{ selectedAbogado.biografia || 'Sin biografía disponible.' }}</p>
+      </div>
+
+      <div class="profile-section">
+        <h3>Ubicación</h3>
+        <p>{{ selectedAbogado.usuario?.municipio?.nombre }}, {{ selectedAbogado.usuario?.municipio?.estado?.nombre }}
+        </p>
+      </div>
+
+      <div class="profile-section">
+        <h3>Especialidades</h3>
+        <div class="tags-container">
+          <span *ngFor="let esp of selectedAbogado.especialidades" class="especialidad-tag">{{ esp.nombreMateria
+            }}</span>
+        </div>
+        <div *ngIf="!selectedAbogado.especialidades || selectedAbogado.especialidades.length === 0" class="no-tags">
+          Sin especialidades
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn-contactar-modal" (click)="contactarAbogado(selectedAbogado); cerrarPerfil()">
+          Contactar Ahora
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <section class="lista-abogados">
 
   <div *ngIf="isLoading" class="estado-container">

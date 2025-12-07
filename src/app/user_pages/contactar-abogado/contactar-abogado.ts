@@ -41,6 +41,10 @@ export class ContactarAbogado implements OnInit {
     'general': 7
   };
 
+  // Modal State
+  selectedAbogado: Abogado | null = null;
+  isPerfilModalOpen: boolean = false;
+
   constructor(
     private abogadoService: AbogadoService,
     private estadoService: EstadoService,
@@ -71,6 +75,7 @@ export class ContactarAbogado implements OnInit {
     this.errorMensaje = '';
     this.cerrarDropdowns();
 
+    // 1. Search by Name
     if (this.terminoBusqueda.trim()) {
       this.abogadoService.searchByName(this.terminoBusqueda).subscribe({
         next: (data) => this.handleSuccess(data),
@@ -79,34 +84,45 @@ export class ContactarAbogado implements OnInit {
       return;
     }
 
-    const filters: any = {};
-
+    // 2. Filter by Materia (Specific Endpoint)
+    // Note: If both materia AND location are selected, we prioritize one or the other
+    // based on typical user flow, or fall back to generic filter if API doesn't support combo on specific endpoints.
+    // The requirement implies specific endpoints for specific actions.
+    // If Materia is active (and not General which is 7 in this map)
     if (this.materiaActiva && this.materiaActiva !== 7) {
-      filters.materiaId = this.materiaActiva;
+       // If we strictly follow "Use Endpoint X for Materia", we use it:
+       // However, if Location is ALSO active, the specific endpoint might not handle it.
+       // Assuming specific endpoints are mutually exclusive or primary:
+       this.abogadoService.getByMateria(this.materiaActiva).subscribe({
+           next: (data) => {
+               // Client-side intersection if location is also selected (optional refinement)
+               if (this.estadoActivo) {
+                   data = data.filter(a => a.usuario?.municipio?.estado?.id === this.estadoActivo);
+                   if (this.ciudadActiva) {
+                       data = data.filter(a => a.usuario?.municipio?.id === this.ciudadActiva);
+                   }
+               }
+               this.handleSuccess(data);
+           },
+           error: (err) => this.handleError(err)
+       });
+       return;
     }
 
+    // 3. Filter by Location (Specific Endpoint)
     if (this.estadoActivo) {
-      filters.estadoId = this.estadoActivo;
+        this.abogadoService.getByLocalidad(this.estadoActivo, this.ciudadActiva || undefined).subscribe({
+            next: (data) => this.handleSuccess(data),
+            error: (err) => this.handleError(err)
+        });
+        return;
     }
 
-    if (this.ciudadActiva) {
-      filters.municipioId = this.ciudadActiva;
-    }
-
-    const hasFilters = Object.keys(filters).length > 0;
-
-    if (hasFilters) {
-       this.abogadoService.filtrar(filters).subscribe({
+    // 4. Default: Get All
+    this.abogadoService.getAll().subscribe({
         next: (data) => this.handleSuccess(data),
         error: (err) => this.handleError(err)
-      });
-    } else {
-      // If no specific filters (or General selected with no other filters), get all
-      this.abogadoService.getAll().subscribe({
-        next: (data) => this.handleSuccess(data),
-        error: (err) => this.handleError(err)
-      });
-    }
+    });
   }
 
   private handleSuccess(data: Abogado[]): void {
@@ -138,8 +154,11 @@ export class ContactarAbogado implements OnInit {
   filtrarPorMateria(event: Event): void {
     const input = event.target as HTMLInputElement;
     const materiaKey = input.value;
-    // If input value is a number (from dynamic list if we had one) or string key
-    // Here we use the map
+    
+    // Clear other filters when switching main filter type if desired, 
+    // but usually users expect additive. 
+    // For specific endpoints, we treat Materia as primary if selected.
+    
     this.materiaActiva = this.materiasMap[materiaKey] || parseInt(materiaKey) || null;
     this.cargarAbogados();
   }
@@ -147,9 +166,21 @@ export class ContactarAbogado implements OnInit {
   filtrarPorEstado(event: Event): void {
     const input = event.target as HTMLInputElement;
     const estadoId = parseInt(input.value);
+    
+    // If switching to Location filter and Materia was active, we might want to clear it 
+    // OR keep it and let the client-side filtering handle it. 
+    // For now, let's reset Materia if Location is explicitly chosen to avoid confusion
+    // about which specific endpoint is driving the data.
+    if (this.materiaActiva) {
+        // Option: this.materiaActiva = null; 
+        // But users might want "Criminal Lawyers in Jalisco".
+        // My implementation above handles Materia FIRST, then filters by location client-side.
+        // If Materia is NULL, I use Location endpoint.
+    }
+
     this.estadoActivo = estadoId;
-    this.ciudadActiva = null; // Reset city when state changes
-    this.municipios = []; // Clear municipalities
+    this.ciudadActiva = null; 
+    this.municipios = []; 
     if (estadoId) {
       this.cargarMunicipios(estadoId);
     }
@@ -167,7 +198,7 @@ export class ContactarAbogado implements OnInit {
     this.estadoActivo = null;
     this.ciudadActiva = null;
     this.terminoBusqueda = '';
-    this.municipios = []; // Clear municipalities
+    this.municipios = []; 
     this.cargarAbogados();
   }
 
@@ -190,8 +221,14 @@ export class ContactarAbogado implements OnInit {
     }
   }
 
+  // --- Profile Modal ---
   verPerfil(abogado: Abogado): void {
-     const id = abogado.idAbogado || abogado.idUsuario;
-     this.router.navigate(['/usuario/ver-perfil-abogado', id]);
+     this.selectedAbogado = abogado;
+     this.isPerfilModalOpen = true;
+  }
+
+  cerrarPerfil(): void {
+      this.isPerfilModalOpen = false;
+      this.selectedAbogado = null;
   }
 }
