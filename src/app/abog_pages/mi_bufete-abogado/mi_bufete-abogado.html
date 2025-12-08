@@ -17,7 +17,7 @@
                             stroke="#1a2b3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </div>
-                <h1>{{ bufeteActual?.nombre || 'Cargando...' }}</h1>
+                <h1>{{ getNombreBufete() }}</h1>
             </div>
         </div>
     </div>
@@ -70,7 +70,7 @@
                         <div class="info-simple">
                             <h3>{{ getNombreAbogado(abogado) }}</h3>
                             <p class="specialty">{{ getEspecialidadPrincipal(abogado) }}</p>
-                            <p class="bufete-name">Bufete: {{ bufeteActual?.nombre || 'Mi Bufete' }}</p>
+                            <p class="bufete-name">Bufete: {{ getNombreBufete() }}</p>
                             <p class="location">
                                 <span class="pin-icon">📍</span> {{ getUbicacion(abogado) }}
                             </p>
@@ -94,8 +94,9 @@
                 <div class="profile-avatar">
                     <img src="/Images/logo azul.png" alt="Profile">
                 </div>
-                <h3>{{ currentUser?.nombre || 'Cargando usuario...' }}</h3>
-                <p class="location">📍 {{ currentUser?.municipio?.nombre || 'Sin ubicación' }}</p>
+                
+                <h3>{{ usuarioActual?.nombre || 'Cargando...' }}</h3>
+                <p class="location">📍 {{ usuarioActual?.municipio?.nombre || 'Sin ubicación' }}</p>
 
                 <div class="specialty-icons" *ngIf="getEspecialidadUsuario()">
                     <div class="spec-icon">
@@ -115,11 +116,3 @@
         </div>
     </div>
 </div>
-
-<div class="mi-bufete-container">        
-  <div class="header-banner">...</div>
-  <div class="main-content">            
-    <div class="left-column">...</div>
-    <div class="right-column">...</div>
-  </div>                                 
-</div>                                   

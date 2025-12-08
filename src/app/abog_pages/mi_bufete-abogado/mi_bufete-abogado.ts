@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BufeteService } from '../../services/bufete.service';
 import { SolicitudBufeteService } from '../../services/solicitud-bufete.service';
+import { AbogadoService } from '../../services/abogado.service';
 import { AuthState } from '../../state/auth.state';
 import { BufeteState } from '../../state/bufete.state';
 import { Bufete, Abogado, SolicitudBufete, Usuario } from '../../models';
@@ -19,7 +20,10 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   bufeteActual: Bufete | null = null;
   abogadosBufete: Abogado[] = [];
   solicitudesPendientes: SolicitudBufete[] = [];
-  currentUserData: Usuario | null = null;
+  
+  // Datos separados
+  usuarioActual: Usuario | null = null;
+  abogadoActual: Abogado | null = null;
   
   usuarioActualId: string = '';
   esAdmin: boolean = false;
@@ -33,6 +37,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   constructor(
     private bufeteService: BufeteService,
     private solicitudService: SolicitudBufeteService,
+    private abogadoService: AbogadoService,
     private authState: AuthState,
     private bufeteState: BufeteState,
     private router: Router
@@ -40,20 +45,43 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Obtener usuario actual
-    const currentUser = this.authState.currentUser;
-    if (currentUser) {
-      this.usuarioActualId = currentUser.idUsuario;
-      this.currentUserData = currentUser;
-      console.log('✅ Usuario actual cargado:', currentUser);
+    this.usuarioActual = this.authState.currentUser;
+    if (this.usuarioActual) {
+      this.usuarioActualId = this.usuarioActual.idUsuario;
+      console.log('✅ Usuario actual:', this.usuarioActual.nombre);
+      
+      // Cargar datos del abogado
+      this.cargarDatosAbogado();
     } else {
       console.error('❌ No hay usuario en sesión');
+      this.router.navigate(['/login']);
     }
-
-    this.cargarBufeteActual();
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  /**
+   * Cargar datos del abogado actual
+   */
+  cargarDatosAbogado(): void {
+    const abogadoSub = this.abogadoService.getById(this.usuarioActualId).subscribe({
+      next: (abogado) => {
+        this.abogadoActual = abogado;
+        console.log('✅ Abogado cargado:', abogado);
+        console.log('📚 Especialidades:', abogado.especialidades);
+        
+        // Ahora cargar el bufete
+        this.cargarBufeteActual();
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar abogado:', error);
+        this.cargarBufeteActual(); // Intentar cargar bufete de todas formas
+      }
+    });
+
+    this.subscriptions.add(abogadoSub);
   }
 
   /**
@@ -64,14 +92,16 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
 
     const bufeteSub = this.bufeteService.getByAbogadoId(this.usuarioActualId).subscribe({
       next: (bufetes) => {
+        console.log('🔍 Bufetes encontrados:', bufetes);
+        
         if (bufetes && bufetes.length > 0) {
           this.bufeteActual = bufetes[0];
           this.bufeteState.setBufeteActual(bufetes[0]);
           
+          console.log('✅ Bufete cargado:', this.bufeteActual.nombre);
+          
           // Verificar si es admin
           this.esAdmin = this.bufeteActual.adminBufeteId === this.usuarioActualId;
-          console.log('✅ Bufete cargado:', this.bufeteActual);
-          console.log('✅ Es admin:', this.esAdmin);
 
           // Cargar abogados del bufete
           this.cargarAbogadosBufete();
@@ -81,7 +111,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
             this.cargarSolicitudesPendientes();
           }
         } else {
-          console.log('⚠️ No tiene bufete, redirigiendo...');
+          console.log('⚠️ No tiene bufete');
           this.router.navigate(['/abogado/opciones-bufete']);
         }
         this.isLoading = false;
@@ -105,7 +135,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     const abogadosSub = this.bufeteService.getAbogadosByBufete(this.bufeteActual.id).subscribe({
       next: (abogados) => {
         this.abogadosBufete = abogados;
-        console.log('✅ Abogados del bufete:', abogados);
+        console.log('✅ Abogados del bufete:', abogados.length);
       },
       error: (error) => {
         console.error('❌ Error al cargar abogados:', error);
@@ -125,7 +155,6 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
       next: (solicitudes) => {
         this.solicitudesPendientes = solicitudes.filter(s => s.estado === 'PENDIENTE');
         this.bufeteState.setSolicitudes(this.solicitudesPendientes);
-        console.log('✅ Solicitudes pendientes:', this.solicitudesPendientes);
       },
       error: (error) => {
         console.error('❌ Error al cargar solicitudes:', error);
@@ -165,7 +194,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
    * Obtener usuario actual (para la card de perfil)
    */
   get currentUser(): Usuario | null {
-    return this.currentUserData;
+    return this.usuarioActual;
   }
 
   /**
@@ -206,7 +235,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   }
 
   /**
-   * Salir del bufete (para todos)
+   * Salir del bufete
    */
   salirDelBufete(): void {
     if (!this.bufeteActual) return;
@@ -267,14 +296,21 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   getCalificacion(abogado: Abogado): number {
     return (abogado as any).calificacionPromedio || 0;
   }
+
   /**
- * Obtener especialidad del usuario actual
- */
-getEspecialidadUsuario(): string | null {
-  if (!this.currentUserData?.abogado?.especialidades || 
-      this.currentUserData.abogado.especialidades.length === 0) {
-    return null;
+   * Obtener especialidad del usuario actual
+   */
+  getEspecialidadUsuario(): string | null {
+    if (!this.abogadoActual?.especialidades || this.abogadoActual.especialidades.length === 0) {
+      return null;
+    }
+    return this.abogadoActual.especialidades[0].nombreMateria || 'Sin especialidad';
   }
-  return this.currentUserData.abogado.especialidades[0].nombreMateria || 'Sin especialidad';
-}
+
+  /**
+   * Obtener nombre del bufete
+   */
+  getNombreBufete(): string {
+    return this.bufeteActual?.nombre || 'Cargando bufete...';
+  }
 }
