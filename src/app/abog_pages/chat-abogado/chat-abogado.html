@@ -6,8 +6,7 @@
       <a routerLink="/abogado/home" style="color: white; text-decoration: none;">&larr;</a>
     </div>
     <div class="user-info-header">
-      <div class="user-name-header">{{ usuarioActual.nombre }}</div>
-      <div class="user-type-header">Mis Chats (Abogado)</div>
+      <div class="user-name-header">Mis Chats (Abogado)</div>
     </div>
   </header>
 
@@ -69,13 +68,13 @@
 
       <!-- Mensajes -->
       <div class="chat-messages">
-        <div *ngFor="let mensaje of mensajes$ | async" class="message-wrapper" [class.sent]="esEnviadoPorMi(mensaje)"
-          [class.received]="!esEnviadoPorMi(mensaje)">
-          <div class="message-bubble" [class.sent-bubble]="esEnviadoPorMi(mensaje)"
-            [class.received-bubble]="!esEnviadoPorMi(mensaje)">
-            {{ mensaje.mensaje }}
+        <div *ngFor="let mensaje of mensajes$ | async" class="message-wrapper">
+          <div class="message-row" [class.sent]="mensaje.remitenteId === chat.usuarioAbogadoId" [class.received]="mensaje.remitenteId !== chat.usuarioAbogadoId">
+            <div class="message-bubble" [class.sent-bubble]="mensaje.remitenteId === chat.usuarioAbogadoId" [class.received-bubble]="mensaje.remitenteId !== chat.usuarioAbogadoId">
+              {{ mensaje.mensaje }}
+            </div>
+            <div class="message-time">{{ getHora(mensaje.fecha) }}</div>
           </div>
-          <div class="message-time">{{ getHora(mensaje.fecha) }}</div>
         </div>
       </div>
 

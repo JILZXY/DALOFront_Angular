@@ -266,7 +266,7 @@
 .message-wrapper {
   display: flex;
   flex-direction: column;
-  max-width: 70%;
+  width: 100%;
   margin-bottom: 10px;
 }
 
@@ -290,10 +290,33 @@
   word-break: break-word;
 }
 
+/* Force bubble alignment by bubble class (safe override if wrapper classes are mismatched) */
+.message-bubble.sent-bubble {
+  align-self: flex-end;
+  max-width: 70%;
+}
+
+.message-bubble.received-bubble {
+  align-self: flex-start;
+  max-width: 70%;
+}
+
+/* Align the timestamp to the same side as the bubble */
+.message-wrapper.sent .message-time {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.message-wrapper.received .message-time {
+  align-self: flex-start;
+  text-align: left;
+}
+
 .sent-bubble {
-  background-color: #223240;
+  background-color: #25D366; /* WhatsApp-like green */
   color: white;
   border-top-right-radius: 0;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06) inset;
 }
 
 .received-bubble {
@@ -301,6 +324,36 @@
   color: #223240;
   border-top-left-radius: 0;
   border: 1px solid #e0e0e0;
+}
+
+/* New layout: wrap bubble and time in .message-row which aligns its children */
+.message-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* default: messages on left */
+  width: 100%;
+}
+
+.message-row.sent {
+  align-items: flex-end; /* sent messages align to right */
+}
+
+.message-row .message-bubble {
+  max-width: 70%;
+}
+
+.message-row .message-time {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #999;
+}
+
+.message-row.sent .message-time {
+  text-align: right;
+}
+
+.message-row.received .message-time {
+  text-align: left;
 }
 
 .message-time {
