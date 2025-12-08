@@ -6,7 +6,6 @@
     height: 100vh;
     background-color: #e6e6e6;
     background-image: url('/Images/background.png');
-    /* Assuming same background pattern */
     background-size: cover;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative;

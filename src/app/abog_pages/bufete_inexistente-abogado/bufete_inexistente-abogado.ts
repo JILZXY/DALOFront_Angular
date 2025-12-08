@@ -13,12 +13,11 @@ import { Router } from '@angular/router';
 export class BufeteInexistenteAbogado implements OnInit {
 
 
-    private apiUrl = 'http://your-api-endpoint'; // Placeholder for API endpoint
+    private apiUrl = 'http://your-api-endpoint'; 
 
     constructor(private http: HttpClient, private router: Router) { }
 
     ngOnInit(): void {
-        // Ready for API connection
     }
 
     volver(): void {

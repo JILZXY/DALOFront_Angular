@@ -35,7 +35,6 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  // Abrir/cerrar sidebar
   toggleSidebar(): void {
     this.isOpen = !this.isOpen;
   }
@@ -44,7 +43,6 @@ export class HeaderComponent implements OnInit {
     this.isOpen = false;
   }
 
-  // Cerrar sesión
   logout(event?: Event): void {
     if (event) {
       event.preventDefault();
@@ -56,7 +54,6 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  // Métodos para verificar roles
   isCliente(): boolean {
     return this.authState.isCliente();
   }
@@ -69,7 +66,6 @@ export class HeaderComponent implements OnInit {
     return this.authState.isAdmin();
   }
 
-  // Getters para el template
   get userName(): string {
     return this.currentUser?.nombre || 'Usuario';
   }

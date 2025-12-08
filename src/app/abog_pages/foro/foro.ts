@@ -24,6 +24,16 @@ export class Foro implements OnInit, OnDestroy {
   municipios: Municipio[] = [];
   municipiosFiltrados: Municipio[] = [];
 
+  materias = [
+    { id: 1, nombre: 'DERECHO CIVIL', nombreMateria: 'DERECHO CIVIL', icono: '/Images/CIVIL.png' },
+    { id: 2, nombre: 'DERECHO FAMILIAR', nombreMateria: 'DERECHO FAMILIAR', icono: '/Images/FAMILIAR.png' },
+    { id: 3, nombre: 'DERECHO PENAL', nombreMateria: 'DERECHO PENAL', icono: '/Images/PENAL.png' },
+    { id: 4, nombre: 'DERECHO LABORAL', nombreMateria: 'DERECHO LABORAL', icono: '/Images/LABORAL.png' },
+    { id: 5, nombre: 'DERECHO MERCANTIL', nombreMateria: 'DERECHO MERCANTIL', icono: '/Images/MERCANTIL.png' },
+    { id: 6, nombre: 'DERECHO CONSTITUCIONAL', nombreMateria: 'DERECHO CONSTITUCIONAL', icono: '/Images/CONSTITUCIONAL.png' },
+    { id: 7, nombre: 'GENERAL', nombreMateria: 'GENERAL', icono: '/Images/GENERAL.png' }
+  ];
+
   isLoading: boolean = true;
   errorMensaje: string | null = null;
 
@@ -56,33 +66,28 @@ export class Foro implements OnInit, OnDestroy {
 
  
   cargarDatosIniciales(): void {
-    const especialidadesSub = this.especialidadService.getAll().subscribe({
-      next: (especialidades) => {
-        this.especialidades = especialidades;
-        this.especialidadState.setEspecialidades(especialidades);
-      },
-      error: (error) => {
-        console.error('Error al cargar especialidades:', error);
-      }
-    });
-    this.subscriptions.add(especialidadesSub);
+    console.log('Materias cargadas (hardcodeadas):', this.materias);
 
     const estadosSub = this.estadoService.getAllEstados().subscribe({
       next: (estados) => {
+        console.log(' Estados cargados:', estados);
         this.estados = estados;
       },
       error: (error) => {
-        console.error('Error al cargar estados:', error);
+        console.error(' Error al cargar estados:', error);
+        this.estados = [];
       }
     });
     this.subscriptions.add(estadosSub);
 
     const municipiosSub = this.estadoService.getAllMunicipios().subscribe({
       next: (municipios) => {
+        console.log('✅ Municipios cargados:', municipios);
         this.municipios = municipios;
       },
       error: (error) => {
-        console.error('Error al cargar municipios:', error);
+        console.error(' Error al cargar municipios:', error);
+        this.municipios = [];
       }
     });
     this.subscriptions.add(municipiosSub);
@@ -140,7 +145,7 @@ export class Foro implements OnInit, OnDestroy {
       this.consultaState.setLoading(false);
     },
     error: (error) => {
-      console.error('❌ Error al cargar consultas:', error);
+      console.error(' Error al cargar consultas:', error);
       this.errorMensaje = 'No se pudieron cargar las consultas. Intenta nuevamente.';
       this.isLoading = false;
       this.consultaState.setLoading(false);
@@ -204,6 +209,12 @@ export class Foro implements OnInit, OnDestroy {
     this.estadoActivo = null;
     this.municipioActivo = null;
     this.municipiosFiltrados = [];
+    this.cargarConsultas();
+  }
+
+  limpiarMateria(): void {
+    this.especialidadActiva = null;
+    this.materiaDropdownAbierto = false;
     this.cargarConsultas();
   }
 

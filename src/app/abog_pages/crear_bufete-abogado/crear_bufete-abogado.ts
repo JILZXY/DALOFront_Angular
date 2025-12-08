@@ -38,14 +38,13 @@ export class CrearBufeteAbogado implements OnInit {
         const requestData = {
             nombre: this.nombre,
             descripcion: this.descripcion,
-            especialidadesIds: [1], // Default or fetch from somewhere
+            especialidadesIds: [1], 
             logo: null
         };
 
         this.bufeteState.createBufete(requestData).subscribe({
             next: (bufete: any) => {
                 console.log('Bufete creado:', bufete);
-                // Reload mis bufetes to ensure the newly created one is fetched from the server
                 this.bufeteState.loadMisBufetes().subscribe(() => {
                     this.router.navigate(['/abogado/mi-bufete']);
                 });
@@ -58,6 +57,5 @@ export class CrearBufeteAbogado implements OnInit {
     }
 
     onFileSelected(event: any): void {
-        // Logic kept for potential future use
     }
 }

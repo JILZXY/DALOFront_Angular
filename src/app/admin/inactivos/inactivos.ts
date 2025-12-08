@@ -67,13 +67,11 @@ export class Inactivos implements OnInit {
 
     this.authService.activarUsuario(id).subscribe({
       next: () => {
-        // Actualizar el estado localmente
         this.usuarioState.activarUsuario(id);
 
         this.successMessage = 'Usuario activado exitosamente.';
         this.isLoading = false;
 
-        // Limpiar mensaje después de 3 segundos
         setTimeout(() => {
           this.successMessage = '';
         }, 3000);

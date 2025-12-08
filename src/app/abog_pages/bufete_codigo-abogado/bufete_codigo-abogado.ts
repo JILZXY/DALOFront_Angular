@@ -22,8 +22,7 @@ export class BufeteCodigoAbogado {
     ingresarCodigo(): void {
         if (this.codigo.trim()) {
             console.log('Código ingresado:', this.codigo);
-            // TODO: Validar código con API
-            // Si es válido:
+       
             this.router.navigate(['/abogado/mi-bufete']);
         }
     }

@@ -105,36 +105,28 @@ export class BufeteService {
         );
     }
 
-    /**
-     * Obtener bufetes de un abogado
-     */
+    
     getByAbogadoId(abogadoId: string): Observable<Bufete[]> {
         return this.http.get<any>(`${this.baseUrl}/api/bufetes/abogado/${abogadoId}`).pipe(
             map(response => response.data || response)
         );
     }
 
-    /**
-     * Obtener abogados de un bufete
-     */
+    
     getAbogadosByBufete(bufeteId: number): Observable<Abogado[]> {
         return this.http.get<any>(`${this.baseUrl}/api/bufetes/${bufeteId}/abogados`).pipe(
             map(response => response.data || response)
         );
     }
 
-    /**
-     * Obtener abogados de un bufete por especialidad
-     */
+    
     getAbogadosPorEspecialidad(bufeteId: number, especialidadId: number): Observable<Abogado[]> {
         return this.http.get<any>(`${this.baseUrl}/api/bufetes/${bufeteId}/abogados/especialidad/${especialidadId}`).pipe(
             map(response => response.data || response)
         );
     }
 
-    /**
-     * Salir de un bufete
-     */
+   
     salirDeBufete(bufeteId: number): Observable<any> {
         return this.http.delete(`${this.baseUrl}/api/bufetes/${bufeteId}/salir`);
     }

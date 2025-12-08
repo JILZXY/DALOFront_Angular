@@ -23,7 +23,6 @@
     </div>
 
     <div class="main-content">
-        <!-- Solicitudes Pendientes (Solo Admin) -->
         <div class="requests-section" *ngIf="esAdmin && solicitudesPendientes.length > 0"
             style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffeeba;">
             <h3 style="color: #856404; margin-top: 0;">📋 Solicitudes Pendientes ({{ solicitudesPendientes.length }})
@@ -83,7 +82,6 @@
                     </div>
                 </div>
 
-                <!-- Mensaje si no hay abogados con esa especialidad -->
                 <div *ngIf="abogadosBufete.length === 0" style="text-align: center; padding: 40px; color: #666;">
                     <p>⚠️ No hay abogados con la especialidad "{{ selectedFilter }}" en este bufete.</p>
                 </div>

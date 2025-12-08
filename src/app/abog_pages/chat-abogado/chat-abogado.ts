@@ -24,7 +24,7 @@ export class ChatAbogado implements OnInit, OnDestroy {
   mensajeNuevo: string = '';
   terminoBusqueda: string = '';
   
-  usuarioActual: any = { nombre: 'Abogado', tipo: 'Abogado' }; // Fallback
+  usuarioActual: any = { nombre: 'Abogado', tipo: 'Abogado' }; 
   usuarioActualId: string | null = null; 
 
   private subscriptions = new Subscription();
@@ -40,11 +40,10 @@ export class ChatAbogado implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Attempt to get user info from local storage
     const userStr = localStorage.getItem('usuario');
     if (userStr) {
         this.usuarioActual = JSON.parse(userStr);
-        this.usuarioActualId = this.usuarioActual.idUsuario || this.usuarioActual.id; // Adjust based on your Auth model
+        this.usuarioActualId = this.usuarioActual.idUsuario || this.usuarioActual.id; 
     }
 
     this.chatState.loadMyChats();
@@ -64,10 +63,8 @@ export class ChatAbogado implements OnInit, OnDestroy {
     this.mensajeNuevo = '';
   }
 
-  // --- Helpers for Template ---
 
   getNombreContacto(chat: Chat): string {
-      // Logic for Lawyer view: show the Client's name
       return chat.cliente?.nombre || 'Cliente';
   }
 
@@ -82,7 +79,6 @@ export class ChatAbogado implements OnInit, OnDestroy {
   }
 
   esEnviadoPorMi(mensaje: Mensaje): boolean {
-       // Use loose equality
        return mensaje.remitenteId == this.usuarioActualId;
   }
 

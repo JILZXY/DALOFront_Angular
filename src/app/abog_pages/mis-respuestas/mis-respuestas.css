@@ -11,15 +11,15 @@
 }
 
 .container {
-  width: 95%; /* Ocupa casi todo el ancho */
-  max-width: 1600px; /* Límite mucho más amplio */
+  width: 95%;
+  max-width: 1600px; 
   margin: 0 auto;
   padding: 0;
 }
 
 .timeline {
   position: relative;
-  padding-left: 40px; /* Un poco más de espacio para la línea */
+  padding-left: 40px; 
 }
 
 .timeline::before {
@@ -28,14 +28,14 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 6px; /* Línea más gruesa */
+  width: 6px;
   background: #e0e0e0;
   border-radius: 3px;
 }
 
 .timeline-item {
   position: relative;
-  margin-bottom: 50px; /* Más separación entre tarjetas */
+  margin-bottom: 50px; 
   width: 100%;
 }
 
@@ -43,7 +43,7 @@
   position: absolute;
   left: -43px; 
   top: 30px;
-  width: 24px; /* Marcador más grande */
+  width: 24px; 
   height: 24px;
   background: #223240;
   border: 4px solid #D9D9D9;
@@ -54,9 +54,9 @@
 .card {
   background: #fdfdfd;
   border-radius: 15px;
-  padding: 40px; /* Más relleno interno para que se vea grande */
+  padding: 40px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-  border-left: 8px solid #223240; /* Borde lateral más notorio */
+  border-left: 8px solid #223240; 
   animation: slideIn 0.5s ease;
   width: 100%;
   box-sizing: border-box;
@@ -70,8 +70,8 @@
 }
 
 .status-badge {
-  font-size: 14px; /* Letra más grande */
-  font-weight: 800; /* Negrita fuerte */
+  font-size: 14px; 
+  font-weight: 800; 
   padding: 6px 15px;
   border-radius: 20px;
   text-transform: uppercase;
@@ -90,7 +90,7 @@
 
 .date {
   font-size: 14px;
-  color: #555; /* Texto más oscuro */
+  color: #555;
   font-weight: 600;
 }
 
@@ -105,16 +105,16 @@
 .pregunta-contexto h4 {
   margin: 0 0 10px 0;
   color: #223240;
-  font-size: 20px; /* Título más grande */
+  font-size: 20px; 
   font-weight: 800;
 }
 
 .pregunta-contexto p {
   margin: 0;
   font-style: italic;
-  color: #333; /* Texto casi negro */
-  font-size: 16px; /* Letra más grande */
-  font-weight: 500; /* Semi-negrita para legibilidad */
+  color: #333; 
+  font-size: 16px; 
+  font-weight: 500; 
   line-height: 1.5;
 }
 
@@ -142,9 +142,9 @@
 .respuesta-content p {
   margin: 0;
   line-height: 1.7;
-  color: #111; /* Negro intenso para la respuesta */
-  font-size: 18px; /* Tamaño de lectura cómodo */
-  font-weight: 500; /* Peso medio para que no se vea "flaca" */
+  color: #111; 
+  font-size: 18px; 
+  font-weight: 500;
 }
 
 .card-actions {
@@ -156,7 +156,7 @@
   background: #223240;
   color: white;
   border: none;
-  padding: 14px 30px; /* Botón más grande */
+  padding: 14px 30px; 
   border-radius: 8px;
   cursor: pointer;
   font-weight: 700;
@@ -169,7 +169,6 @@
   transform: translateY(-2px);
 }
 
-/* MODAL (Sin cambios mayores, solo ajustes de fuente) */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;

@@ -1,8 +1,6 @@
 <div class="chat-container">
-  <!-- Header Superior -->
   <header class="top-header">
     <div class="menu-icon">
-      <!-- Icon or Back button -->
       <a routerLink="/usuario/home" style="color: white; text-decoration: none;">&larr;</a>
     </div>
     <div class="user-info-header">
@@ -14,9 +12,7 @@
   </header>
 
   <div class="chat-layout">
-    <!-- Sidebar de Contactos -->
     <aside class="contacts-sidebar">
-      <!-- Barra de Búsqueda -->
       <div class="search-bar">
         <input type="text" placeholder="Buscar..." class="search-input" [(ngModel)]="terminoBusqueda" />
         <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -26,7 +22,6 @@
         </svg>
       </div>
 
-      <!-- Lista de Contactos (Chats) -->
       <div class="contacts-list">
         <div *ngFor="let chat of getChatsFiltrados(chats$ | async)" class="contact-item"
           [class.active]="(chatActual$ | async)?.id === chat.id" (click)="seleccionarChat(chat)">
@@ -43,7 +38,6 @@
           </div>
           <div class="contact-meta">
             <div class="contact-date" *ngIf="chat.ultimoMensaje">{{ getHora(chat.ultimoMensaje.fecha) }}</div>
-            <!-- Unread count not yet in model, omitted for now -->
           </div>
         </div>
 
@@ -54,9 +48,7 @@
       </div>
     </aside>
 
-    <!-- Área Principal de Chat -->
     <main class="chat-main" *ngIf="(chatActual$ | async) as chat">
-      <!-- Header del Chat -->
       <div class="chat-header">
         <div class="chat-contact-avatar">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -70,7 +62,6 @@
         </div>
       </div>
 
-      <!-- Mensajes -->
       <div class="chat-messages">
         <div *ngFor="let mensaje of mensajes$ | async" class="message-wrapper">
           <div class="message-row" [class.sent]="mensaje.remitenteId === chat.usuarioAbogadoId" [class.received]="mensaje.remitenteId !== chat.usuarioAbogadoId">
@@ -82,7 +73,6 @@
         </div>
       </div>
 
-      <!-- Input de Mensaje -->
       <div class="message-input-container">
         <button class="attach-button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -99,7 +89,6 @@
       </div>
     </main>
 
-    <!-- Estado vacío cuando no hay contacto seleccionado -->
     <main class="chat-main empty-state" *ngIf="!(chatActual$ | async)">
       <div class="empty-message">
         <p>Selecciona un contacto para comenzar a chatear</p>

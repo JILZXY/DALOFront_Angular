@@ -1,18 +1,14 @@
 <div class="header-wrapper">
-  <!-- Header superior -->
   <header class="main-header">
     <div class="header-container">
-      <!-- Botón de menú (hamburguesa) -->
       <button class="menu-toggle-btn" (click)="toggleSidebar()" *ngIf="isAuthenticated$ | async">
         ☰
       </button>
 
-      <!-- Logo -->
       <div class="logo">
         <a routerLink="/">DALO</a>
       </div>
 
-      <!-- Usuario info (desktop) -->
       <div class="user-section" *ngIf="isAuthenticated$ | async">
         <span class="user-name">{{ userName }}</span>
         <span class="user-role">({{ userRole }})</span>
@@ -20,10 +16,8 @@
     </div>
   </header>
 
-  <!-- Overlay para cerrar sidebar -->
   <div class="sidebar-overlay" [class.active]="isOpen" (click)="closeSidebar()"></div>
 
-  <!-- SIDEBAR PARA CLIENTE (ROL 1) -->
   <aside class="sidebar" [class.active]="isOpen" *ngIf="isCliente()">
     <div class="sidebar-header">
       <div class="user-info-slide">
@@ -66,7 +60,6 @@
     </div>
   </aside>
 
-  <!-- SIDEBAR PARA ABOGADO (ROL 2) -->
   <aside class="sidebar" [class.active]="isOpen" *ngIf="isAbogado()">
     <div class="sidebar-header">
       <div class="user-info-slide">
@@ -112,7 +105,6 @@
     </div>
   </aside>
 
-  <!-- SIDEBAR PARA ADMIN (ROL 3) -->
   <aside class="sidebar" [class.active]="isOpen" *ngIf="isAdmin()">
     <div class="sidebar-header">
       <div class="user-info-slide">
@@ -149,7 +141,6 @@
     </div>
   </aside>
 
-  <!-- Contenido principal -->
   <main class="main-content">
     <router-outlet></router-outlet>
   </main>

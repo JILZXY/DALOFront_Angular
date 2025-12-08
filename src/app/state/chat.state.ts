@@ -45,7 +45,6 @@ export class ChatState {
         this.mensajesSubject.next(mensajes);
     }
 
-    // --- Actions ---
 
     loadMyChats(): void {
         this.setLoading(true);
@@ -80,7 +79,7 @@ export class ChatState {
         const chat = this.findChatById(chatId);
         if (chat) {
             this.setChatActual(chat);
-            this.setMensajes([]); // Clear messages to avoid stale data
+            this.setMensajes([]); 
             this.loadMensajes(chatId);
         }
     }
@@ -92,7 +91,7 @@ export class ChatState {
             },
             error: (err) => {
                 console.error('Error loading messages', err);
-                this.setMensajes([]); // Ensure empty on error
+                this.setMensajes([]); 
             }
         });
     }
@@ -111,11 +110,10 @@ export class ChatState {
         });
     }
 
-    // --- Internal State Helpers ---
+    
 
     addChat(chat: Chat): void {
         const actuales = this.chatsSubject.value;
-        // Check if exists to avoid dupes
         if (!actuales.find(c => c.id === chat.id)) {
              this.chatsSubject.next([chat, ...actuales]);
         }
@@ -125,14 +123,11 @@ export class ChatState {
         const actuales = this.mensajesSubject.value;
         this.mensajesSubject.next([...actuales, mensaje]);
 
-        // Update last message in chat list
         if (this.chatActual && this.chatActual.id === mensaje.chatId) {
-            // Update local object
             const chatActualizado = { ...this.chatActual, ultimoMensaje: mensaje };
             this.chatActualSubject.next(chatActualizado);
             this.updateChatInList(chatActualizado);
         } else {
-             // If message received for another chat (e.g. websocket in future), find and update
              const chat = this.findChatById(mensaje.chatId);
              if (chat) {
                  this.updateChatInList({ ...chat, ultimoMensaje: mensaje });

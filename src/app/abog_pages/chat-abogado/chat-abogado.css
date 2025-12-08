@@ -16,7 +16,6 @@
   overflow: hidden;
 }
 
-/* Header Superior */
 .top-header {
   background-color: #223240;
   color: white;
@@ -56,7 +55,6 @@
   margin-top: 2px;
 }
 
-/* Layout Principal */
 .chat-layout {
   display: flex;
   flex: 1;
@@ -64,7 +62,6 @@
   height: calc(100vh - 60px);
 }
 
-/* Sidebar de Contactos */
 .contacts-sidebar {
   width: 350px;
   background-color: #E8E8E8;
@@ -75,7 +72,6 @@
   height: 100%;
 }
 
-/* Barra de Búsqueda */
 .search-bar {
   background-color: #223240;
   padding: 15px;
@@ -107,7 +103,6 @@
   pointer-events: none;
 }
 
-/* Lista de Contactos */
 .contacts-list {
   flex: 1;
   overflow-y: auto;
@@ -184,7 +179,6 @@
   color: #666;
 }
 
-/* Área Principal de Chat */
 .chat-main {
   flex: 1;
   display: flex;
@@ -208,7 +202,6 @@
   font-weight: 600;
 }
 
-/* Header del Chat */
 .chat-header {
   background-color: #223240;
   color: white;
@@ -290,7 +283,6 @@
   word-break: break-word;
 }
 
-/* Force bubble alignment by bubble class (safe override if wrapper classes are mismatched) */
 .message-bubble.sent-bubble {
   align-self: flex-end;
   max-width: 70%;
@@ -301,7 +293,6 @@
   max-width: 70%;
 }
 
-/* Align the timestamp to the same side as the bubble */
 .message-wrapper.sent .message-time {
   align-self: flex-end;
   text-align: right;
@@ -313,7 +304,7 @@
 }
 
 .sent-bubble {
-  background-color: #25D366; /* WhatsApp-like green */
+  background-color: #25D366; 
   color: white;
   border-top-right-radius: 0;
   box-shadow: 0 1px 0 rgba(0,0,0,0.06) inset;
@@ -326,16 +317,15 @@
   border: 1px solid #e0e0e0;
 }
 
-/* New layout: wrap bubble and time in .message-row which aligns its children */
 .message-row {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* default: messages on left */
+  align-items: flex-start; 
   width: 100%;
 }
 
 .message-row.sent {
-  align-items: flex-end; /* sent messages align to right */
+  align-items: flex-end; 
 }
 
 .message-row .message-bubble {
@@ -363,7 +353,6 @@
   font-weight: 600;
 }
 
-/* Input de Mensaje */
 .message-input-container {
   background-color: #223240;
   padding: 15px 20px;
@@ -409,7 +398,6 @@
   color: #999;
 }
 
-/* Scrollbar personalizado */
 .contacts-list::-webkit-scrollbar,
 .chat-messages::-webkit-scrollbar {
   width: 8px;
@@ -431,7 +419,6 @@
   background: #1a2830;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .contacts-sidebar {
     width: 100%;

@@ -4,7 +4,6 @@
     <p class="page-subtitle">Gestión de abogados pendientes de activación</p>
   </div>
 
-  <!-- Mensajes de Alerta -->
   <div *ngIf="errorMessage" class="alert alert-error">
     {{ errorMessage }}
   </div>
@@ -12,12 +11,10 @@
     {{ successMessage }}
   </div>
 
-  <!-- Loading -->
   <div *ngIf="isLoading" class="loading">
     <p>Procesando...</p>
   </div>
 
-  <!-- Lista de Usuarios -->
   <ng-container *ngIf="usuariosInactivos$ | async as usuarios">
 
     <div *ngIf="usuarios.length > 0; else noData" class="lawyers-grid">
@@ -31,7 +28,6 @@
               <span>{{ user.email }}</span>
             </div>
 
-            <!-- Datos específicos de abogado -->
             <ng-container *ngIf="user.abogado">
               <div class="detail-item">
                 <span class="detail-label">Cédula:</span>

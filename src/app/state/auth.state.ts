@@ -101,13 +101,11 @@ export class AuthState {
         if (!token) return true;
 
         try {
-            // Decodificar el payload del JWT (sin verificar firma)
             const payload = JSON.parse(atob(token.split('.')[1]));
             const exp = payload.exp;
 
             if (!exp) return false;
 
-            // Comparar con tiempo actual (en segundos)
             const now = Math.floor(Date.now() / 1000);
             return exp < now;
         } catch (error) {
@@ -116,11 +114,7 @@ export class AuthState {
         }
     }
 
-    // ✨ NUEVO MÉTODO - Validar autenticación completa
-    /**
-     * Verificar si la autenticación es válida
-     * (usuario existe, token existe y no está expirado)
-     */
+  
     isAuthValid(): boolean {
         return this.isAuthenticated && !this.isTokenExpired();
     }

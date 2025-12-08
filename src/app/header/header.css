@@ -5,7 +5,6 @@
   font-family: 'Montserrat', sans-serif;
 }
 
-/* --- Layout Principal --- */
 .header-wrapper {
   display: flex;
   flex-direction: column;
@@ -15,11 +14,9 @@
 .main-content {
   flex: 1;
   padding-top: 80px;
-  /* Espacio para el header fijo */
   background-color: #f4f6f9;
 }
 
-/* --- Header Superior --- */
 .main-header {
   background-color: #223240;
   color: #D9D9D9;
@@ -75,12 +72,10 @@
   color: #00A8E8;
 }
 
-/* --- Sidebar (Menú Lateral) --- */
 .sidebar {
   position: fixed;
   top: 0;
   left: -280px;
-  /* Oculto por defecto */
   width: 280px;
   height: 100%;
   background-color: #ffffff;
@@ -172,7 +167,6 @@
   background-color: #fff5f5;
 }
 
-/* --- Overlay (Fondo oscuro) --- */
 .sidebar-overlay {
   position: fixed;
   top: 0;

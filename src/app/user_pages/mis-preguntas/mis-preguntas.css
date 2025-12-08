@@ -242,7 +242,6 @@
 }
 
 
-/* === MEDIA QUERIES === */
 @media (max-width: 768px) {
     .pregunta-header {
         flex-direction: column;
@@ -263,7 +262,7 @@
     
     .btn-ver-comentarios {
         width: 100%;
-        justify-content: center; /* Centrar texto e icono en móvil */
+        justify-content: center; 
     }
 
     .no-preguntas {

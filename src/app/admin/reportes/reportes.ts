@@ -21,7 +21,6 @@ export class Reportes implements OnInit {
 
   showModal = false;
   selectedReporte: Reporte | null = null;
-  // Para mostrar detalles de la consulta asociada si existen
   selectedConsulta: any = null;
   respuestas: any[] = [];
 
@@ -56,8 +55,7 @@ export class Reportes implements OnInit {
   viewConsultation(consultaId: number): void {
     if (!consultaId) return;
 
-    // Aquí idealmente deberíamos tener un servicio/state para consultas
-    // Por ahora usaremos el servicio directamente para obtener detalles
+    
     this.consultaService.getById(consultaId).subscribe({
       next: (consulta) => {
         this.selectedConsulta = consulta;
@@ -113,7 +111,6 @@ export class Reportes implements OnInit {
     this.respuestas = [];
   }
 
-  // Helpers para el template
   getReportId(report: Reporte): number | string {
     return report.id || 'N/A';
   }

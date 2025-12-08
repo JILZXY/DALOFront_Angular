@@ -10,12 +10,18 @@
         <span class="dropdown-arrow">▼</span>
       </button>
       <div class="dropdown-content" [class.show]="materiaDropdownAbierto">
-        <label *ngFor="let especialidad of especialidades" 
-               (click)="seleccionarEspecialidad(especialidad.id)">
+        <label (click)="limpiarMateria()">
           <input type="radio" 
                  name="especialidad" 
-                 [checked]="especialidadActiva === especialidad.id">
-          {{ especialidad.nombreMateria }}
+                 [checked]="especialidadActiva === null">
+          Todas las Materias
+        </label>
+        <label *ngFor="let materia of materias" 
+               (click)="seleccionarEspecialidad(materia.id)">
+          <input type="radio" 
+                 name="especialidad" 
+                 [checked]="especialidadActiva === materia.id">
+          {{ materia.nombreMateria }}
         </label>
       </div>
     </div>

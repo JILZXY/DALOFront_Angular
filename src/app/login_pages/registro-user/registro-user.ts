@@ -42,7 +42,6 @@ export class RegistroUser implements OnInit {
   }
 
   ngOnInit(): void {
-    // Cargar estados desde el backend
     this.estadoService.getAllEstados().subscribe({
       next: (estados) => {
         this.estados = estados;
@@ -53,7 +52,6 @@ export class RegistroUser implements OnInit {
       }
     });
 
-    // Cargar todos los municipios
     this.estadoService.getAllMunicipios().subscribe({
       next: (municipios) => {
         this.municipios = municipios;
@@ -63,7 +61,6 @@ export class RegistroUser implements OnInit {
       }
     });
 
-    // Filtrar municipios cuando cambia el estado
     this.registroForm.get('estadoId')?.valueChanges.subscribe(estadoId => {
       if (estadoId) {
         this.municipiosFiltrados = this.municipios.filter(
@@ -107,18 +104,16 @@ export class RegistroUser implements OnInit {
 
     const formData = this.registroForm.value;
 
-    // Preparar payload según el formato del backend
     const payload: RegisterRequest = {
       nombre: formData.nombre,
       email: formData.email,
       contrasena: formData.password,
       municipioId: formData.municipioId ? Number(formData.municipioId) : null,
-      rolId: 1  // Cliente
+      rolId: 1  
     };
 
     this.authService.register(payload).subscribe({
       next: (response) => {
-        // Usuario cliente se activa inmediatamente
         this.authState.setAuth(response.token, response.usuario);
 
         alert('¡Registro exitoso! Bienvenido a DALO.');

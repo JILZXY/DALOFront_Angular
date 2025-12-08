@@ -15,7 +15,6 @@ import { Bufete } from '../../models';
 export class BufeteExistenteAbogado implements OnInit {
 
     bufetes$: Observable<Bufete[]>;
-    // Keep track of requests maybe? For now simple join.
 
     constructor(
         private router: Router,

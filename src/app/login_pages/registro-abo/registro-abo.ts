@@ -61,7 +61,6 @@ export class RegistroAbo implements OnInit {
   }
 
   ngOnInit(): void {
-    // Cargar estados
     this.estadoService.getAllEstados().subscribe({
       next: (estados) => {
         this.estados = estados;
@@ -72,7 +71,6 @@ export class RegistroAbo implements OnInit {
       }
     });
 
-    // Cargar municipios
     this.estadoService.getAllMunicipios().subscribe({
       next: (municipios) => {
         this.municipios = municipios;
@@ -82,7 +80,6 @@ export class RegistroAbo implements OnInit {
       }
     });
 
-    // Filtrar municipios por estado
     this.registroForm.get('estadoId')?.valueChanges.subscribe(estadoId => {
       if (estadoId) {
         this.municipiosFiltrados = this.municipios.filter(
@@ -109,7 +106,6 @@ export class RegistroAbo implements OnInit {
     if (this.selectedMaterias.includes(id)) {
       this.selectedMaterias = this.selectedMaterias.filter(m => m !== id);
     } else {
-      // Only allow selection if less than 3 specialties are already selected
       if (this.selectedMaterias.length < 3) {
         this.selectedMaterias.push(id);
       }
@@ -124,7 +120,6 @@ export class RegistroAbo implements OnInit {
     this.errorMessage = '';
 
     if (tab > this.currentTab) {
-      // Validar Tab 1: Datos Personales
       if (this.currentTab === 1) {
         const camposTab1 = ['nombre', 'estadoId', 'municipioId'];
         const invalidos = camposTab1.filter(c => this.registroForm.get(c)?.invalid);
@@ -167,7 +162,6 @@ export class RegistroAbo implements OnInit {
       return;
     }
 
-    // Validar especialidades
     if (this.selectedMaterias.length === 0) {
       this.errorMessage = 'Selecciona al menos una especialidad.';
       return;

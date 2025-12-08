@@ -21,7 +21,6 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   abogadosBufete: Abogado[] = [];
   solicitudesPendientes: SolicitudBufete[] = [];
   
-  // Datos separados
   usuarioActual: Usuario | null = null;
   abogadoActual: Abogado | null = null;
   
@@ -32,7 +31,6 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   isLoading: boolean = true;
   errorMensaje: string | null = null;
 
-  // Mapa de especialidades
   private specialtyMap: { [key: string]: number } = {
     'PENAL': 1,
     'CIVIL': 2,
@@ -52,18 +50,14 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Obtener usuario actual
     this.usuarioActual = this.authState.currentUser;
     if (this.usuarioActual) {
       this.usuarioActualId = this.usuarioActual.idUsuario;
       
-      // Cargar datos del abogado
       this.cargarDatosAbogado();
       
-      // Cargar bufete desde el state
       this.cargarBufeteActual();
 
-      // Suscribirse a abogados filtrados
         this.subscriptions.add(
             this.bufeteState.abogadosFiltrados$.subscribe(abogados => {
                 this.abogadosBufete = abogados;
@@ -80,9 +74,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  /**
-   * Cargar datos del abogado actual
-   */
+  
   cargarDatosAbogado(): void {
     const abogadoSub = this.abogadoService.getById(this.usuarioActualId).subscribe({
       next: (abogado) => {
@@ -96,29 +88,22 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     this.subscriptions.add(abogadoSub);
   }
 
-  /**
-   * Cargar bufete del abogado actual
-   */
+ 
   cargarBufeteActual(): void {
     this.isLoading = true;
 
-    // Primero cargar mis bufetes en el state
     this.bufeteState.loadMisBufetes();
 
-    // Luego suscribirse al state para obtener el bufete
     const bufeteSub = this.bufeteState.misBufetes$.subscribe({
       next: (bufetes) => {
         if (bufetes && bufetes.length > 0) {
           this.bufeteActual = bufetes[0];
           this.bufeteState.setBufeteActual(bufetes[0]);
           
-          // Verificar si es admin
           this.esAdmin = this.bufeteActual.adminBufeteId === this.usuarioActualId;
 
-          // Cargar abogados del bufete (inicialmente con filtro por defecto)
           this.setFilter(this.selectedFilter);
 
-          // Si es admin, cargar solicitudes pendientes
           if (this.esAdmin) {
             this.cargarSolicitudesPendientes();
           }
@@ -138,9 +123,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     this.subscriptions.add(bufeteSub);
   }
 
-  /**
-   * Cargar solicitudes pendientes (solo admin)
-   */
+
   cargarSolicitudesPendientes(): void {
     if (!this.bufeteActual) return;
 
@@ -157,9 +140,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     this.subscriptions.add(solicitudesSub);
   }
 
-  /**
-   * Cambiar filtro de especialidad
-   */
+  
   setFilter(filter: string): void {
     this.selectedFilter = filter;
     if (this.bufeteActual) {
@@ -172,22 +153,16 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Obtener usuario actual (para la card de perfil)
-   */
   get currentUser(): Usuario | null {
     return this.usuarioActual;
   }
 
-  /**
-   * Aprobar solicitud
-   */
+  
   aprobarSolicitud(solicitudId: number): void {
     const sub = this.solicitudService.aprobar(solicitudId).subscribe({
       next: () => {
         alert('Solicitud aprobada');
         this.cargarSolicitudesPendientes();
-        // Recargar abogados si la aprobación fue exitosa para verlo en la lista si cumple el filtro
         this.setFilter(this.selectedFilter); 
       },
       error: (error) => {
@@ -199,9 +174,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  /**
-   * Rechazar solicitud
-   */
+
   rechazarSolicitud(solicitudId: number): void {
     const sub = this.solicitudService.rechazar(solicitudId).subscribe({
       next: () => {
@@ -217,9 +190,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     this.subscriptions.add(sub);
   }
 
-  /**
-   * Salir del bufete
-   */
+ 
   salirDelBufete(): void {
     if (!this.bufeteActual) return;
 
@@ -241,23 +212,16 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     this.subscriptions.add(leaveSub);
   }
 
-  /**
-   * Volver a opciones
-   */
+  
   volver(): void {
     this.router.navigate(['/abogado/opciones-bufete']);
   }
 
-  /**
-   * Obtener nombre de abogado
-   */
   getNombreAbogado(abogado: Abogado): string {
     return abogado.usuario?.nombre || 'Abogado';
   }
 
-  /**
-   * Obtener especialidad principal
-   */
+  
   getEspecialidadPrincipal(abogado: Abogado): string {
     if (abogado.especialidades && abogado.especialidades.length > 0) {
       return abogado.especialidades[0].nombreMateria || 'Sin especialidad';
@@ -265,23 +229,16 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     return 'Sin especialidad';
   }
 
-  /**
-   * Obtener ubicación
-   */
+  
   getUbicacion(abogado: Abogado): string {
     return abogado.usuario?.municipio?.nombre || 'Sin ubicación';
   }
 
-  /**
-   * Obtener calificación promedio
-   */
+  
   getCalificacion(abogado: Abogado): number {
     return (abogado as any).calificacionPromedio || 0;
   }
 
-  /**
-   * Obtener especialidad del usuario actual
-   */
   getEspecialidadUsuario(): string | null {
     if (!this.abogadoActual?.especialidades || this.abogadoActual.especialidades.length === 0) {
       return null;
@@ -289,9 +246,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     return this.abogadoActual.especialidades[0].nombreMateria || 'Sin especialidad';
   }
 
-  /**
-   * Obtener nombre del bufete
-   */
+ 
   getNombreBufete(): string {
     return this.bufeteActual?.nombre || 'Cargando bufete...';
   }

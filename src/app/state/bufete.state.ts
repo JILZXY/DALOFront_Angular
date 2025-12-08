@@ -8,78 +8,57 @@ import { SolicitudBufeteService } from '../services/solicitud-bufete.service';
     providedIn: 'root'
 })
 export class BufeteState {
-    // Lista de bufetes
     private bufetesSubject = new BehaviorSubject<Bufete[]>([]);
     public bufetes$: Observable<Bufete[]> = this.bufetesSubject.asObservable();
 
-    // Mis bufetes (administrados por mí)
     private misBufetesSubject = new BehaviorSubject<Bufete[]>([]);
     public misBufetes$: Observable<Bufete[]> = this.misBufetesSubject.asObservable();
 
-    // Bufete actual seleccionado
     private bufeteActualSubject = new BehaviorSubject<Bufete | null>(null);
     public bufeteActual$: Observable<Bufete | null> = this.bufeteActualSubject.asObservable();
 
-    // Solicitudes pendientes
     private solicitudesSubject = new BehaviorSubject<SolicitudBufete[]>([]);
     public solicitudes$: Observable<SolicitudBufete[]> = this.solicitudesSubject.asObservable();
 
-    // Abogados filtrados
     private abogadosFiltradosSubject = new BehaviorSubject<Abogado[]>([]);
     public abogadosFiltrados$: Observable<Abogado[]> = this.abogadosFiltradosSubject.asObservable();
 
-    /**
-     * Obtener bufetes (valor instantáneo)
-     */
+   
     get bufetes(): Bufete[] {
         return this.bufetesSubject.value;
     }
 
-    /**
-     * Obtener mis bufetes (valor instantáneo)
-     */
+   
     get misBufetes(): Bufete[] {
         return this.misBufetesSubject.value;
     }
 
-    /**
-     * Obtener bufete actual (valor instantáneo)
-     */
+   
     get bufeteActual(): Bufete | null {
         return this.bufeteActualSubject.value;
     }
 
-    /**
-     * Establecer lista de bufetes
-     */
+    
     setBufetes(bufetes: Bufete[]): void {
         this.bufetesSubject.next(bufetes);
     }
 
-    /**
-     * Establecer mis bufetes
-     */
+    
     setMisBufetes(bufetes: Bufete[]): void {
         this.misBufetesSubject.next(bufetes);
     }
 
-    /**
-     * Establecer bufete actual
-     */
+    
     setBufeteActual(bufete: Bufete | null): void {
         this.bufeteActualSubject.next(bufete);
     }
 
-    /**
-     * Establecer solicitudes
-     */
+   
     setSolicitudes(solicitudes: SolicitudBufete[]): void {
         this.solicitudesSubject.next(solicitudes);
     }
 
-    /**
-     * Establecer abogados filtrados
-     */
+    
     setAbogadosFiltrados(abogados: Abogado[]): void {
         this.abogadosFiltradosSubject.next(abogados);
     }
@@ -88,9 +67,7 @@ export class BufeteState {
         return this.abogadosFiltradosSubject.value;
     }
 
-    /**
-     * Agregar nuevo bufete
-     */
+   
     addBufete(bufete: Bufete): void {
         const bufetes = [bufete, ...this.bufetesSubject.value];
         this.bufetesSubject.next(bufetes);
@@ -99,9 +76,6 @@ export class BufeteState {
         this.misBufetesSubject.next(misBufetes);
     }
 
-    /**
-     * Actualizar bufete
-     */
     updateBufete(bufeteActualizado: Bufete): void {
         const bufetes = this.bufetesSubject.value.map(b =>
             b.id === bufeteActualizado.id ? bufeteActualizado : b
@@ -114,9 +88,7 @@ export class BufeteState {
         this.misBufetesSubject.next(misBufetes);
     }
 
-    /**
-     * Eliminar bufete
-     */
+   
     deleteBufete(bufeteId: number): void {
         const bufetes = this.bufetesSubject.value.filter(b => b.id !== bufeteId);
         this.bufetesSubject.next(bufetes);
@@ -125,23 +97,17 @@ export class BufeteState {
         this.misBufetesSubject.next(misBufetes);
     }
 
-    /**
-    /**
-     * Eliminar bufete en el servidor
-     */
+    
     deleteBufeteServer(bufeteId: number): Observable<void> {
         return this.bufeteService.delete(bufeteId);
     }
 
-    /**
-     * Limpiar estado
-     */
+    
     constructor(
         private bufeteService: BufeteService,
         private solicitudService: SolicitudBufeteService
     ) {}
 
-    // --- Actions ---
 
     loadBufetes(): void {
         this.bufeteService.getAll().subscribe(bufetes => {
@@ -178,7 +144,7 @@ export class BufeteState {
         const obs = this.bufeteService.salirDeBufete(bufeteId);
         obs.subscribe(() => {
             this.setBufeteActual(null);
-            this.loadMisBufetes(); // Recargar para asegurar que la lista esté actualizada
+            this.loadMisBufetes(); 
         });
         return obs;
     }
@@ -188,7 +154,6 @@ export class BufeteState {
         obs.subscribe(bufetes => {
             this.setMisBufetes(bufetes);
             if (bufetes.length > 0) {
-                // Assuming single bufete for now or selecting first
                 this.setBufeteActual(bufetes[0]);
                 this.loadSolicitudes(bufetes[0].id);
             }
@@ -213,7 +178,6 @@ export class BufeteState {
     private updateSolicitudEstado(solicitudId: number, estado: string): Observable<void> {
         const obs = this.solicitudService.updateEstado(solicitudId, { estado });
         obs.subscribe(() => {
-             // Remove from local list after processed
              const current = this.solicitudesSubject.value;
              this.setSolicitudes(current.filter(s => s.id !== solicitudId));
         });

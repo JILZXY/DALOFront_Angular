@@ -12,20 +12,13 @@ export class EspecialidadService {
 
     constructor(private http: HttpClient) { }
 
-    /**
-     * Obtener todas las especialidades/materias
-     * GET /api/especialidades
-     */
+    
     getAll(): Observable<Especialidad[]> {
         return this.http.get<Especialidad[]>(
             `${this.baseUrl}/api/especialidades`
         );
     }
 
-    /**
-     * Obtener especialidad por ID
-     * GET /api/especialidades/{id}
-     */
     getById(id: number): Observable<Especialidad> {
         return this.http.get<Especialidad>(
             `${this.baseUrl}/api/especialidades/${id}`

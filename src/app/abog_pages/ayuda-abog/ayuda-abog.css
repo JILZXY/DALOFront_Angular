@@ -63,7 +63,6 @@ h2 {
   position: relative;
 }
 
-/* Animación de desvanecimiento y desplazamiento hacia arriba */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -75,7 +74,6 @@ h2 {
   }
 }
 
-/* Animación escalonada */
 .card-info:nth-child(1) { animation-delay: 0.1s; }
 .card-info:nth-child(2) { animation-delay: 0.2s; }
 .card-info:nth-child(3) { animation-delay: 0.3s; }
