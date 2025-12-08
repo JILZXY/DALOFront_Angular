@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AbogadoService } from '../../services/abogado.service';
-import { CalificacionService } from '../../services/calificacion.service';
 import { RespuestaConsultaService } from '../../services/respuesta-consulta.service';
 import { AuthState } from '../../state/auth.state';
 import { AbogadoState } from '../../state/abogado.state';
@@ -23,19 +22,8 @@ export class PerfilAbogado implements OnInit, OnDestroy {
 
   nombreAbogado: string = '';
   especializacionAbogado: string = '';
-  ubicacionAbogado: string = '';
   descripcionAbogado: string = '';
-
-  calificaciones = {
-    general: '0.0',
-    profesionalismo: '0.0',
-    atencion: '0.0',
-    claridad: '0.0',
-    empatia: '0.0'
-  };
-
   totalRespuestas: number = 0;
-  totalLikes: number = 0;
 
   private subscriptions = new Subscription();
   private abogadoId: string = '';
@@ -44,7 +32,6 @@ export class PerfilAbogado implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private abogadoService: AbogadoService,
-    private calificacionService: CalificacionService,
     private respuestaService: RespuestaConsultaService,
     private authState: AuthState,
     private abogadoState: AbogadoState
@@ -93,14 +80,7 @@ export class PerfilAbogado implements OnInit, OnDestroy {
           this.especializacionAbogado = 'No especificado';
         }
 
-         if (abogado.usuario?.municipio?.nombre) {
-          this.ubicacionAbogado = abogado.usuario.municipio.nombre;
-        } else {
-          this.ubicacionAbogado = 'No especificado';
-        }
-
         this.cargarEstadisticas();
-        this.cargarCalificaciones();
       },
       error: (error) => {
         console.error('Error al cargar abogado:', error);
@@ -116,63 +96,17 @@ export class PerfilAbogado implements OnInit, OnDestroy {
     const respuestasSub = this.respuestaService.getTotalByAbogado(this.abogadoId).subscribe({
       next: (data) => {
         this.totalRespuestas = data.total || 0;
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error al cargar estadísticas:', error);
+        this.isLoading = false;
       }
     });
 
     this.subscriptions.add(respuestasSub);
   }
 
-  
-  cargarCalificaciones(): void {
-    const calificacionSub = this.calificacionService.getByAbogadoId(this.abogadoId).subscribe({
-      next: (calificaciones) => {
-        if (calificaciones && calificaciones.length > 0) {
-          const total = calificaciones.length;
-          let sumProfesionalismo = 0;
-          let sumAtencion = 0;
-          let sumClaridad = 0;
-          let sumEmpatia = 0;
-
-          calificaciones.forEach(cal => {
-            sumProfesionalismo += cal.profesionalismo;
-            sumAtencion += cal.atencion;
-            sumClaridad += cal.claridad;
-            sumEmpatia += cal.empatia;
-          });
-
-          this.calificaciones.profesionalismo = (sumProfesionalismo / total).toFixed(1);
-          this.calificaciones.atencion = (sumAtencion / total).toFixed(1);
-          this.calificaciones.claridad = (sumClaridad / total).toFixed(1);
-          this.calificaciones.empatia = (sumEmpatia / total).toFixed(1);
-
-          const general = (
-            (sumProfesionalismo + sumAtencion + sumClaridad + sumEmpatia) / (total * 4)
-          );
-          this.calificaciones.general = general.toFixed(1);
-        }
-
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error al cargar calificaciones:', error);
-        this.isLoading = false;
-      }
-    });
-
-    this.subscriptions.add(calificacionSub);
-  }
-
-  
-  contactar(): void {
-    this.router.navigate(['/abogado/chat'], {
-      queryParams: { abogadoId: this.abogadoId }
-    });
-  }
-
-  
   volver(): void {
     this.router.navigate(['/abogado/foro']);
   }

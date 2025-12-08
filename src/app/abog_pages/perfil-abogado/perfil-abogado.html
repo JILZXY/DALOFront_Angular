@@ -9,64 +9,36 @@
 </div>
 
 <div class="perfil-wrapper" *ngIf="!isLoading && !errorMensaje">
-  <div class="perfil-lateral">
-    <h2>{{ nombreAbogado }}</h2>
-
-    <div class="info-adicional">
-      <div class="info-item">
-        <span class="info-label">Especialización:</span>
-        <p>{{ especializacionAbogado }}</p>
-      </div>
-
-      <div class="info-item">
-        <span class="info-label">Ubicación:</span>
-        <p>{{ ubicacionAbogado }}</p>
-      </div>
-
-      <div class="info-item">
-        <span class="info-label">Total Respuestas:</span>
-        <p>{{ totalRespuestas }}</p>
-      </div>
-    </div>
-
-    <div class="botones-accion">
-      <button class="btn-contactar" (click)="contactar()">CONTACTAR</button>
-      <button class="btn-volver" (click)="volver()">← VOLVER</button>
-    </div>
+  <div class="perfil-header">
+    <button class="btn-volver-top" (click)="volver()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Volver
+    </button>
+    <h1>{{ nombreAbogado }}</h1>
   </div>
 
-  <div class="perfil-card">
-    <div class="descripcion-section">
-      <h3>Biografía:</h3>
+  <div class="perfil-contenido">
+    <div class="especialidades-card">
+      <h3>Especialidades</h3>
+      <div class="especialidades-tags">
+        <span class="especialidad-tag">{{ especializacionAbogado }}</span>
+      </div>
+    </div>
+
+    <div class="biografia-card">
+      <h3>Biografía</h3>
       <p>{{ descripcionAbogado }}</p>
     </div>
 
-    <div class="calificaciones-section">
-      <h3>Calificaciones Promedio</h3>
-      <div class="calificaciones-grid">
-        <div class="calificacion-box destacada">
-          <span class="calificacion-titulo">General</span>
-          <div class="calificacion-valor">{{ calificaciones.general }}/5</div>
-        </div>
-
-        <div class="calificacion-box">
-          <span class="calificacion-titulo">Profesionalismo</span>
-          <div class="calificacion-valor">{{ calificaciones.profesionalismo }}/5</div>
-        </div>
-
-        <div class="calificacion-box">
-          <span class="calificacion-titulo">Atención</span>
-          <div class="calificacion-valor">{{ calificaciones.atencion }}/5</div>
-        </div>
-
-        <div class="calificacion-box">
-          <span class="calificacion-titulo">Claridad</span>
-          <div class="calificacion-valor">{{ calificaciones.claridad }}/5</div>
-        </div>
-
-        <div class="calificacion-box">
-          <span class="calificacion-titulo">Empatía</span>
-          <div class="calificacion-valor">{{ calificaciones.empatia }}/5</div>
+    <div class="estadisticas-card">
+      <h3>Actividad</h3>
+      <div class="estadistica-item">
+        <div class="estadistica-icono">📝</div>
+        <div class="estadistica-info">
+          <span class="estadistica-numero">{{ totalRespuestas }}</span>
+          <span class="estadistica-label">Respuestas dadas</span>
         </div>
       </div>
     </div>
