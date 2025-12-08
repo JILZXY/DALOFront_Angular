@@ -5,7 +5,7 @@ on:
     push:
         branches:
             - main
-            - deploy3
+            - deploy4
 
 jobs:
     deploy:
