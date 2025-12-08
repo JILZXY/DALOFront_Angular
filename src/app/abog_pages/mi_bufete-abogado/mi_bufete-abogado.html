@@ -26,7 +26,8 @@
         <!-- Solicitudes Pendientes (Solo Admin) -->
         <div class="requests-section" *ngIf="esAdmin && solicitudesPendientes.length > 0"
             style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffeeba;">
-            <h3 style="color: #856404; margin-top: 0;">📋 Solicitudes Pendientes ({{ solicitudesPendientes.length }})</h3>
+            <h3 style="color: #856404; margin-top: 0;">📋 Solicitudes Pendientes ({{ solicitudesPendientes.length }})
+            </h3>
             <div *ngFor="let solicitud of solicitudesPendientes"
                 style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; padding: 10px 0;">
                 <div>
@@ -61,7 +62,7 @@
             </div>
 
             <div class="abogados-list">
-                <div class="abogado-card-simple" *ngFor="let abogado of filteredAbogados; let i = index">
+                <div class="abogado-card-simple" *ngFor="let abogado of abogadosBufete; let i = index">
                     <div class="ranking-badge">#{{ i + 1 }}</div>
                     <div class="card-content-simple">
                         <div class="avatar-simple">
@@ -83,7 +84,7 @@
                 </div>
 
                 <!-- Mensaje si no hay abogados con esa especialidad -->
-                <div *ngIf="filteredAbogados.length === 0" style="text-align: center; padding: 40px; color: #666;">
+                <div *ngIf="abogadosBufete.length === 0" style="text-align: center; padding: 40px; color: #666;">
                     <p>⚠️ No hay abogados con la especialidad "{{ selectedFilter }}" en este bufete.</p>
                 </div>
             </div>
@@ -94,7 +95,7 @@
                 <div class="profile-avatar">
                     <img src="/Images/logo azul.png" alt="Profile">
                 </div>
-                
+
                 <h3>{{ usuarioActual?.nombre || 'Cargando...' }}</h3>
                 <p class="location">📍 {{ usuarioActual?.municipio?.nombre || 'Sin ubicación' }}</p>
 
@@ -109,7 +110,8 @@
                     🚪 SALIR DEL BUFETE
                 </button>
 
-                <div *ngIf="esAdmin" style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 6px; font-size: 12px; color: #856404; text-align: center;">
+                <div *ngIf="esAdmin"
+                    style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 6px; font-size: 12px; color: #856404; text-align: center;">
                     ⭐ Eres el administrador
                 </div>
             </div>

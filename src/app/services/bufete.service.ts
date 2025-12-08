@@ -124,9 +124,18 @@ export class BufeteService {
     }
 
     /**
+     * Obtener abogados de un bufete por especialidad
+     */
+    getAbogadosPorEspecialidad(bufeteId: number, especialidadId: number): Observable<Abogado[]> {
+        return this.http.get<any>(`${this.baseUrl}/api/bufetes/${bufeteId}/abogados/especialidad/${especialidadId}`).pipe(
+            map(response => response.data || response)
+        );
+    }
+
+    /**
      * Salir de un bufete
      */
-    salirDeBufete(bufeteId: number, abogadoId: string): Observable<any> {
-        return this.http.delete(`${this.baseUrl}/api/bufetes/${bufeteId}/miembros/${abogadoId}`);
+    salirDeBufete(bufeteId: number): Observable<any> {
+        return this.http.delete(`${this.baseUrl}/api/bufetes/${bufeteId}/salir`);
     }
 }

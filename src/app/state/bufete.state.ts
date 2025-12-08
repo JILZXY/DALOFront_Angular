@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Bufete, SolicitudBufete, EstadoSolicitud } from '../models';
+import { Bufete, SolicitudBufete, EstadoSolicitud, Abogado } from '../models';
 import { BufeteService } from '../services/bufete.service';
 import { SolicitudBufeteService } from '../services/solicitud-bufete.service';
 
@@ -23,6 +23,10 @@ export class BufeteState {
     // Solicitudes pendientes
     private solicitudesSubject = new BehaviorSubject<SolicitudBufete[]>([]);
     public solicitudes$: Observable<SolicitudBufete[]> = this.solicitudesSubject.asObservable();
+
+    // Abogados filtrados
+    private abogadosFiltradosSubject = new BehaviorSubject<Abogado[]>([]);
+    public abogadosFiltrados$: Observable<Abogado[]> = this.abogadosFiltradosSubject.asObservable();
 
     /**
      * Obtener bufetes (valor instantáneo)
@@ -71,6 +75,17 @@ export class BufeteState {
      */
     setSolicitudes(solicitudes: SolicitudBufete[]): void {
         this.solicitudesSubject.next(solicitudes);
+    }
+
+    /**
+     * Establecer abogados filtrados
+     */
+    setAbogadosFiltrados(abogados: Abogado[]): void {
+        this.abogadosFiltradosSubject.next(abogados);
+    }
+
+    get abogadosFiltrados(): Abogado[] {
+        return this.abogadosFiltradosSubject.value;
     }
 
     /**
@@ -147,6 +162,27 @@ export class BufeteState {
         return this.solicitudService.create({ bufeteId });
     }
 
+    getAbogadosPorEspecialidad(bufeteId: number, especialidadId: number): void {
+        this.bufeteService.getAbogadosPorEspecialidad(bufeteId, especialidadId).subscribe({
+            next: (abogados) => {
+                this.setAbogadosFiltrados(abogados);
+            },
+            error: (error) => {
+                console.error('Error al filtrar abogados:', error);
+                this.setAbogadosFiltrados([]);
+            }
+        });
+    }
+
+    salirDeBufete(bufeteId: number): Observable<any> {
+        const obs = this.bufeteService.salirDeBufete(bufeteId);
+        obs.subscribe(() => {
+            this.setBufeteActual(null);
+            this.loadMisBufetes(); // Recargar para asegurar que la lista esté actualizada
+        });
+        return obs;
+    }
+
     loadMisBufetes(): Observable<Bufete[]> {
         const obs = this.bufeteService.getMisBufetes();
         obs.subscribe(bufetes => {
@@ -189,5 +225,6 @@ export class BufeteState {
         this.misBufetesSubject.next([]);
         this.bufeteActualSubject.next(null);
         this.solicitudesSubject.next([]);
+        this.abogadosFiltradosSubject.next([]);
     }
 }

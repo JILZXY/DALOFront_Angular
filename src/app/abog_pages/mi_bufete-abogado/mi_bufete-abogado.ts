@@ -32,6 +32,14 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   isLoading: boolean = true;
   errorMensaje: string | null = null;
 
+  // Mapa de especialidades
+  private specialtyMap: { [key: string]: number } = {
+    'PENAL': 1,
+    'CIVIL': 2,
+    'MERCANTIL': 3,
+    'CONSTITUCIONAL': 4
+  };
+
   private subscriptions = new Subscription();
 
   constructor(
@@ -48,13 +56,20 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     this.usuarioActual = this.authState.currentUser;
     if (this.usuarioActual) {
       this.usuarioActualId = this.usuarioActual.idUsuario;
-      console.log('✅ Usuario actual:', this.usuarioActual.nombre);
       
       // Cargar datos del abogado
       this.cargarDatosAbogado();
       
       // Cargar bufete desde el state
       this.cargarBufeteActual();
+
+      // Suscribirse a abogados filtrados
+        this.subscriptions.add(
+            this.bufeteState.abogadosFiltrados$.subscribe(abogados => {
+                this.abogadosBufete = abogados;
+            })
+        );
+
     } else {
       console.error('❌ No hay usuario en sesión');
       this.router.navigate(['/login']);
@@ -72,8 +87,6 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     const abogadoSub = this.abogadoService.getById(this.usuarioActualId).subscribe({
       next: (abogado) => {
         this.abogadoActual = abogado;
-        console.log('✅ Abogado cargado:', abogado);
-        console.log('📚 Especialidades:', abogado.especialidades);
       },
       error: (error) => {
         console.error('❌ Error al cargar abogado:', error);
@@ -95,20 +108,15 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
     // Luego suscribirse al state para obtener el bufete
     const bufeteSub = this.bufeteState.misBufetes$.subscribe({
       next: (bufetes) => {
-        console.log('🔍 Bufetes del state:', bufetes);
-        
         if (bufetes && bufetes.length > 0) {
           this.bufeteActual = bufetes[0];
           this.bufeteState.setBufeteActual(bufetes[0]);
           
-          console.log('✅ Bufete cargado:', this.bufeteActual);
-          console.log('📛 Nombre del bufete:', this.bufeteActual.nombre);
-          
           // Verificar si es admin
           this.esAdmin = this.bufeteActual.adminBufeteId === this.usuarioActualId;
 
-          // Cargar abogados del bufete
-          this.cargarAbogadosBufete();
+          // Cargar abogados del bufete (inicialmente con filtro por defecto)
+          this.setFilter(this.selectedFilter);
 
           // Si es admin, cargar solicitudes pendientes
           if (this.esAdmin) {
@@ -117,9 +125,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
           
           this.isLoading = false;
         } else {
-          console.log('⚠️ No tiene bufete');
           this.isLoading = false;
-          this.router.navigate(['/abogado/opciones-bufete']);
         }
       },
       error: (error) => {
@@ -133,25 +139,6 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   }
 
   /**
-   * Cargar abogados del bufete
-   */
-  cargarAbogadosBufete(): void {
-    if (!this.bufeteActual) return;
-
-    const abogadosSub = this.bufeteService.getAbogadosByBufete(this.bufeteActual.id).subscribe({
-      next: (abogados) => {
-        this.abogadosBufete = abogados;
-        console.log('✅ Abogados del bufete:', abogados.length);
-      },
-      error: (error) => {
-        console.error('❌ Error al cargar abogados:', error);
-      }
-    });
-
-    this.subscriptions.add(abogadosSub);
-  }
-
-  /**
    * Cargar solicitudes pendientes (solo admin)
    */
   cargarSolicitudesPendientes(): void {
@@ -161,7 +148,6 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
       next: (solicitudes) => {
         this.solicitudesPendientes = solicitudes.filter(s => s.estado === 'PENDIENTE');
         this.bufeteState.setSolicitudes(this.solicitudesPendientes);
-        console.log('✅ Solicitudes pendientes:', this.solicitudesPendientes.length);
       },
       error: (error) => {
         console.error('❌ Error al cargar solicitudes:', error);
@@ -172,29 +158,18 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   }
 
   /**
-   * Filtrar abogados por especialidad
-   */
-  get filteredAbogados(): Abogado[] {
-    if (!this.abogadosBufete || this.abogadosBufete.length === 0) {
-      return [];
-    }
-
-    return this.abogadosBufete.filter(abogado => {
-      if (!abogado.especialidades || abogado.especialidades.length === 0) {
-        return false;
-      }
-      
-      return abogado.especialidades.some(esp => 
-        esp.nombreMateria?.toUpperCase().includes(this.selectedFilter)
-      );
-    });
-  }
-
-  /**
    * Cambiar filtro de especialidad
    */
   setFilter(filter: string): void {
     this.selectedFilter = filter;
+    if (this.bufeteActual) {
+        const especialidadId = this.specialtyMap[filter];
+        if (especialidadId) {
+            this.bufeteState.getAbogadosPorEspecialidad(this.bufeteActual.id, especialidadId);
+        } else {
+            console.warn(`⚠️ Especialidad no mapeada: ${filter}`);
+        }
+    }
   }
 
   /**
@@ -212,7 +187,8 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
       next: () => {
         alert('Solicitud aprobada');
         this.cargarSolicitudesPendientes();
-        this.cargarAbogadosBufete();
+        // Recargar abogados si la aprobación fue exitosa para verlo en la lista si cumple el filtro
+        this.setFilter(this.selectedFilter); 
       },
       error: (error) => {
         console.error('❌ Error al aprobar solicitud:', error);
@@ -251,10 +227,9 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
       return;
     }
 
-    const leaveSub = this.bufeteService.salirDeBufete(this.bufeteActual.id, this.usuarioActualId).subscribe({
+    const leaveSub = this.bufeteState.salirDeBufete(this.bufeteActual.id).subscribe({
       next: () => {
         alert('Has salido del bufete exitosamente');
-        this.bufeteState.setBufeteActual(null);
         this.router.navigate(['/abogado/opciones-bufete']);
       },
       error: (error) => {
