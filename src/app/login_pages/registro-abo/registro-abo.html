@@ -24,7 +24,6 @@
 
       <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
 
-        <!-- TAB 1: DATOS PERSONALES -->
         <div *ngIf="currentTab === 1" class="tab-content">
           <div class="fila">
             <div class="campo full-width">
@@ -89,16 +88,6 @@
 
         <!-- TAB 3: PERFIL -->
         <div *ngIf="currentTab === 3" class="tab-content">
-          <div class="campo-foto">
-            <div class="preview-container" *ngIf="previewUrl">
-              <img [src]="previewUrl" class="foto-preview" alt="Vista previa">
-            </div>
-            <label class="btn-upload">
-              Subir Foto de Perfil
-              <input type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
-            </label>
-          </div>
-
           <div class="campo full-width">
             <label>Biografía Corta (150 caracteres)</label>
             <textarea formControlName="biografia" rows="3" maxlength="150"
@@ -127,11 +116,12 @@
             <input type="text" formControlName="cedula" placeholder="1234567">
           </div>
 
-          <h3>Selecciona tus especialidades</h3>
+          <h3>Selecciona tus especialidades (Máximo 3)</h3>
+          <p style="color: #666; font-size: 12px; margin: 0 0 15px 0;">{{ selectedMaterias.length }}/3 especialidades seleccionadas</p>
 
           <div class="materias-grid">
             <div class="materia-card" *ngFor="let m of materias" (click)="toggleMateria(m.id)"
-              [class.selected]="isSelected(m.id)">
+              [class.selected]="isSelected(m.id)" [class.disabled]="selectedMaterias.length >= 3 && !isSelected(m.id)">
               <img [src]="m.icono" [alt]="m.nombre" class="materia-icon">
               <span class="materia-title">{{ m.nombre }}</span>
             </div>

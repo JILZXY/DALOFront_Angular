@@ -238,6 +238,17 @@ input, select, textarea {
     color: #223240;
 }
 
+.materia-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.materia-card.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
 @media (max-width: 1000px) {
     .vista-registro {
         flex-direction: column;

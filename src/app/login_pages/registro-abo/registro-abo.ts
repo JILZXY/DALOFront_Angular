@@ -109,7 +109,10 @@ export class RegistroAbo implements OnInit {
     if (this.selectedMaterias.includes(id)) {
       this.selectedMaterias = this.selectedMaterias.filter(m => m !== id);
     } else {
-      this.selectedMaterias.push(id);
+      // Only allow selection if less than 3 specialties are already selected
+      if (this.selectedMaterias.length < 3) {
+        this.selectedMaterias.push(id);
+      }
     }
   }
 
@@ -132,7 +135,6 @@ export class RegistroAbo implements OnInit {
         }
       }
 
-      // Validar Tab 2: Acceso
       if (this.currentTab === 2) {
         if (this.registroForm.get('email')?.invalid) {
           this.errorMessage = 'Ingresa un correo válido.';
@@ -148,7 +150,6 @@ export class RegistroAbo implements OnInit {
         }
       }
 
-      // Validar Tab 3: Perfil
       if (this.currentTab === 3) {
         if (this.registroForm.get('biografia')?.invalid || this.registroForm.get('descripcion')?.invalid) {
           this.errorMessage = 'Completa tu biografía y descripción.';
@@ -161,7 +162,6 @@ export class RegistroAbo implements OnInit {
   }
 
   onSubmit(): void {
-    // Validar cédula
     if (this.registroForm.get('cedula')?.invalid) {
       this.errorMessage = 'Ingresa tu cédula profesional.';
       return;
