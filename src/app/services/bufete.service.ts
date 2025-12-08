@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { API_CONFIG } from '../config/api.config';
 import {
     Bufete,
@@ -9,7 +10,8 @@ import {
     CreateSolicitudBufeteRequest,
     UpdateSolicitudEstadoRequest,
     CalificacionBufete,
-    CreateCalificacionBufeteRequest
+    CreateCalificacionBufeteRequest,
+    Abogado
 } from '../models';
 
 @Injectable({
@@ -101,5 +103,30 @@ export class BufeteService {
             `${this.baseUrl}${API_CONFIG.endpoints.calificacionesBufete}/bufete/${bufeteId}`,
             data
         );
+    }
+
+    /**
+     * Obtener bufetes de un abogado
+     */
+    getByAbogadoId(abogadoId: string): Observable<Bufete[]> {
+        return this.http.get<any>(`${this.baseUrl}/api/bufetes/abogado/${abogadoId}`).pipe(
+            map(response => response.data || response)
+        );
+    }
+
+    /**
+     * Obtener abogados de un bufete
+     */
+    getAbogadosByBufete(bufeteId: number): Observable<Abogado[]> {
+        return this.http.get<any>(`${this.baseUrl}/api/bufetes/${bufeteId}/abogados`).pipe(
+            map(response => response.data || response)
+        );
+    }
+
+    /**
+     * Salir de un bufete
+     */
+    salirDeBufete(bufeteId: number, abogadoId: string): Observable<any> {
+        return this.http.delete(`${this.baseUrl}/api/bufetes/${bufeteId}/miembros/${abogadoId}`);
     }
 }

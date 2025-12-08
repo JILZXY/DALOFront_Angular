@@ -8,7 +8,6 @@
             </svg>
         </button>
         <div class="banner-content">
-            <!-- Banner image placeholder -->
             <div class="banner-image" style="background-image: url('/Images/background.png');"></div>
             <div class="bufete-identity">
                 <div class="logo-circle">
@@ -18,35 +17,39 @@
                             stroke="#1a2b3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </div>
-                <h1>RODRIGUEZ Y ASOCIADOS</h1>
+                <h1>{{ bufeteActual?.nombre || 'Cargando...' }}</h1>
             </div>
         </div>
     </div>
 
     <div class="main-content">
-        <!-- Requests Section (Admin) -->
-        <div class="requests-section" *ngIf="(solicitudes$ | async)?.length"
+        <!-- Solicitudes Pendientes (Solo Admin) -->
+        <div class="requests-section" *ngIf="esAdmin && solicitudesPendientes.length > 0"
             style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffeeba;">
-            <h3 style="color: #856404; margin-top: 0;">Solicitudes Pendientes</h3>
-            <div *ngFor="let solicitud of (solicitudes$ | async)"
+            <h3 style="color: #856404; margin-top: 0;">📋 Solicitudes Pendientes ({{ solicitudesPendientes.length }})</h3>
+            <div *ngFor="let solicitud of solicitudesPendientes"
                 style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #dee2e6; padding: 10px 0;">
                 <div>
                     <strong>{{ solicitud.abogado?.usuario?.nombre || 'Abogado' }}</strong> quiere unirse.
                     <br>
-                    <small>{{ solicitud.fechaSolicitud | date }}</small>
+                    <small>{{ solicitud.fechaSolicitud | date:'short' }}</small>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button (click)="aprobarSolicitud(solicitud.id)"
-                        style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Aprobar</button>
+                        style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        ✅ Aprobar
+                    </button>
                     <button (click)="rechazarSolicitud(solicitud.id)"
-                        style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Rechazar</button>
+                        style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        ❌ Rechazar
+                    </button>
                 </div>
             </div>
         </div>
 
         <div class="left-column">
             <div class="filter-section">
-                <h2>Encuentre a nuestros abogados segun la especialidad que requiera</h2>
+                <h2>Encuentre a nuestros abogados según la especialidad que requiera</h2>
                 <div class="filter-buttons">
                     <button [class.active]="selectedFilter === 'PENAL'" (click)="setFilter('PENAL')">PENAL</button>
                     <button [class.active]="selectedFilter === 'CIVIL'" (click)="setFilter('CIVIL')">CIVIL</button>
@@ -58,25 +61,30 @@
             </div>
 
             <div class="abogados-list">
-                <div class="abogado-card-simple" *ngFor="let abogado of filteredAbogados">
-                    <div class="ranking-badge">#{{ abogado.ranking }}</div>
+                <div class="abogado-card-simple" *ngFor="let abogado of filteredAbogados; let i = index">
+                    <div class="ranking-badge">#{{ i + 1 }}</div>
                     <div class="card-content-simple">
                         <div class="avatar-simple">
-                            <img [src]="abogado.foto" alt="Avatar">
+                            <img src="/Images/logo azul.png" alt="Avatar">
                         </div>
                         <div class="info-simple">
-                            <h3>{{ abogado.nombre }}</h3>
-                            <p class="specialty">{{ abogado.especialidad }}</p>
-                            <p class="bufete-name">Buffet: {{ abogado.bufete }}</p>
+                            <h3>{{ getNombreAbogado(abogado) }}</h3>
+                            <p class="specialty">{{ getEspecialidadPrincipal(abogado) }}</p>
+                            <p class="bufete-name">Bufete: {{ bufeteActual?.nombre || 'Mi Bufete' }}</p>
                             <p class="location">
-                                <span class="pin-icon">📍</span> {{ abogado.ubicacion }}
+                                <span class="pin-icon">📍</span> {{ getUbicacion(abogado) }}
                             </p>
                         </div>
                         <div class="rating-simple">
                             <span>CALIFICACIÓN GENERAL</span>
-                            <span class="score">{{ (abogado.calificacion || 0).toFixed(1) }}/5.0</span>
+                            <span class="score">{{ getCalificacion(abogado).toFixed(1) }}/5.0</span>
                         </div>
                     </div>
+                </div>
+
+                <!-- Mensaje si no hay abogados con esa especialidad -->
+                <div *ngIf="filteredAbogados.length === 0" style="text-align: center; padding: 40px; color: #666;">
+                    <p>⚠️ No hay abogados con la especialidad "{{ selectedFilter }}" en este bufete.</p>
                 </div>
             </div>
         </div>
@@ -86,22 +94,32 @@
                 <div class="profile-avatar">
                     <img src="/Images/logo azul.png" alt="Profile">
                 </div>
-                <h3>JESHUA GABRIEL MÁRQUEZ CASTAÑO</h3>
-                <p class="location">📍 Tapachula, Chiapas.</p>
+                <h3>{{ currentUser?.nombre || 'Cargando usuario...' }}</h3>
+                <p class="location">📍 {{ currentUser?.municipio?.nombre || 'Sin ubicación' }}</p>
 
-                <div class="specialty-icons">
+                <div class="specialty-icons" *ngIf="getEspecialidadUsuario()">
                     <div class="spec-icon">
                         <div class="icon-box">⚖️</div>
-                        <span>DERECHO PENAL</span>
-                    </div>
-                    <div class="spec-icon">
-                        <div class="icon-box">♟️</div>
-                        <span>DERECHO CIVIL</span>
+                        <span>{{ getEspecialidadUsuario() }}</span>
                     </div>
                 </div>
 
-                <button class="btn-salir" (click)="salirDelBufete()">SALIR DEL BUFETE</button>
+                <button class="btn-salir" (click)="salirDelBufete()">
+                    🚪 SALIR DEL BUFETE
+                </button>
+
+                <div *ngIf="esAdmin" style="margin-top: 10px; padding: 10px; background: #fff3cd; border-radius: 6px; font-size: 12px; color: #856404; text-align: center;">
+                    ⭐ Eres el administrador
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="mi-bufete-container">        
+  <div class="header-banner">...</div>
+  <div class="main-content">            
+    <div class="left-column">...</div>
+    <div class="right-column">...</div>
+  </div>                                 
+</div>                                   

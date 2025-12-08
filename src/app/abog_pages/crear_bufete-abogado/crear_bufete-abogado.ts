@@ -45,9 +45,15 @@ export class CrearBufeteAbogado implements OnInit {
         this.bufeteState.createBufete(requestData).subscribe({
             next: (bufete: any) => {
                 console.log('Bufete creado:', bufete);
-                this.router.navigate(['/abogado/mi-bufete']);
+                // Reload mis bufetes to ensure the newly created one is fetched from the server
+                this.bufeteState.loadMisBufetes().subscribe(() => {
+                    this.router.navigate(['/abogado/mi-bufete']);
+                });
             },
-            error: (err: any) => console.error(err)
+            error: (err: any) => {
+                console.error('Error al crear bufete:', err);
+                alert('Error al crear el bufete. Intenta nuevamente.');
+            }
         });
     }
 

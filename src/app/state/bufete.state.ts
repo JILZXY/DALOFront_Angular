@@ -111,6 +111,14 @@ export class BufeteState {
     }
 
     /**
+    /**
+     * Eliminar bufete en el servidor
+     */
+    deleteBufeteServer(bufeteId: number): Observable<void> {
+        return this.bufeteService.delete(bufeteId);
+    }
+
+    /**
      * Limpiar estado
      */
     constructor(
@@ -139,8 +147,9 @@ export class BufeteState {
         return this.solicitudService.create({ bufeteId });
     }
 
-    loadMisBufetes(): void {
-        this.bufeteService.getMisBufetes().subscribe(bufetes => {
+    loadMisBufetes(): Observable<Bufete[]> {
+        const obs = this.bufeteService.getMisBufetes();
+        obs.subscribe(bufetes => {
             this.setMisBufetes(bufetes);
             if (bufetes.length > 0) {
                 // Assuming single bufete for now or selecting first
@@ -148,6 +157,7 @@ export class BufeteState {
                 this.loadSolicitudes(bufetes[0].id);
             }
         });
+        return obs;
     }
 
     loadSolicitudes(bufeteId: number): void {

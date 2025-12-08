@@ -57,4 +57,18 @@ export class SolicitudBufeteService {
             data
         );
     }
+
+    /**
+     * Aprobar solicitud
+     */
+    aprobar(solicitudId: number): Observable<any> {
+        return this.http.put(`${this.baseUrl}/api/solicitudes-bufete/${solicitudId}/aprobar`, {});
+    }
+
+    /**
+     * Rechazar solicitud
+     */
+    rechazar(solicitudId: number): Observable<any> {
+        return this.http.put(`${this.baseUrl}/api/solicitudes-bufete/${solicitudId}/rechazar`, {});
+    }
 }

@@ -1,6 +1,6 @@
 .mi-bufete-container {
     min-height: 100vh;
-    background-color: #e6e6e6;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding-bottom: 40px;
 }
@@ -8,27 +8,43 @@
 .header-banner {
     position: relative;
     width: 100%;
-    background-color: white;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
+    background: linear-gradient(135deg, #1a2b3c 0%, #2c4257 100%);
+    padding-bottom: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-volver {
     position: absolute;
     top: 20px;
     left: 20px;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
     cursor: pointer;
     z-index: 10;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-volver:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.btn-volver svg {
+    stroke: white;
+    width: 24px;
+    height: 24px;
 }
 
 .banner-image {
-    height: 150px;
-    background-color: #d9d9d9;
-    /* Placeholder color */
+    height: 180px;
+    background: linear-gradient(135deg, #1a2b3c 0%, #2c4257 100%);
     background-image: url('/Images/banner-placeholder.png');
-    /* If available */
     background-size: cover;
     background-position: center;
 }
@@ -36,35 +52,41 @@
 .bufete-identity {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
     padding: 0 50px;
-    margin-top: -40px;
-    /* Overlap banner */
+    margin-top: -50px;
 }
 
 .logo-circle {
-    width: 100px;
-    height: 100px;
-    background-color: white;
+    width: 110px;
+    height: 110px;
+    background: white;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 2px solid #1a2b3c;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border: 3px solid #1a2b3c;
+    flex-shrink: 0;
+}
+
+.logo-circle svg {
+    stroke: #1a2b3c;
 }
 
 .bufete-identity h1 {
-    font-size: 28px;
-    font-weight: 900;
-    color: #1a2b3c;
-    margin-top: 40px;
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    margin-top: 0;
+    margin-bottom: 0;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .main-content {
     display: flex;
-    gap: 30px;
+    gap: 40px;
     padding: 0 50px;
     max-width: 1400px;
     margin: 0 auto;
@@ -80,60 +102,69 @@
 }
 
 .filter-section h2 {
-    font-size: 18px;
-    font-weight: bold;
-    color: #000;
-    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a2b3c;
+    margin-bottom: 20px;
 }
 
 .filter-buttons {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 30px;
     flex-wrap: wrap;
 }
 
 .filter-buttons button {
-    background-color: white;
-    border: none;
+    background: white;
+    border: 2px solid #ddd;
     padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: bold;
+    border-radius: 25px;
+    font-weight: 600;
     color: #333;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
 }
 
-.filter-buttons button.active {
-    background-color: #8daec9;
-    /* Light blue from image */
-    color: #1a2b3c;
+.filter-buttons button:hover {
+    border-color: #1a2b3c;
+    transform: translateY(-2px);
 }
 
-/* Simplified Card Styles */
+.filter-buttons button.active {
+    background: linear-gradient(135deg, #1a2b3c 0%, #2c4257 100%);
+    color: white;
+    border-color: #1a2b3c;
+}
+
 .abogado-card-simple {
-    background-color: white;
-    border-radius: 15px;
-    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
     margin-bottom: 20px;
     position: relative;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e8e8e8;
+    transition: all 0.3s ease;
+}
+
+.abogado-card-simple:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
 }
 
 .ranking-badge {
     position: absolute;
-    top: 0;
-    right: 0;
-    background-color: #1a2b3c;
+    top: -10px;
+    right: 20px;
+    background: linear-gradient(135deg, #1a2b3c 0%, #2c4257 100%);
     color: white;
-    padding: 5px 15px;
-    border-top-right-radius: 15px;
-    border-bottom-left-radius: 15px;
-    font-weight: bold;
-    font-size: 18px;
-    z-index: 5;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .card-content-simple {
@@ -142,13 +173,17 @@
     gap: 20px;
 }
 
+.avatar-simple {
+    flex-shrink: 0;
+}
+
 .avatar-simple img {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     object-fit: cover;
-    background-color: #1a2b3c;
-    border: 2px solid #1a2b3c;
+    background: linear-gradient(135deg, #1a2b3c 0%, #2c4257 100%);
+    border: 3px solid #1a2b3c;
 }
 
 .info-simple {
@@ -156,134 +191,153 @@
 }
 
 .info-simple h3 {
-    margin: 0 0 5px 0;
+    margin: 0 0 8px 0;
     font-size: 18px;
-    font-weight: 900;
+    font-weight: 700;
     color: #1a2b3c;
 }
 
 .info-simple p {
-    margin: 2px 0;
+    margin: 4px 0;
     font-size: 14px;
-    color: #333;
+    color: #555;
 }
 
 .info-simple .specialty {
-    font-weight: bold;
+    font-weight: 600;
     color: #1a2b3c;
+    font-size: 13px;
 }
 
 .info-simple .location {
     color: #e74c3c;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .rating-simple {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 5px;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .rating-simple span:first-child {
-    font-size: 12px;
-    font-weight: bold;
-    color: #1a2b3c;
+    font-size: 11px;
+    font-weight: 700;
+    color: #666;
+    text-transform: uppercase;
 }
 
 .rating-simple .score {
-    background-color: #b0c4de;
-    padding: 5px 15px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 14px;
-    color: #006DCC;
+    background: linear-gradient(135deg, #1a2b3c 0%, #2c4257 100%);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
 }
 
-/* Right Column Profile Card */
 .profile-card {
-    background-color: #dcdcdc;
-    /* Slightly darker gray */
-    border: 2px solid #1a2b3c;
-    border-radius: 15px;
-    padding: 30px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 35px 25px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .profile-avatar img {
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
-    background-color: #1a2b3c;
+    background: linear-gradient(135deg, #1a2b3c 0%, #2c4257 100%);
     object-fit: cover;
+    border: 3px solid #1a2b3c;
 }
 
 .profile-card h3 {
     font-size: 16px;
-    font-weight: 900;
+    font-weight: 700;
     color: #1a2b3c;
-    margin: 0;
+    margin: 10px 0 0 0;
+    line-height: 1.4;
 }
 
 .profile-card .location {
     color: #666;
     font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .specialty-icons {
     display: flex;
     gap: 15px;
     margin: 20px 0;
+    justify-content: center;
 }
 
 .spec-icon {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
 }
 
 .icon-box {
-    width: 60px;
-    height: 60px;
-    background-color: #1a2b3c;
-    border-radius: 10px;
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #1a2b3c 0%, #2c4257 100%);
+    border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
+    font-size: 28px;
     border: 2px solid white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.spec-icon:hover .icon-box {
+    transform: scale(1.1);
 }
 
 .spec-icon span {
-    font-size: 10px;
-    font-weight: 900;
+    font-size: 11px;
+    font-weight: 700;
     color: #1a2b3c;
     text-align: center;
     width: 80px;
+    text-transform: uppercase;
 }
 
 .btn-salir {
-    background-color: #7fa0bc;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
     color: white;
     border: none;
-    padding: 10px 30px;
-    border-radius: 5px;
-    font-weight: bold;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 700;
     cursor: pointer;
-    margin-top: 10px;
     width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btn-salir:hover {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
 }
 
 @media (max-width: 1024px) {
     .main-content {
         flex-direction: column;
-        padding: 0 20px;
+        padding: 0 30px;
     }
 
     .right-column {
@@ -297,5 +351,31 @@
 
     .rating-simple {
         align-items: center;
+    }
+
+    .bufete-identity {
+        padding: 0 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-banner {
+        margin-bottom: 20px;
+    }
+
+    .bufete-identity {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .bufete-identity h1 {
+        font-size: 24px;
+    }
+
+    .logo-circle {
+        width: 90px;
+        height: 90px;
     }
 }

@@ -57,11 +57,8 @@ export class OpcionesBufetAbogado implements OnInit {
             break;
 
           case 'crear-bufete':
-            if (tieneBufete) {
-              this.router.navigate(['/abogado/bufete-existente']); // Or specific "Already have bufete" page
-            } else {
-              this.router.navigate(['/abogado/crear-bufete']);
-            }
+            // Always navigate to crear-bufete, regardless of existing bufetes
+            this.router.navigate(['/abogado/crear-bufete']);
             break;
 
           case 'unirse-bufete':
