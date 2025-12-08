@@ -52,6 +52,9 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
       
       // Cargar datos del abogado
       this.cargarDatosAbogado();
+      
+      // Cargar bufete desde el state
+      this.cargarBufeteActual();
     } else {
       console.error('❌ No hay usuario en sesión');
       this.router.navigate(['/login']);
@@ -71,13 +74,9 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
         this.abogadoActual = abogado;
         console.log('✅ Abogado cargado:', abogado);
         console.log('📚 Especialidades:', abogado.especialidades);
-        
-        // Ahora cargar el bufete
-        this.cargarBufeteActual();
       },
       error: (error) => {
         console.error('❌ Error al cargar abogado:', error);
-        this.cargarBufeteActual(); // Intentar cargar bufete de todas formas
       }
     });
 
@@ -90,15 +89,20 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
   cargarBufeteActual(): void {
     this.isLoading = true;
 
-    const bufeteSub = this.bufeteService.getByAbogadoId(this.usuarioActualId).subscribe({
+    // Primero cargar mis bufetes en el state
+    this.bufeteState.loadMisBufetes();
+
+    // Luego suscribirse al state para obtener el bufete
+    const bufeteSub = this.bufeteState.misBufetes$.subscribe({
       next: (bufetes) => {
-        console.log('🔍 Bufetes encontrados:', bufetes);
+        console.log('🔍 Bufetes del state:', bufetes);
         
         if (bufetes && bufetes.length > 0) {
           this.bufeteActual = bufetes[0];
           this.bufeteState.setBufeteActual(bufetes[0]);
           
-          console.log('✅ Bufete cargado:', this.bufeteActual.nombre);
+          console.log('✅ Bufete cargado:', this.bufeteActual);
+          console.log('📛 Nombre del bufete:', this.bufeteActual.nombre);
           
           // Verificar si es admin
           this.esAdmin = this.bufeteActual.adminBufeteId === this.usuarioActualId;
@@ -110,14 +114,16 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
           if (this.esAdmin) {
             this.cargarSolicitudesPendientes();
           }
+          
+          this.isLoading = false;
         } else {
           console.log('⚠️ No tiene bufete');
+          this.isLoading = false;
           this.router.navigate(['/abogado/opciones-bufete']);
         }
-        this.isLoading = false;
       },
       error: (error) => {
-        console.error('❌ Error al cargar bufete:', error);
+        console.error('❌ Error al cargar bufete del state:', error);
         this.errorMensaje = 'Error al cargar el bufete.';
         this.isLoading = false;
       }
@@ -155,6 +161,7 @@ export class MiBufeteAbogado implements OnInit, OnDestroy {
       next: (solicitudes) => {
         this.solicitudesPendientes = solicitudes.filter(s => s.estado === 'PENDIENTE');
         this.bufeteState.setSolicitudes(this.solicitudesPendientes);
+        console.log('✅ Solicitudes pendientes:', this.solicitudesPendientes.length);
       },
       error: (error) => {
         console.error('❌ Error al cargar solicitudes:', error);
